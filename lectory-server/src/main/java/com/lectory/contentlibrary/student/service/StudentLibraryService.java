@@ -86,4 +86,31 @@ public class StudentLibraryService {
                 .success(true)
                 .build();
     }
+
+    /**
+     * 수강신청 (Free/Paid 공통)
+     */
+    public EnrollResponse enroll(Long memberId, Long lectureRoomId) {
+        // 1) 이미 신청된 강의실인지 체크
+        membershipRepo.findByUserIdAndLectureRoomId(memberId, lectureRoomId)
+                .ifPresent(m -> {
+                    throw new IllegalArgumentException("이미 수강신청된 강의입니다.");
+                });
+
+        // 2) Membership 엔티티 생성 및 저장
+        Membership membership = Membership.builder()
+                .userId(memberId)
+                .lectureRoomId(lectureRoomId)
+                .build();
+        membershipRepo.save(membership);
+
+        // 3) 응답 DTO 반환 — DTO 스펙에 맞춰 memberId 제거, message·isEnrolled 추가
+        return EnrollResponse.builder()
+                .success(true)                         // 처리 성공 여부
+                .message("수강신청이 완료되었습니다.")   // 결과 메시지
+                .lectureRoomId(lectureRoomId)          // 강의실 ID
+                .isEnrolled(true)                      // 완료 후 수강 여부
+                .build();
+    }
+
 }
