@@ -2,9 +2,7 @@ package com.lectory.contentlibrary.student.dto;
 
 import lombok.*;
 
-/**
- * 무료 구독자 수강신청 요청 DTO
- */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
