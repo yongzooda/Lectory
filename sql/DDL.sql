@@ -279,3 +279,4 @@ INSERT INTO user_type (user_type, type_name) VALUES
 ('PAID', '유료 회원'),
 ('EXPERT', '전문가'),
 ('ADMIN', '관리자');
+(Update DDL.sql (Modify order of drop query And add user_type))
