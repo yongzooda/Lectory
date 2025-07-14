@@ -1,4 +1,4 @@
-.view {
+.postList {
   height: 735px;
   left: 291px;
   position: absolute;
@@ -6,7 +6,7 @@
   width: 826px;
 }
 
-.view .div-2 {
+.postList .div-2 {
   height: 159px;
   left: 2px;
   position: absolute;
@@ -14,7 +14,7 @@
   width: 814px;
 }
 
-.view .group {
+.postList .group {
   height: 127px;
   left: 20px;
   position: absolute;
@@ -22,7 +22,7 @@
   width: 794px;
 }
 
-.view .frame {
+.postList .frame {
   align-items: flex-start;
   display: flex;
   flex-direction: column;
@@ -31,7 +31,7 @@
   width: 794px;
 }
 
-.view .frame-2 {
+.postList .frame-2 {
   align-items: flex-start;
   display: flex;
   flex: 0 0 auto;
@@ -42,7 +42,7 @@
   width: 304px;
 }
 
-.view .text-wrapper-11 {
+.postList .text-wrapper-11 {
   color: #191919;
   font-family: "Roboto", Helvetica;
   font-size: 22px;
@@ -55,7 +55,7 @@
   white-space: nowrap;
 }
 
-.view .div-wrapper {
+.postList .div-wrapper {
   align-items: center;
   background-color: #3dcbb1;
   border-radius: 20px;
@@ -68,7 +68,7 @@
   position: relative;
 }
 
-.view .text-wrapper-12 {
+.postList .text-wrapper-12 {
   color: #ffffff;
   font-family: "Roboto", Helvetica;
   font-size: 13px;
@@ -81,7 +81,7 @@
   width: fit-content;
 }
 
-.view .frame-3 {
+.postList .frame-3 {
   align-items: center;
   display: inline-flex;
   flex: 0 0 auto;
@@ -89,7 +89,7 @@
   position: relative;
 }
 
-.view .text-wrapper-13 {
+.postList .text-wrapper-13 {
   color: #292929;
   font-family: "Roboto", Helvetica;
   font-size: 14px;
@@ -101,7 +101,7 @@
   width: 60.42px;
 }
 
-.view .text-wrapper-14 {
+.postList .text-wrapper-14 {
   color: #757575;
   font-family: "Roboto", Helvetica;
   font-size: 14px;
@@ -113,7 +113,7 @@
   width: 73.14px;
 }
 
-.view .p {
+.postList .p {
   align-self: stretch;
   color: #292929;
   font-family: "Roboto", Helvetica;
@@ -124,7 +124,7 @@
   position: relative;
 }
 
-.view .line {
+.postList .line {
   height: 1px;
   left: 20px;
   object-fit: cover;
@@ -133,7 +133,7 @@
   width: 794px;
 }
 
-.view .rectangle-2 {
+.postList .rectangle-2 {
   background-color: #3dcbb1;
   border-radius: 28px;
   height: 159px;
@@ -144,7 +144,7 @@
   width: 4px;
 }
 
-.view .div-3 {
+.postList .div-3 {
   height: 159px;
   left: 0;
   position: absolute;
@@ -152,7 +152,7 @@
   width: 816px;
 }
 
-.view .frame-wrapper {
+.postList .frame-wrapper {
   height: 127px;
   left: 22px;
   position: absolute;
@@ -160,7 +160,7 @@
   width: 794px;
 }
 
-.view .frame-4 {
+.postList .frame-4 {
   align-items: center;
   background-color: #1f1d1b26;
   border-radius: 20px;
@@ -173,7 +173,7 @@
   position: relative;
 }
 
-.view .text-wrapper-15 {
+.postList .text-wrapper-15 {
   color: #1f1d1b;
   font-family: "Roboto", Helvetica;
   font-size: 13px;
@@ -187,7 +187,7 @@
   width: fit-content;
 }
 
-.view .img {
+.postList .img {
   height: 1px;
   left: 22px;
   object-fit: cover;
@@ -196,7 +196,7 @@
   width: 794px;
 }
 
-.view .div-4 {
+.postList .div-4 {
   height: 158px;
   left: 22px;
   position: absolute;
@@ -204,7 +204,7 @@
   width: 794px;
 }
 
-.view .group-2 {
+.postList .group-2 {
   height: 127px;
   left: 0;
   position: absolute;
@@ -212,7 +212,7 @@
   width: 794px;
 }
 
-.view .line-2 {
+.postList .line-2 {
   height: 1px;
   left: 0;
   object-fit: cover;
@@ -221,7 +221,7 @@
   width: 794px;
 }
 
-.view .div-5 {
+.postList .div-5 {
   height: 161px;
   left: 22px;
   position: absolute;
@@ -229,7 +229,7 @@
   width: 804px;
 }
 
-.view .group-3 {
+.postList .group-3 {
   height: 130px;
   left: 0;
   position: absolute;
@@ -237,7 +237,7 @@
   width: 794px;
 }
 
-.view .frame-5 {
+.postList .frame-5 {
   align-items: center;
   background-color: #1f1d1b26;
   border-radius: 1000px;
@@ -250,7 +250,7 @@
   position: relative;
 }
 
-.view .text-wrapper-16 {
+.postList .text-wrapper-16 {
   color: #1f1d1b;
   font-family: "Space Grotesk", Helvetica;
   font-size: 14px;
@@ -262,7 +262,7 @@
   width: fit-content;
 }
 
-.view .line-3 {
+.postList .line-3 {
   height: 1px;
   left: 10px;
   object-fit: cover;

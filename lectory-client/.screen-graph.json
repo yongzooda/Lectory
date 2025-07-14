@@ -8,6 +8,22 @@
       ],
       "dataModelId": "2823:13576",
       "isRoot": true
+    },
+    {
+      "id": "src/pages/PostWritePage.jsx",
+      "label": "PostWritePage",
+      "routes": [
+        "/post-write"
+      ],
+      "dataModelId": "2823:13581"
+    },
+    {
+      "id": "src/pages/PostDetailPage.jsx",
+      "label": "PostDetailPage",
+      "routes": [
+        "/post-detail"
+      ],
+      "dataModelId": "2810:13554"
     }
   ],
   "edges": []

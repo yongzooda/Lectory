@@ -1,9 +1,9 @@
 import React from "react";
-import "../../assets/css/view.css";
+import "../../assets/css/postList.css";
 
-export const View = () => {
+export const PostList = () => {
   return (
-    <div className="view">
+    <div className="postList">
       <div className="div-2">
         <div className="group">
           <div className="frame">
@@ -143,4 +143,4 @@ export const View = () => {
   );
 };
 
-export default View;
+export default PostList;

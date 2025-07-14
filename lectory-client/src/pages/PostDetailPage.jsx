@@ -1,17 +1,17 @@
 import React from "react";
 import { Footer } from "./sections/Footer";
 import { NavbarLightDefault } from "./sections/NavbarLightDefault";
-import { PostList } from "./sections/PostList";
+import { PostDetail } from "./sections/PostDetail";
 import "../assets/css/page.css";
 
-export const PostListPage = () => {
+export const PostDetailPage = () => {
   return (
-    <div className="page" data-model-id="2823:13576">
+    <div className="page" data-model-id="2810:13554">
       <NavbarLightDefault />
       <Footer />
-      <PostList />
+      <PostDetail />
     </div>
   );
 };
 
-export default PostListPage;
+export default PostDetailPage;
