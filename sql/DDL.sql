@@ -151,7 +151,7 @@ CREATE TABLE expert_tag (
 -- 수강권
 CREATE TABLE membership (
     membership_id BIGINT AUTO_INCREMENT,
-    member_id BIGINT,
+    user_id BIGINT,
     lecture_room_id BIGINT,
     enrolled_at DATETIME,
     PRIMARY KEY (membership_id)
@@ -160,7 +160,7 @@ CREATE TABLE membership (
 -- 후기 댓글
 CREATE TABLE lecture_comment (
     lecture_comment_id BIGINT AUTO_INCREMENT,
-    member_id BIGINT,
+    user_id BIGINT,
     lecture_room_id BIGINT,
     content TEXT,
     created_at DATETIME,
@@ -170,7 +170,7 @@ CREATE TABLE lecture_comment (
 -- 결제 내역
 CREATE TABLE pay_history (
     pay_history_id BIGINT AUTO_INCREMENT,
-    member_id BIGINT,
+    user_id BIGINT,
     paid_at DATETIME,
     PRIMARY KEY (pay_history_id)
 );
@@ -178,7 +178,7 @@ CREATE TABLE pay_history (
 -- 정기 결제
 CREATE TABLE regular_pay (
     regular_pay_id BIGINT AUTO_INCREMENT,
-    member_id BIGINT,
+    user_id BIGINT,
     aid VARCHAR(50),
     tid VARCHAR(50),
     sid VARCHAR(50),
@@ -250,21 +250,21 @@ ALTER TABLE expert_tag
 
 ALTER TABLE membership
     MODIFY enrolled_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ADD CONSTRAINT fk_membership_member FOREIGN KEY (member_id) REFERENCES user(user_id),
+    ADD CONSTRAINT fk_membership_member FOREIGN KEY (user_id) REFERENCES user(user_id),
     ADD CONSTRAINT fk_membership_lecture FOREIGN KEY (lecture_room_id) REFERENCES lecture_room(lecture_room_id);
 
 ALTER TABLE lecture_comment
     MODIFY content TEXT NOT NULL,
     MODIFY created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ADD CONSTRAINT fk_lecturecomment_member FOREIGN KEY (member_id) REFERENCES user(user_id),
+    ADD CONSTRAINT fk_lecturecomment_member FOREIGN KEY (user_id) REFERENCES user(user_id),
     ADD CONSTRAINT fk_lecturecomment_lecture FOREIGN KEY (lecture_room_id) REFERENCES lecture_room(lecture_room_id);
 
 ALTER TABLE pay_history
     MODIFY paid_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ADD CONSTRAINT fk_payhistory_member FOREIGN KEY (member_id) REFERENCES user(user_id);
+    ADD CONSTRAINT fk_payhistory_member FOREIGN KEY (user_id) REFERENCES user(user_id);
 
 ALTER TABLE regular_pay
     MODIFY aid VARCHAR(50) NOT NULL,
     MODIFY tid VARCHAR(50) NOT NULL,
     MODIFY sid VARCHAR(50) NOT NULL,
-    ADD CONSTRAINT fk_regularpay_member FOREIGN KEY (member_id) REFERENCES user(user_id);
+    ADD CONSTRAINT fk_regularpay_member FOREIGN KEY (user_id) REFERENCES user(user_id);
