@@ -40,10 +40,6 @@ public class Post {
     @Column(nullable = false)
     private boolean isResolved = false;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private SubscriberType subscriberType = SubscriberType.FREE;
-
     @Column(nullable = false)
     private Integer likeCount = 0;
 
