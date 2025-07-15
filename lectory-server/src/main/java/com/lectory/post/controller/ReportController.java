@@ -28,7 +28,7 @@ public class ReportController {
 
 	 Long userId = userDetail.getUser().getUserId();
 	 
-	 reportService.create(dto.getTarget(), dto.getTargetId(), userDetail.getId(), dto.getContent());
+	 reportService.create(dto.getTarget(), dto.getTargetId(), userId, dto.getContent());
      return ResponseEntity.ok().build();
  }
 }

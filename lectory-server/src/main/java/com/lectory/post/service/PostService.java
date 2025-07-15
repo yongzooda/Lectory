@@ -35,7 +35,7 @@ public class PostService {
 
         boolean onlyExpert = dto.isOnlyExpert();
 
-        if (onlyExpert && !"PAID".equals(user.getUserType())) {
+        if (onlyExpert && !"PAID".equals(user.getUserType().getUserType())) {
             throw new IllegalArgumentException("전문가 답변 허용은 PAID 구독자만 가능합니다.");
         }
 
@@ -119,7 +119,7 @@ public class PostService {
 
         Page<Post> posts;
 
-        if (user.getUserType() == User.UserType.EXPERT) {
+        if ("EXPERT".equals(user.getUserType().getUserType())) {
             // 전문가: onlyExpert=true인 글만 조회
             posts = postRepository.findByOnlyExpertTrueOrderByCreatedAtDesc(pageable);
         } else {
