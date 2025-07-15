@@ -1,6 +1,6 @@
 package com.lectory.user.repository;
 
-import com.lectory.user.domain.User;
+import com.lectory.common.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

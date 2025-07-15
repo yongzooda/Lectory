@@ -1,5 +1,5 @@
 // Expert.java
-package com.lectory.user.domain;
+package com.lectory.common.domain.user;
 
 import jakarta.persistence.*;
 import lombok.*;

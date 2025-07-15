@@ -1,8 +1,8 @@
 // LectureTagRepository.java
 package com.lectory.lecture.repository;
 
-import com.lectory.lecture.domain.LectureTag;
-import com.lectory.lecture.domain.LectureTagId;
+import com.lectory.common.domain.lecture.LectureTag;
+import com.lectory.common.domain.lecture.LectureTagId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

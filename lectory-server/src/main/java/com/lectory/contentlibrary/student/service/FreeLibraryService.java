@@ -1,8 +1,8 @@
 package com.lectory.contentlibrary.student.service;
 
 import com.lectory.contentlibrary.student.dto.EnrollResponse;
-import com.lectory.lecture.domain.LectureRoom;
-import com.lectory.lecture.domain.Membership;
+import com.lectory.common.domain.lecture.LectureRoom;
+import com.lectory.common.domain.lecture.Membership;
 import com.lectory.lecture.repository.LectureRoomRepository;
 import com.lectory.lecture.repository.MembershipRepository;
 import lombok.RequiredArgsConstructor;

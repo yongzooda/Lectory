@@ -1,7 +1,7 @@
 // LectureRoom.java
-package com.lectory.lecture.domain;
+package com.lectory.common.domain.lecture;
 
-import com.lectory.user.domain.Expert;
+import com.lectory.common.domain.user.Expert;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
