@@ -20,6 +20,7 @@ import com.lectory.common.domain.pay.PayHistory;
 import com.lectory.common.domain.pay.RegularPay;
 import com.lectory.common.domain.user.User;
 import com.lectory.common.domain.user.UserType;
+import com.lectory.user.repository.UserRepository;
 import com.lectory.user.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,9 @@ public class KakaoPayService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Value("${kakaopay.cid}")
     private String cid;
@@ -107,7 +111,7 @@ public class KakaoPayService {
                 UserType userType = user.getUserType();
                 userType.setTypeName("FREE");
                 user.setUserType(userType);
-                userService.save(user);
+                userRepository.save(user);
                 continue;
             }
 
@@ -165,12 +169,9 @@ public class KakaoPayService {
          * 현재 userService가 없어서 레포지토리로 임시사용중
          */
 
-        User user = userService.getUser(userId);
-        user.setSubscriptionEndDate(user.getSubscriptionEndDate().plusMinutes(3)); // 3분뒤로 임시 설정
-        user.setUserType(user.getUserType());
-        userService.save(user);
-
-        PayHistory payHistory = PayHistory.builder().user(user).paidAt(LocalDateTime.now()).build();
+        userService.updatePaidUser(userId);
+        PayHistory payHistory = PayHistory.builder().user(userService.getUser(userId)).paidAt(LocalDateTime.now())
+                .build();
         payHistoryService.save(payHistory);
 
         RegularPay regularPay = regularPayService.findByUser_UserId(userId);
@@ -209,20 +210,15 @@ public class KakaoPayService {
         /*
          * 현재 userService가 없어서 레포지토리로 임시사용중
          */
-        User user = userService.getUser(userId);
-        user.setSubscriptionStartDate(LocalDateTime.now());
-        user.setSubscriptionEndDate(LocalDateTime.now().plusMinutes(3));
-        UserType userType = user.getUserType();
-        userType.setTypeName("PAID");
-        user.setUserType(userType);
-        userService.save(user);
+        userService.updatePaidUser(userId);
 
-        PayHistory payHistory = PayHistory.builder().user(user).paidAt(LocalDateTime.now()).build();
+        PayHistory payHistory = PayHistory.builder().user(userService.getUser(userId)).paidAt(LocalDateTime.now())
+                .build();
         payHistoryService.save(payHistory);
 
         if (regularPayService.findByUser_UserId(userId) == null) {
             RegularPay regularPay = RegularPay.builder()
-                    .user(user)
+                    .user(userService.getUser(userId))
                     .aid(response.getAid())
                     .tid(response.getTid())
                     .sid(response.getSid())
