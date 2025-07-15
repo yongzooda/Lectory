@@ -21,3 +21,7 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+kakaopay:
+  secretKey: DEVAAD6CD799B5A33B3A05071F5C5DBB0D863D62
+  cid: TCSUBSCRIP

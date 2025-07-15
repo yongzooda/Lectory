@@ -38,4 +38,7 @@ public class RegularPay {
     /** 정기 결제용 ID (sid) */
     @Column(name = "sid", length = 50, nullable = false)
     private String sid;
+
+    @Column(name = "is_canceled", nullable = false)
+    private boolean canceled;
 }
