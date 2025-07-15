@@ -1,4 +1,4 @@
-package com.lectory.lectory;
+package com.lectory;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
