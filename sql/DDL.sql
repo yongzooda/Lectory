@@ -1,4 +1,3 @@
-
 DROP TABLE IF EXISTS LECTURE_TAG;
 DROP TABLE IF EXISTS LECTURE;
 DROP TABLE IF EXISTS MEMBERSHIP;
@@ -15,6 +14,13 @@ DROP TABLE IF EXISTS PAY_HISTORY;
 DROP TABLE IF EXISTS REGULAR_PAY;
 DROP TABLE IF EXISTS USER;
 DROP TABLE IF EXISTS TAG;
+DROP TABLE IF EXISTS USER_TYPE;
+
+-- 회원 권한 테이블
+CREATE TABLE user_type (
+    user_type VARCHAR(20) PRIMARY KEY,
+    type_name VARCHAR(50) NOT NULL
+);
 
 -- 회원 테이블
 CREATE TABLE user (
@@ -267,3 +273,9 @@ ALTER TABLE regular_pay
     MODIFY tid VARCHAR(50) NOT NULL,
     MODIFY sid VARCHAR(50) NOT NULL,
     ADD CONSTRAINT fk_regularpay_member FOREIGN KEY (user_id) REFERENCES user(user_id);
+
+INSERT INTO user_type (user_type, type_name) VALUES
+('FREE', '무료 회원'),
+('PAID', '유료 회원'),
+('EXPERT', '전문가'),
+('ADMIN', '관리자');
