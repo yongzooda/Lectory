@@ -1,5 +1,5 @@
 // ===== CommentResponse.java =====
-package com.lectory.contentlibrary.student.dto;
+package com.lectory.contentlibrary.dto;
 
 import lombok.*;
 
@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CommentResponse {
+public class CommentResponseDto {
     /** 생성된 댓글 ID */
     private Long commentId;
     /** 댓글 작성자 닉네임 or ID */

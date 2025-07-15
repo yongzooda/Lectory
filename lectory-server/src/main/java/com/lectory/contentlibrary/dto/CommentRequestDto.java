@@ -1,5 +1,5 @@
 // ===== CommentRequest.java =====
-package com.lectory.contentlibrary.student.dto;
+package com.lectory.contentlibrary.dto;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentRequest {
+public class CommentRequestDto {
     /** 댓글 작성자 회원 ID */
     private Long memberId;
     /** 댓글 내용 */

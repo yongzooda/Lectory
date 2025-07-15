@@ -1,10 +1,10 @@
 package com.lectory.contentlibrary.student.service;
 
-import com.lectory.contentlibrary.student.dto.EnrollResponse;
+import com.lectory.contentlibrary.dto.EnrollResponseDto;
 import com.lectory.common.domain.lecture.LectureRoom;
 import com.lectory.common.domain.lecture.Membership;
-import com.lectory.lecture.repository.LectureRoomRepository;
-import com.lectory.lecture.repository.MembershipRepository;
+import com.lectory.contentlibrary.repository.LectureRoomRepository;
+import com.lectory.contentlibrary.repository.MembershipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class FreeLibraryService {
     /**
      * Free 전용 수강신청: 유료 강의실 신청 불가
      */
-    public EnrollResponse enroll(Long memberId, Long lectureRoomId) {
+    public EnrollResponseDto enroll(Long memberId, Long lectureRoomId) {
         LectureRoom room = lectureRoomRepo.findById(lectureRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의실입니다."));
         if (room.getIsPaid()) {
@@ -29,7 +29,7 @@ public class FreeLibraryService {
                 .lectureRoomId(lectureRoomId)
                 .build();
         membershipRepo.save(m);
-        return EnrollResponse.builder()
+        return EnrollResponseDto.builder()
                 .success(true)
                 .message("수강신청이 완료되었습니다.")
                 .lectureRoomId(lectureRoomId)

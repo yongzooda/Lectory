@@ -1,5 +1,5 @@
 // ===== EnrollResponse.java =====
-package com.lectory.contentlibrary.student.dto;
+package com.lectory.contentlibrary.dto;
 
 import lombok.*;
 
@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EnrollResponse {
+public class EnrollResponseDto {
     /** 처리 성공 여부 */
     private boolean success;
     /** 결과 메시지 */
