@@ -32,8 +32,8 @@ CREATE TABLE user (
     is_deleted BOOLEAN,
     created_at DATETIME,
     deleted_at DATETIME,
-    subcription_start_date DATETIME,
-    subcription_end_date DATETIME,
+    subscription_start_date DATETIME,
+    subscription_end_date DATETIME,
     PRIMARY KEY (user_id)
 );
 
