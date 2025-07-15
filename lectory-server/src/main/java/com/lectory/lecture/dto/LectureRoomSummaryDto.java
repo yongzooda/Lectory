@@ -12,10 +12,9 @@ import lombok.Getter;
 public class LectureRoomSummaryDto {
 
     private final Long lectureRoomId;
-    private final String thumbnail;
+    private final String thumbnail;       // coverImageUrl을 매핑
     private final String title;
     private final String expertName;
-    private final Double rating;
     private final Integer enrollmentCount;
     private final Boolean isPaid;
     private final Boolean canEnroll;

@@ -32,8 +32,8 @@ CREATE TABLE user (
     is_deleted BOOLEAN,
     created_at DATETIME,
     deleted_at DATETIME,
-    subcription_start_date DATETIME,
-    subcription_end_date DATETIME,
+    subscription_start_date DATETIME,
+    subscription_end_date DATETIME,
     PRIMARY KEY (user_id)
 );
 
@@ -279,4 +279,3 @@ INSERT INTO user_type (user_type, type_name) VALUES
 ('PAID', '유료 회원'),
 ('EXPERT', '전문가'),
 ('ADMIN', '관리자');
-(Update DDL.sql (Modify order of drop query And add user_type))
