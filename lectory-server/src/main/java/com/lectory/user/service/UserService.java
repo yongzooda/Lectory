@@ -62,18 +62,29 @@ public class UserService {
         //첫 결제
         if ("FREE".equals(user.getUserType().getUserType()) || user.getSubscriptionStartDate() == null) {
             user.setSubscriptionStartDate(now);
-            user.setSubscriptionEndDate(now.plusMonths(1));
+            user.setSubscriptionEndDate(now.plusMinutes(3));
         } else if (user.getSubscriptionEndDate() != null && user.getSubscriptionEndDate().isAfter(now)
         ) {
             // 정기 결제 중에 연장
-            user.setSubscriptionEndDate(user.getSubscriptionEndDate().plusMonths(1));
+            user.setSubscriptionEndDate(user.getSubscriptionEndDate().plusMinutes(3));
         } else {
             // 구독 만료 시 재결제 (자동 연장이고 구독 취소 기능 만들거니 안쓸테지만 일단 추가)
             user.setSubscriptionStartDate(now);
-            user.setSubscriptionEndDate(now.plusMonths(1));
+            user.setSubscriptionEndDate(now.plusMinutes(3));
         }
 
         user.setUserType(paidType);
+        userRepository.save(user);
+    }
+
+    //구독 취소 시 변경
+    public void cancelSubscription(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
+        var freeType = userTypeRepository.findById("FREE").orElseThrow(() -> new IllegalStateException("무료 유저 타입이 존재하지 않습니다."));
+
+        user.setUserType(freeType);
+
         userRepository.save(user);
     }
 
