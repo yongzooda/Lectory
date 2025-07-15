@@ -1,5 +1,5 @@
 // MembershipRepository.java
-package com.lectory.lecture.repository;
+package com.lectory.contentlibrary.repository;
 
 import com.lectory.common.domain.lecture.Membership;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -31,10 +31,9 @@ public class User {
     private String nickname;
 
     /** 사용자 권한(구독 등급 or 전문가/Admin) */
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private UserType userType = UserType.FREE;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_type", nullable = false)
+    private UserType userType;
 
     /** 소프트 삭제 여부 */
     @Column(nullable = false)
@@ -61,11 +60,4 @@ public class User {
     /** 전문가 프로필(1:1) */
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Expert expert;
-
-    public enum UserType {
-        FREE,
-        PAID,
-        EXPERT,
-        ADMIN
-    }
 }

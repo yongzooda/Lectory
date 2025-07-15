@@ -3,8 +3,8 @@
 
 package com.lectory.contentlibrary.student.controller;
 
-import com.lectory.contentlibrary.student.dto.EnrollRequest;
-import com.lectory.contentlibrary.student.dto.EnrollResponse;
+import com.lectory.contentlibrary.dto.EnrollRequestDto;
+import com.lectory.contentlibrary.dto.EnrollResponseDto;
 import com.lectory.contentlibrary.student.service.StudentLibraryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +22,9 @@ public class FreeLibraryController {
 
     /** 무료 강의실에 한해 수강신청 가능 */
     @PostMapping("/{lectureRoomId}/enroll")
-    public ResponseEntity<EnrollResponse> enroll(
+    public ResponseEntity<EnrollResponseDto> enroll(
             @PathVariable Long lectureRoomId,
-            @RequestBody EnrollRequest req
+            @RequestBody EnrollRequestDto req
     ) {
         return ResponseEntity.ok(
                 svc.enroll(req.getMemberId(), lectureRoomId)
