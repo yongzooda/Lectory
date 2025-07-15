@@ -29,9 +29,6 @@ public class PayHistory {
     private User user;
 
     /** 결제 일자 */
-    @Column(name = "paid_at",
-            nullable = false,
-            updatable = false,
-            columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "paid_at", nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime paidAt;
 }
