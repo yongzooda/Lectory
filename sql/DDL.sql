@@ -187,6 +187,7 @@ CREATE TABLE regular_pay (
     aid VARCHAR(50),
     tid VARCHAR(50),
     sid VARCHAR(50),
+    is_canceled BOOLEAN NOT NULL,
     PRIMARY KEY (regular_pay_id)
 );
 
