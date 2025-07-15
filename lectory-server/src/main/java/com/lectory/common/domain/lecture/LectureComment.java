@@ -1,5 +1,5 @@
 // LectureComment.java
-package com.lectory.lecture.domain;
+package com.lectory.common.domain.lecture;
 
 import jakarta.persistence.*;
 import lombok.*;

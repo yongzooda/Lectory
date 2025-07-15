@@ -1,4 +1,4 @@
-package com.lectory.lecture.domain;
+package com.lectory.common.domain.lecture;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

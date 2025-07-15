@@ -1,5 +1,5 @@
 // Tag.java
-package com.lectory.lecture.domain;
+package com.lectory.common.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

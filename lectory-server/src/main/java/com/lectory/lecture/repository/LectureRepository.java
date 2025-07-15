@@ -1,7 +1,7 @@
 // LectureRepository.java
 package com.lectory.lecture.repository;
 
-import com.lectory.lecture.domain.Lecture;
+import com.lectory.common.domain.lecture.Lecture;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
