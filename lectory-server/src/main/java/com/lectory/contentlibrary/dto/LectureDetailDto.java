@@ -1,5 +1,5 @@
 // LectureDetailDto.java
-package com.lectory.lecture.dto;
+package com.lectory.contentlibrary.dto;
 
 import java.util.List;
 

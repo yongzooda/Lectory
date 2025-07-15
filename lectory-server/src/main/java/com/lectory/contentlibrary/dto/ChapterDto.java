@@ -1,5 +1,5 @@
 // ChapterDto.java
-package com.lectory.lecture.dto;
+package com.lectory.contentlibrary.dto;
 
 /**
  * 강의실 상세 조회 시 각 챕터 정보를 담는 DTO
