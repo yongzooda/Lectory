@@ -28,7 +28,7 @@ public class SecurityConfig {
                                 "/login",              // 로그인 폼 접근
                                 "/logout",             // 로그아웃 엔드포인트
                                 "/error",            // ← 추가!
-                                "/api/users/signup",
+                                "/api/**",
                                 "/v3/api-docs/**",     // OpenAPI JSON
                                 "/swagger-ui.html",    // Swagger UI redirect 페이지
                                 "/swagger-ui/**",      // Swagger 정적 리소스
