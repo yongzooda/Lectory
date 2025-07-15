@@ -23,10 +23,6 @@ public class KakaoPayController {
         if (response == null) {
             return "pay_fail";
         }
-        System.out.println(response.getTid());
-        System.out.println(response.getNext_redirect_pc_url());
-        System.out.println(response.getUserId());
-
         return "pay_ready";
     }
 
@@ -46,15 +42,12 @@ public class KakaoPayController {
         if (response == null) {
             return "pay_fail";
         }
-        System.out.println(
-                response.getSid() + "판매된 물건 " + response.getItem_name() + "결제 금액" + response.getAmount().getTotal());
         return "pay_success";
     }
 
     @GetMapping("/cancel/{id}")
     public String subscriptionCancel(@PathVariable("id") Long id) {
         kakaoPayService.kakaopaySubscriptionCancel(id);
-        System.out.println("정기 결제 취소 완료" + id);
         return "main";
     }
 

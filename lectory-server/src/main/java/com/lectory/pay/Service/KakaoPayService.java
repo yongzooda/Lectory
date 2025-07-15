@@ -18,6 +18,7 @@ import com.lectory.common.domain.pay.KakaoApproveResponse;
 import com.lectory.common.domain.pay.KakaoReadyResponse;
 import com.lectory.common.domain.pay.PayHistory;
 import com.lectory.common.domain.pay.RegularPay;
+import com.lectory.common.domain.user.User;
 import com.lectory.pay.Repository.PayHistoryRepository;
 import com.lectory.pay.Repository.RegularPayRepository;
 
@@ -51,7 +52,7 @@ public class KakaoPayService {
     }
 
     public KakaoReadyResponse kaKaoReady(Long userId) { // 단건 결제 요청
-        System.out.println("카카오페이 결제 준비 요청");
+
         Map<String, Object> body = new HashMap<>();
         body.put("cid", cid);
         body.put("partner_order_id", "order_id");
@@ -69,6 +70,7 @@ public class KakaoPayService {
                 new HttpEntity<>(body, headers),
                 KakaoReadyResponse.class);
         kakaoReadyResponse.setUserId(userId);
+        log.info("카카오페이 결제 준비 요청");
         return kakaoReadyResponse;
     }
 
@@ -100,15 +102,15 @@ public class KakaoPayService {
                     "https://open-api.kakaopay.com/online/v1/payment/ready",
                     new HttpEntity<>(body, headers),
                     KakaoReadyResponse.class);
-            System.out.println("정기 결제 준비 요청" + kakaoReadyResponse.getTid() + " sid: " + regularpay.getSid());
-            kaKaoRegularApprove(kakaoReadyResponse, regularpay.getUserId(), regularpay.getSid());
+            log.info(" 정기 결제 준비 요청 완료 :" + LocalDateTime.now());
+
+            kaKaoRegularApprove(kakaoReadyResponse, regularpay.getUser().getUserId(), regularpay.getSid());
         }
     }
 
     @Transactional
     public void kaKaoRegularApprove(KakaoReadyResponse kakaoReadyResponse, Long userId, String sid) { // 결제 승인
         Map<String, Object> body = new HashMap<>();
-        System.out.println("결제 승인");
         body.put("cid", cid);
         body.put("sid", sid);
         body.put("partner_order_id", "order_id");
@@ -122,35 +124,35 @@ public class KakaoPayService {
                 "https://open-api.kakaopay.com/online/v1/payment/subscription",
                 new HttpEntity<>(body, headers),
                 KakaoApproveResponse.class);
-        PayHistory payHistory = PayHistory.builder().userId(userId).paidAt(LocalDateTime.now()).build();
+        User user = User.builder().userId(userId).build();
+        PayHistory payHistory = PayHistory.builder().user(user).paidAt(LocalDateTime.now()).build();
         payHistoryRepository.save(payHistory);
         if (response == null) {
             log.error("에러발생");
             return;
         }
-        if (regularPayRepository.findByUserId(userId).isEmpty()) {
+        if (regularPayRepository.findByUser_UserId(userId).isEmpty()) {
             RegularPay regularPay = RegularPay.builder()
-                    .userId(userId)
+                    .user(user)
                     .aid(response.getAid())
                     .tid(response.getTid())
                     .sid(response.getSid())
                     .build();
             regularPayRepository.save(regularPay);
         } else {
-            RegularPay regularPay = regularPayRepository.findByUserId(userId).get();
+            RegularPay regularPay = regularPayRepository.findByUser_UserId(userId).get();
             regularPay.setAid(response.getAid());
             regularPay.setTid(response.getTid());
             regularPay.setSid(response.getSid());
             regularPayRepository.save(regularPay);
         }
-        System.out.println("정기결제 승인" + LocalDateTime.now() + " userId: " + userId
-                + " aid: " + response.getAid() + " sid: " + response.getSid());
+        log.info("정기 결제 승인 요청 완료 :" + LocalDateTime.now());
     }
 
     @Transactional
     public KakaoApproveResponse kaKaoApprove(String pgToken, Long userId) { // 결제 승인
         Map<String, Object> body = new HashMap<>();
-        System.out.println("결제 승인");
+        log.info("카카오페이 결제 승인 요청");
         body.put("cid", cid);
         body.put("tid", kakaoReadyResponse.getTid());
         body.put("partner_order_id", "order_id");
@@ -161,22 +163,23 @@ public class KakaoPayService {
                 "https://open-api.kakaopay.com/online/v1/payment/approve",
                 new HttpEntity<>(body, headers),
                 KakaoApproveResponse.class);
-        PayHistory payHistory = PayHistory.builder().userId(userId).paidAt(LocalDateTime.now()).build();
+        User user = User.builder().userId(userId).build();
+        PayHistory payHistory = PayHistory.builder().user(user).paidAt(LocalDateTime.now()).build();
         payHistoryRepository.save(payHistory);
         if (response == null) {
             log.error("에러발생");
             return null;
         }
-        if (regularPayRepository.findByUserId(userId).isEmpty()) {
+        if (regularPayRepository.findByUser_UserId(userId).isEmpty()) {
             RegularPay regularPay = RegularPay.builder()
-                    .userId(userId)
+                    .user(user)
                     .aid(response.getAid())
                     .tid(response.getTid())
                     .sid(response.getSid())
                     .build();
             regularPayRepository.save(regularPay);
         } else {
-            RegularPay regularPay = regularPayRepository.findByUserId(userId).get();
+            RegularPay regularPay = regularPayRepository.findByUser_UserId(userId).get();
             regularPay.setAid(response.getAid());
             regularPay.setTid(response.getTid());
             regularPay.setSid(response.getSid());
@@ -186,12 +189,12 @@ public class KakaoPayService {
     }
 
     public int kakaopaySubscriptionCancel(Long userId) {
-        System.out.println("정기 결제 취소 요청" + LocalDateTime.now());
-        RegularPay regularPay = regularPayRepository.findByUserId(userId).orElse(null);
+        log.info("정기 결제 취소 요청" + LocalDateTime.now());
+        RegularPay regularPay = regularPayRepository.findByUser_UserId(userId).orElse(null);
         if (regularPay == null) {
             return -1;
         }
-        regularPayRepository.deleteByUserId(userId);
+        regularPayRepository.deleteByUser_UserId(userId);
         return 0;
 
     }

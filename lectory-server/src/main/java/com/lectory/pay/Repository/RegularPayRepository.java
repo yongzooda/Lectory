@@ -8,7 +8,7 @@ import com.lectory.common.domain.pay.RegularPay;
 
 public interface RegularPayRepository extends JpaRepository<RegularPay, Long> {
 
-    public Optional<RegularPay> findByUserId(Long userId);
+    public Optional<RegularPay> findByUser_UserId(Long userId);
 
-    public void deleteByUserId(Long userId);
+    public void deleteByUser_UserId(Long userId);
 }
