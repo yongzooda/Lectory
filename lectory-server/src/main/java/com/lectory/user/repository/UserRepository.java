@@ -4,8 +4,14 @@ import com.lectory.common.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    // 기본적인 findById, save, delete 등은 JpaRepository가 제공합니다.
-    // 필요하다면 추가 쿼리 메서드를 여기에 선언하세요.
+
+    Optional<User> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByNickname(String nickname);
 }
