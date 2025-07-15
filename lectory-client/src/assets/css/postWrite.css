@@ -1,0 +1,175 @@
+.postWrite {
+  height: 1153px;
+  left: 277px;
+  position: absolute;
+  top: 147px;
+  width: 886px;
+}
+
+.postWrite .frame {
+  border-color: #757575;
+  border-top-style: solid;
+  border-top-width: 1px;
+  height: 100px;
+  left: 0;
+  position: absolute;
+  top: 1053px;
+  width: 886px;
+}
+
+.postWrite .tab-wrapper {
+  align-items: center;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  left: 725px;
+  position: absolute;
+  top: 29px;
+}
+
+.postWrite .tab {
+  align-items: center;
+  background-color: #409f71;
+  border-radius: 6px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 8px 16px;
+  position: relative;
+  width: 161px;
+}
+
+.postWrite .text-wrapper {
+  color: var(--white);
+  font-family: var(--navigation-font-family);
+  font-size: var(--navigation-font-size);
+  font-style: var(--navigation-font-style);
+  font-weight: var(--navigation-font-weight);
+  letter-spacing: var(--navigation-letter-spacing);
+  line-height: var(--navigation-line-height);
+  margin-top: -1.00px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.postWrite .div-wrapper {
+  align-items: center;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  left: 544px;
+  position: absolute;
+  top: 29px;
+}
+
+.postWrite .div {
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #eb4600;
+  border-radius: 6px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 8px 16px;
+  position: relative;
+  width: 161px;
+}
+
+.postWrite .text-wrapper-2 {
+  color: #eb4600;
+  font-family: var(--navigation-font-family);
+  font-size: var(--navigation-font-size);
+  font-style: var(--navigation-font-style);
+  font-weight: var(--navigation-font-weight);
+  letter-spacing: var(--navigation-letter-spacing);
+  line-height: var(--navigation-line-height);
+  margin-top: -1.00px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.postWrite .div-2 {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  left: 63px;
+  position: absolute;
+  top: 0;
+  width: 760px;
+}
+
+.postWrite .text-wrapper-3 {
+  align-self: stretch;
+  color: #1f1d1b;
+  font-family: "Poppins", Helvetica;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+}
+
+.postWrite .div-3 {
+  align-items: flex-start;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 8px 8px;
+  position: relative;
+}
+
+.postWrite .frame-2 {
+  align-items: center;
+  background-color: #1f1d1b26;
+  border-radius: 1000px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  justify-content: center;
+  padding: 4px 8px;
+  position: relative;
+}
+
+.postWrite .text-wrapper-4 {
+  color: #1f1d1b;
+  font-family: "Space Grotesk", Helvetica;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  width: fit-content;
+}
+
+.postWrite .line {
+  height: 1px;
+  object-fit: cover;
+  position: relative;
+  width: 760px;
+}
+
+.postWrite .div-wrapper-2 {
+  height: 144px;
+  margin-right: -36.00px;
+  position: relative;
+  width: 796px;
+}
+
+.postWrite .p {
+  color: var(--object-black-60);
+  font-family: "Poppins", Helvetica;
+  font-size: 16px;
+  font-weight: 400;
+  left: 0;
+  letter-spacing: 0;
+  line-height: 24px;
+  position: absolute;
+  top: 0;
+  width: 794px;
+}
