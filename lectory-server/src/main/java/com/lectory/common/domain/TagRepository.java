@@ -1,7 +1,6 @@
 // TagRepository.java
-package com.lectory.lecture.repository;
+package com.lectory.common.domain;
 
-import com.lectory.common.domain.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
