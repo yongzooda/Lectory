@@ -1,5 +1,5 @@
 // PageDto.java
-package com.lectory.lecture.dto;
+package com.lectory.contentlibrary.dto;
 
 import lombok.Builder;
 import lombok.Getter;
