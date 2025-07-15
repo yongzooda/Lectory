@@ -1,14 +1,12 @@
-kakaopay:
-  secretKey: DEVAAD6CD799B5A33B3A05071F5C5DBB0D863D62
-  cid: TCSUBSCRIP
+server:
+  port: 8080
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/lectory
-    username: mydb
-    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
-server:
-  port: 8888
+    username: LectoryUser
+    password: 1234
 
   jpa:
     hibernate:
@@ -23,3 +21,7 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+kakaopay:
+  secretKey: DEVAAD6CD799B5A33B3A05071F5C5DBB0D863D62
+  cid: TCSUBSCRIP

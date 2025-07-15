@@ -19,8 +19,8 @@ import com.lectory.common.domain.pay.KakaoReadyResponse;
 import com.lectory.common.domain.pay.PayHistory;
 import com.lectory.common.domain.pay.RegularPay;
 import com.lectory.common.domain.user.User;
-
-import com.lectory.user.repository.UserRepository;
+import com.lectory.common.domain.user.UserType;
+import com.lectory.user.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +36,7 @@ public class KakaoPayService {
     private RegularPayService regularPayService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Value("${kakaopay.cid}")
     private String cid;
@@ -104,8 +104,10 @@ public class KakaoPayService {
             if (regularpay.isCanceled()) {
                 regularPayService.deleteByUser_UserId(regularpay.getUser().getUserId());
                 User user = regularpay.getUser();
-                user.setUserType(User.UserType.FREE);
-                userRepository.save(user);
+                UserType userType = user.getUserType();
+                userType.setTypeName("FREE");
+                user.setUserType(userType);
+                userService.save(user);
                 continue;
             }
 
@@ -163,10 +165,10 @@ public class KakaoPayService {
          * 현재 userService가 없어서 레포지토리로 임시사용중
          */
 
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userService.getUser(userId);
         user.setSubscriptionEndDate(user.getSubscriptionEndDate().plusMinutes(3)); // 3분뒤로 임시 설정
-        user.setUserType(User.UserType.PAID);
-        userRepository.save(user);
+        user.setUserType(user.getUserType());
+        userService.save(user);
 
         PayHistory payHistory = PayHistory.builder().user(user).paidAt(LocalDateTime.now()).build();
         payHistoryService.save(payHistory);
@@ -207,11 +209,13 @@ public class KakaoPayService {
         /*
          * 현재 userService가 없어서 레포지토리로 임시사용중
          */
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userService.getUser(userId);
         user.setSubscriptionStartDate(LocalDateTime.now());
         user.setSubscriptionEndDate(LocalDateTime.now().plusMinutes(3));
-        user.setUserType(User.UserType.PAID);
-        userRepository.save(user);
+        UserType userType = user.getUserType();
+        userType.setTypeName("PAID");
+        user.setUserType(userType);
+        userService.save(user);
 
         PayHistory payHistory = PayHistory.builder().user(user).paidAt(LocalDateTime.now()).build();
         payHistoryService.save(payHistory);
