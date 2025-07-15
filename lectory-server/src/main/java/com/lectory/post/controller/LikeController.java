@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lectory.common.domain.LikeTarget;
 import com.lectory.post.dto.LikeRequestDto;
 import com.lectory.post.service.LikeService;
+import com.lectory.user.security.CustomUserDetail;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,10 @@ public class LikeController {
  @PostMapping("/{postId}/like")
  public ResponseEntity<Void> likePost(
 		 @PathVariable Long postId,
-         @AuthenticationPrincipal UserDetailsImpl userDetails) {
+         @AuthenticationPrincipal CustomUserDetail userDetail) {
 
-     likeService.create(LikeTarget.POST, postId, userDetails.getId());
+	 Long userId = userDetail.getUser().getUserId();
+	 likeService.create(LikeTarget.POST, postId, userId);
      return ResponseEntity.ok().build();
  }
 }

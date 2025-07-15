@@ -2,7 +2,6 @@ package com.lectory.post.service;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,14 +10,11 @@ import org.springframework.stereotype.Service;
 import com.lectory.post.dto.PostRequestDto;
 import com.lectory.post.dto.PostResponseDto;
 import com.lectory.common.domain.Tag;
-import com.lectory.common.domain.TagRepository;
 import com.lectory.common.domain.post.*;
 import com.lectory.post.repository.PostRepository;
-import com.lectory.post.repository.PostTagRepository;
 import com.lectory.user.repository.UserRepository;
 import com.lectory.common.domain.user.User;
-import com.lectory.global.exception.custom.ForbiddenException;
-import com.lectory.global.exception.custom.NotFoundException;
+import com.lectory.common.repository.TagRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +35,7 @@ public class PostService {
 
         boolean onlyExpert = dto.isOnlyExpert();
 
-        if (onlyExpert && user.getUserType() != User.UserType.PAID) {
+        if (onlyExpert && !"PAID".equals(user.getUserType())) {
             throw new IllegalArgumentException("전문가 답변 허용은 PAID 구독자만 가능합니다.");
         }
 

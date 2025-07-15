@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lectory.post.dto.ReportRequestDto;
 import com.lectory.post.service.ReportService;
+import com.lectory.user.security.CustomUserDetail;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +24,11 @@ public class ReportController {
  @PostMapping
  public ResponseEntity<Void> createReport(
          @RequestBody @Valid ReportRequestDto dto,
-         @AuthenticationPrincipal UserDetailsImpl userDetails) {
+         @AuthenticationPrincipal CustomUserDetail userDetail) {
 
-     reportService.create(dto.getTarget(), dto.getTargetId(), userDetails.getId(), dto.getContent());
+	 Long userId = userDetail.getUser().getUserId();
+	 
+	 reportService.create(dto.getTarget(), dto.getTargetId(), userDetail.getId(), dto.getContent());
      return ResponseEntity.ok().build();
  }
 }
