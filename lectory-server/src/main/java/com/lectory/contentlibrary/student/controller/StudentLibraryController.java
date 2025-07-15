@@ -1,41 +1,36 @@
-// File: StudentLibraryController.java
-// Package: com.lectory.contentlibrary.student.controller
-
 package com.lectory.contentlibrary.student.controller;
 
-import com.lectory.contentlibrary.student.dto.*;
+import com.lectory.contentlibrary.dto.*;
 import com.lectory.contentlibrary.student.service.StudentLibraryService;
-import com.lectory.lecture.dto.LectureDetailDto;
-import com.lectory.lecture.dto.LectureRoomSummaryDto;
-import com.lectory.lecture.dto.PageDto;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Free/paid 공통: 목록·검색·상세·댓글
- */
 @RestController
-@RequestMapping({"/library/free", "/library/paid"})
+@RequestMapping("/library")
 @RequiredArgsConstructor
 public class StudentLibraryController {
 
     private final StudentLibraryService svc;
 
-    /** 인기순/최신순 목록 조회 */
+    /** 1) 인기순/최신순 전체 목록 조회 */
     @GetMapping
     public ResponseEntity<PageDto<LectureRoomSummaryDto>> list(
             @RequestParam Long memberId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "popularity") String sort
+            @Parameter(description = "정렬 기준: createdAt 또는 popularity, 예: popularity,desc")
+            @RequestParam(defaultValue = "createdAt,desc") String sort
     ) {
-        return ResponseEntity.ok(svc.listLectureRooms(memberId, page, size, sort));
+        return ResponseEntity.ok(
+                svc.listLectureRooms(memberId, page, size, sort)
+        );
     }
 
-    /** 제목·전문가·태그 검색 */
+    /** 2) 제목·태그 검색 */
     @GetMapping("/search")
     public ResponseEntity<PageDto<LectureRoomSummaryDto>> search(
             @RequestParam Long memberId,
@@ -43,25 +38,41 @@ public class StudentLibraryController {
             @RequestParam(required = false) List<String> tags,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "relevance") String sort
+            @Parameter(description = "정렬 기준: createdAt 또는 popularity, 예: popularity,desc")
+            @RequestParam(defaultValue = "createdAt,desc") String sort
     ) {
-        return ResponseEntity.ok(svc.searchLectureRooms(memberId, search, tags, page, size, sort));
+        return ResponseEntity.ok(
+                svc.searchLectureRooms(memberId, search, tags, page, size, sort)
+        );
     }
 
-    /** 강의실 상세 조회 (수강신청 전/후 모두 허용) */
+    /** 3) 상세 조회 (수강 전·후 모두) */
     @GetMapping("/{lectureRoomId}")
     public ResponseEntity<LectureDetailDto> detail(
             @PathVariable Long lectureRoomId,
             @RequestParam Long memberId
     ) {
-        return ResponseEntity.ok(svc.getLectureDetail(memberId, lectureRoomId));
+        return ResponseEntity.ok(
+                svc.getLectureDetail(memberId, lectureRoomId)
+        );
     }
 
-    /** 댓글 작성 (수강 중이어야만 가능) */
-    @PostMapping("/{lectureRoomId}/comments")
-    public ResponseEntity<CommentResponse> comment(
+    /** 4) 수강신청 */
+    @PostMapping("/{lectureRoomId}/enroll")
+    public ResponseEntity<EnrollResponseDto> enroll(
             @PathVariable Long lectureRoomId,
-            @RequestBody CommentRequest req
+            @RequestBody EnrollRequestDto req
+    ) {
+        return ResponseEntity.ok(
+                svc.enroll(req.getMemberId(), lectureRoomId)
+        );
+    }
+
+    /** 5) 댓글 작성 */
+    @PostMapping("/{lectureRoomId}/comments")
+    public ResponseEntity<CommentResponseDto> comment(
+            @PathVariable Long lectureRoomId,
+            @RequestBody CommentRequestDto req
     ) {
         return ResponseEntity.ok(
                 svc.postComment(req.getMemberId(), lectureRoomId, req.getContent())
