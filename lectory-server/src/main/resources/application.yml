@@ -1,0 +1,11 @@
+kakaopay:
+  secretKey: DEVAAD6CD799B5A33B3A05071F5C5DBB0D863D62
+  cid: TCSUBSCRIP
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/lectory
+    username: mydb
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+server:
+  port: 8888
