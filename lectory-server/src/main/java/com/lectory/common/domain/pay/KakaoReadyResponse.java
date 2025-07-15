@@ -1,4 +1,4 @@
-package com.lectory.common.domain;
+package com.lectory.common.domain.pay;
 
 import lombok.Data;
 

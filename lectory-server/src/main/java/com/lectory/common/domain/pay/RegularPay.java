@@ -1,6 +1,4 @@
-package com.lectory.common.domain;
-
-import java.time.LocalDateTime;
+package com.lectory.common.domain.pay;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,22 +6,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Table(name = "pay_history")
-@Entity
 @Data
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class PayHistory {
-
+@Table(name = "regular_pay")
+public class RegularPay {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pay_history_id")
-    private Long payHistoryId;
+    @Column(name = "regular_pay_id")
+    private Long regularPayId;
     @Column(name = "user_id")
     private Long userId;
-    @Column(name = "paid_at")
-    private LocalDateTime paidAt;
-
+    private String aid;
+    private String tid;
+    private String sid;
 }

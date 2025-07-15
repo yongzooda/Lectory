@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.lectory.common.domain.KakaoApproveResponse;
-import com.lectory.common.domain.KakaoReadyResponse;
-import com.lectory.common.domain.PayHistory;
-import com.lectory.common.domain.RegularPay;
+import com.lectory.common.domain.pay.KakaoApproveResponse;
+import com.lectory.common.domain.pay.KakaoReadyResponse;
+import com.lectory.common.domain.pay.PayHistory;
+import com.lectory.common.domain.pay.RegularPay;
 import com.lectory.pay.Repository.PayHistoryRepository;
 import com.lectory.pay.Repository.RegularPayRepository;
 
@@ -74,7 +74,6 @@ public class KakaoPayService {
 
     @Scheduled(cron = "0 * * * * *") // 새벽 4시 예정, 현재 매 분마다 요청중
     public void KakaoRegularReady() { // 정기 결제
-        System.out.println("정기 결제 준비 요청" + LocalDateTime.now());
         List<RegularPay> regularPays = regularPayRepository.findAll();
         for (var regularpay : regularPays) {
             /*
@@ -184,6 +183,17 @@ public class KakaoPayService {
             regularPayRepository.save(regularPay);
         }
         return response;
+    }
+
+    public int kakaopaySubscriptionCancel(Long userId) {
+        System.out.println("정기 결제 취소 요청" + LocalDateTime.now());
+        RegularPay regularPay = regularPayRepository.findByUserId(userId).orElse(null);
+        if (regularPay == null) {
+            return -1;
+        }
+        regularPayRepository.deleteByUserId(userId);
+        return 0;
+
     }
 
 }
