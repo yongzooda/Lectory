@@ -1,4 +1,4 @@
-package com.lectory.pay.Config;
+package com.lectory.pay.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
