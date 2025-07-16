@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/post/{postId}/comment")
@@ -41,5 +43,12 @@ public class CommentController {
     public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal CustomUserDetail userDetail) {
         commentService.deleteComment(postId, commentId, userDetail);
         return ResponseEntity.noContent().build();
+    }
+
+    // 댓글 조회
+    @GetMapping
+    public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable Long postId) {
+        List<CommentResponseDto> comments = commentService.getComments(postId);
+        return ResponseEntity.ok(comments);
     }
 }

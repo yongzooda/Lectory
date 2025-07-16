@@ -2,6 +2,7 @@ package com.lectory.user.service;
 
 import com.lectory.common.domain.user.Expert;
 import com.lectory.common.domain.user.User;
+import com.lectory.user.dto.ExpertMypageResponse;
 import com.lectory.user.dto.ExpertSignUpRequest;
 import com.lectory.user.repository.ExpertRepository;
 import com.lectory.user.repository.UserRepository;
@@ -54,5 +55,17 @@ public class ExpertService {
 
         return savedUser;
 
+    }
+
+    public ExpertMypageResponse getExpertMypage(User user){
+        Expert expert = expertRepository.findByUser(user).orElseThrow(() -> new IllegalStateException("전문가 정보를 찾을 수 없습니다."));
+
+        return ExpertMypageResponse.builder()
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .userType(user.getUserType().getUserType())
+                .portfolioFileUrl(expert.getPortfolioFileUrl())
+                .profileImageUrl(expert.getProfileImageUrl())
+                .build();
     }
 }

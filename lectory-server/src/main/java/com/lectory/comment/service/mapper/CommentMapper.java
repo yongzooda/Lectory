@@ -12,6 +12,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Component
@@ -63,15 +66,27 @@ public class CommentMapper {
     // Comment -> DTO
     public CommentResponseDto getCommentResponse(Comment comment) {
         return CommentResponseDto.builder()
-                .post_id(comment.getPost().getPostId())
-                .user_id(comment.getUser().getUserId())
-                .parent_id(comment.getParent()!=null?comment.getParent().getCommentId():null)
+                .postId(comment.getPost().getPostId())
+                .userId(comment.getUser().getUserId())
+                .parentId(comment.getParent()!=null?comment.getParent().getCommentId():null)
                 .content(comment.getContent())
-                .like_count(comment.getLikeCount())
-                .created_at(comment.getCreatedAt())
-                .updated_at(comment.getUpdatedAt())
-                .is_accepted(comment.getIsAccepted())
-                .is_deleted(comment.getIsDeleted())
+                .likeCount(comment.getLikeCount())
+                .createdAt(comment.getCreatedAt())
+                .updatedAt(comment.getUpdatedAt())
+                .isAccepted(comment.getIsAccepted())
+                .isDeleted(comment.getIsDeleted())
                 .build();
+    }
+
+    // 댓글&대댓글 -> DTO
+    public CommentResponseDto getCommentReplies(Comment comment) {
+        CommentResponseDto res = getCommentResponse(comment);
+        if (comment.getReplies()!=null & !comment.getReplies().isEmpty()) {
+            List<CommentResponseDto> replies = comment.getReplies().stream().map(this::getCommentReplies)
+                    .sorted(Comparator.comparing(CommentResponseDto::getCreatedAt))
+                    .collect(Collectors.toList());
+            res.setReplies(replies);
+        }
+        return res;
     }
 }
