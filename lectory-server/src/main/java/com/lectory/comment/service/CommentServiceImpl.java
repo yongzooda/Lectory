@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -34,8 +36,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentResponseDto addReply(Long postId, Long parentId, CommentRequestDto req, CustomUserDetail userDetail) {
         Comment comment = commentMapper.getReply(postId, parentId, req, userDetail);
-        Comment parent = comment.getParent();
-        parent.addReply(comment);
         commentRepository.save(comment);
         return commentMapper.getCommentResponse(comment);
     }
@@ -68,6 +68,14 @@ public class CommentServiceImpl implements CommentService {
             commentRepository.delete(comment);
         }
 
+    }
+
+    @Override
+    public List<CommentResponseDto> getComments(Long postId) {
+        List<Comment> comment = commentRepository.findByPost_PostIdAndParentIsNullOrderByCreatedAtAsc(postId);
+        return comment.stream()
+                .map(commentMapper::getCommentReplies)
+                .collect(Collectors.toList());
     }
 
     private void logicalDelete(Comment comment) {

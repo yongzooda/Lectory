@@ -79,10 +79,4 @@ public class Comment {
         this.content = content;
         this.updatedAt = LocalDateTime.now();
     }
-
-    // 대댓글 등록
-    public void addReply(Comment reply) {
-        replies.add(reply);
-        this.updatedAt = LocalDateTime.now();
-    }
 }

@@ -1,6 +1,7 @@
 package com.lectory.user.service;
 
 import com.lectory.common.domain.user.User;
+import com.lectory.user.dto.UserMypageResponse;
 import com.lectory.user.dto.UserSignUpRequest;
 import com.lectory.user.repository.UserRepository;
 import com.lectory.user.repository.UserTypeRepository;
@@ -50,12 +51,23 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
     }
 
+    //마이페이지 정보 리턴
+    public UserMypageResponse getUserMypage(User user){
+        return UserMypageResponse.builder()
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .userType(user.getUserType().getUserType())
+                .subscriptionStartDate(user.getSubscriptionStartDate())
+                .subscriptionEndDate(user.getSubscriptionEndDate())
+                .build();
+    }
+
     //구독에 따른 유저 업데이트
     @Transactional
     public void updatePaidUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
-        var paidType = userTypeRepository.findById("PAID").orElseThrow(() -> new IllegalStateException("유료 타입 없음"));
+        var paidType = userTypeRepository.findById("PAID").orElseThrow(() -> new IllegalStateException("유료 회원 권한이 존재하지 않습니다."));
 
         LocalDateTime now = LocalDateTime.now();
 

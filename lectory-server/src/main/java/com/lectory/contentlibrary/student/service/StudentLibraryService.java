@@ -59,11 +59,19 @@ public class StudentLibraryService {
             String sort
     ) {
         Pageable pageable = toPageable(page, size, sort);
-        // 태그 필터링 로직이 있으면 추가… 예: repo.findByTitleContainingOrTags(...)
-        Page<LectureRoom> rooms = lectureRoomRepo
-                .findByTitleContainingIgnoreCase(keyword, pageable);
+        Page<LectureRoom> rooms;
 
-        Page<LectureRoomSummaryDto> dtos = rooms.map(r -> toSummary(r, memberId));
+        if (tags != null && !tags.isEmpty()) {
+            // 태그 검색 우선
+            rooms = lectureRoomRepo.findByLectureTagNames(tags, pageable);
+        } else {
+            // 기존 제목(키워드) 검색
+            rooms = lectureRoomRepo.findByTitleContainingIgnoreCase(keyword, pageable);
+        }
+
+        Page<LectureRoomSummaryDto> dtos = rooms
+                .map(r -> toSummary(r, memberId));
+
         return PageDto.of(dtos);
     }
 

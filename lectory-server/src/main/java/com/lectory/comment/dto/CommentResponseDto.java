@@ -3,6 +3,7 @@ package com.lectory.comment.dto;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,14 +11,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CommentResponseDto {
-    private Long comment_id;
-    private Long post_id;
-    private Long user_id;
-    private Long parent_id;
+    private Long commentId;
+    private Long postId;
+    private Long userId;
+    private Long parentId;
     private String content;
-    private Integer like_count;
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
-    private Boolean is_accepted;
-    private Boolean is_deleted;
+    private Integer likeCount;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Boolean isAccepted;
+    private Boolean isDeleted;
+    private List<CommentResponseDto> replies;
 }
