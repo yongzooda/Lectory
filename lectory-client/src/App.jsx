@@ -1,7 +1,7 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-/* ─── 기존 포스트 ─── */
+/* ─── 게시글 ─── */
 import PostListPage   from './pages/PostListPage';
 import PostWritePage  from './pages/PostWritePage';
 import PostDetailPage from './pages/PostDetailPage';
@@ -22,13 +22,13 @@ import NewLecturePage       from './pages/contentlibrary/expert/LectureNew';
 import EditLecturePage      from './pages/contentlibrary/expert/LectureEdit';
 import ManageChaptersPage   from './pages/contentlibrary/expert/ManageChapters';
 
+/* ─── 관리자 전용 페이지 (다른 개발자 추가) ─── */
+import MembershipManagementPage from './pages/admin/MembershipManagementPage';
+
 export default function App() {
   return (
     <BrowserRouter
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
     >
       <Routes>
         {/* ─── 게시글 영역 ─── */}
@@ -38,7 +38,6 @@ export default function App() {
 
         {/* ─── 콘텐츠 라이브러리 · 수강생 ─── */}
         <Route path="/library"                        element={<StudentLibraryHome />} />
-        {/* 과거 /library/search → 홈으로 리다이렉트 */}
         <Route path="/library/search"                 element={<Navigate to="/library" replace />} />
         <Route path="/library/:lectureRoomId"         element={<StudentLectureDetail />} />
         <Route path="/library/:lectureRoomId/enroll-result"
@@ -46,9 +45,7 @@ export default function App() {
 
         {/* ─── 콘텐츠 라이브러리 · 전문가 ─── */}
         <Route path="/library/expert"                 element={<ExpertLibraryHome />} />
-        {/* 과거 /library/expert/search → 전문가 홈으로 리다이렉트 */}
-        <Route path="/library/expert/search"
-               element={<Navigate to="/library/expert" replace />} />
+        <Route path="/library/expert/search"          element={<Navigate to="/library/expert" replace />} />
         <Route path="/library/expert/new"             element={<NewLecturePage />} />
         <Route path="/library/expert/:lectureRoomId"  element={<ExpertLectureDetail />} />
         <Route path="/library/expert/:lectureRoomId/edit"
@@ -56,11 +53,15 @@ export default function App() {
         <Route path="/library/expert/:lectureRoomId/chapters"
                element={<ManageChaptersPage />} />
 
+        {/* ─── 관리자 페이지 ─── */}
+        <Route path="/admin/students"
+               element={<MembershipManagementPage />} />
+
         {/* ─── 결제 ─── */}
         <Route path="/pay"           element={<PayPage />}        />
         <Route path="/pay/success"   element={<PaySuccessPage />} />
 
-        {/* ─── 존재하지 않는 모든 경로 → 루트 ─── */}
+        {/* ─── 그 외 모든 경로 → 루트 ─── */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
