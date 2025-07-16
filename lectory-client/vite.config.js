@@ -20,6 +20,11 @@ export default defineConfig(({ mode }) => ({
         target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
+      },
+      "/pay/ready":{
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
       }
     }
   }
