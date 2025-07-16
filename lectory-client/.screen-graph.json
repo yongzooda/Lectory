@@ -26,24 +26,16 @@
       "dataModelId": "2810:13554"
     },
     {
-      "id": "src/pages/contentlibrary/student/ListPage.jsx",
-      "label": "ListPage",
+      "id": "src/pages/contentlibrary/expert/LibraryHome.jsx",
+      "label": "LibraryHome",
       "routes": [
         "/library",
         "/library/expert"
       ]
     },
     {
-      "id": "src/pages/contentlibrary/student/SearchPage.jsx",
-      "label": "SearchPage",
-      "routes": [
-        "/library/search",
-        "/library/expert/search"
-      ]
-    },
-    {
-      "id": "src/pages/contentlibrary/student/DetailPage.jsx",
-      "label": "DetailPage",
+      "id": "src/pages/contentlibrary/expert/LectureDetail.jsx",
+      "label": "LectureDetail",
       "routes": [
         "/library/:lectureRoomId",
         "/library/expert/:lectureRoomId"
@@ -57,22 +49,22 @@
       ]
     },
     {
-      "id": "src/pages/contentlibrary/expert/NewLecturePage.jsx",
-      "label": "NewLecturePage",
+      "id": "src/pages/contentlibrary/expert/LectureNew.jsx",
+      "label": "LectureNew",
       "routes": [
         "/library/expert/new"
       ]
     },
     {
-      "id": "src/pages/contentlibrary/expert/EditLecturePage.jsx",
-      "label": "EditLecturePage",
+      "id": "src/pages/contentlibrary/expert/LectureEdit.jsx",
+      "label": "LectureEdit",
       "routes": [
         "/library/expert/:lectureRoomId/edit"
       ]
     },
     {
-      "id": "src/pages/contentlibrary/expert/ManageChaptersPage.jsx",
-      "label": "ManageChaptersPage",
+      "id": "src/components/expert/ManageChapters.jsx",
+      "label": "ManageChapters",
       "routes": [
         "/library/expert/:lectureRoomId/chapters"
       ]
@@ -95,34 +87,66 @@
   ],
   "edges": [
     {
-      "id": "src\\pages\\contentlibrary\\student\\ListPage.jsx:66:8-to-src\\pages\\contentlibrary\\student\\ListPage.jsx",
-      "source": "src\\pages\\contentlibrary\\student\\ListPage.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\ListPage.jsx",
+      "id": "src/pages/contentlibrary/expert/LibraryHome.jsx:89:6-to-src/pages/contentlibrary/expert/LibraryHome.jsx",
+      "source": "src/pages/contentlibrary/expert/LibraryHome.jsx",
+      "target": "src/pages/contentlibrary/expert/LibraryHome.jsx",
       "data": {
-        "viaRoute": "/library",
+        "viaRoute": "/library/expert",
         "trigger": {
-          "element": "<Pagination\n          pageInfo={pageInfo}\n          basePath=\"/library\"\n          query={{ memberId, search, tags, sort }}\n        />",
-          "line": 66,
-          "endLine": 70,
-          "column": 8,
-          "endColumn": 10,
-          "sourceFile": "src\\pages\\contentlibrary\\student\\ListPage.jsx"
+          "element": "<SearchBar\n        memberId={expertId}\n        initial={search}\n        tags={tags}\n        sort={sort}\n        basePath=\"/library/expert\"\n      />",
+          "line": 89,
+          "endLine": 95,
+          "column": 6,
+          "endColumn": 8,
+          "sourceFile": "src/pages/contentlibrary/expert/LibraryHome.jsx"
         }
       }
     },
     {
-      "id": "src\\pages\\contentlibrary\\student\\ListPage.jsx:66:8-to-src\\pages\\contentlibrary\\student\\ListPage.jsx",
-      "source": "src\\pages\\contentlibrary\\student\\SearchPage.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\ListPage.jsx",
+      "id": "src/pages/contentlibrary/expert/LibraryHome.jsx:96:6-to-src/pages/contentlibrary/expert/LibraryHome.jsx",
+      "source": "src/pages/contentlibrary/expert/LibraryHome.jsx",
+      "target": "src/pages/contentlibrary/expert/LibraryHome.jsx",
       "data": {
-        "viaRoute": "/library",
+        "viaRoute": "/library/expert",
         "trigger": {
-          "element": "<Pagination\n          pageInfo={pageInfo}\n          basePath=\"/library\"\n          query={{ memberId, search, tags, sort }}\n        />",
-          "line": 66,
-          "endLine": 70,
+          "element": "<TagFilterBar\n        memberId={expertId}\n        selected={tags}\n        allTags={allTags}\n        search={search}\n        sort={sort}\n        basePath=\"/library/expert\"\n      />",
+          "line": 96,
+          "endLine": 103,
+          "column": 6,
+          "endColumn": 8,
+          "sourceFile": "src/pages/contentlibrary/expert/LibraryHome.jsx"
+        }
+      }
+    },
+    {
+      "id": "src/pages/contentlibrary/expert/LibraryHome.jsx:105:8-to-src/pages/contentlibrary/expert/LibraryHome.jsx",
+      "source": "src/pages/contentlibrary/expert/LibraryHome.jsx",
+      "target": "src/pages/contentlibrary/expert/LibraryHome.jsx",
+      "data": {
+        "viaRoute": "/library/expert",
+        "trigger": {
+          "element": "<SortDropdown\n          memberId={expertId}\n          search={search}\n          tags={tags}\n          value={sort}\n          basePath=\"/library/expert\"\n        />",
+          "line": 105,
+          "endLine": 111,
           "column": 8,
           "endColumn": 10,
-          "sourceFile": "src\\pages\\contentlibrary\\student\\ListPage.jsx"
+          "sourceFile": "src/pages/contentlibrary/expert/LibraryHome.jsx"
+        }
+      }
+    },
+    {
+      "id": "src/pages/contentlibrary/expert/LibraryHome.jsx:136:12-to-src/pages/contentlibrary/expert/LibraryHome.jsx",
+      "source": "src/pages/contentlibrary/expert/LibraryHome.jsx",
+      "target": "src/pages/contentlibrary/expert/LibraryHome.jsx",
+      "data": {
+        "viaRoute": "/library/expert",
+        "trigger": {
+          "element": "<Pagination\n              pageInfo={pageInfo}\n              basePath=\"/library/expert\"\n              query={{ expertId, keyword: search, tags, sort }}\n            />",
+          "line": 136,
+          "endLine": 140,
+          "column": 12,
+          "endColumn": 14,
+          "sourceFile": "src/pages/contentlibrary/expert/LibraryHome.jsx"
         }
       }
     }

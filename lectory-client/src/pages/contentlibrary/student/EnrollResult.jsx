@@ -1,36 +1,48 @@
+// lectory-client/src/pages/contentlibrary/student/EnrollResult.jsx
 import React from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 
+/**
+ * 수강신청 완료 페이지
+ * URL: /library/:lectureRoomId/enroll-result?memberId=#
+ */
 const EnrollResult = () => {
-  const { lectureRoomId } = useParams();
-  const [searchParams] = useSearchParams();
-  const memberId = searchParams.get('memberId');
-  const navigate = useNavigate();
+  const { lectureRoomId }   = useParams();
+  const [searchParams]      = useSearchParams();
+  const memberId            = searchParams.get('memberId');
+  const navigate            = useNavigate();
 
-  const goToDetail = () => {
+  /* ─── 이동 핸들러 ─── */
+  const goDetail = () => {
     navigate(`/library/${lectureRoomId}?memberId=${memberId}`);
   };
 
-  const goToList = () => {
+  const goList = () => {
     navigate(`/library?memberId=${memberId}`);
   };
 
+  /* ─── 렌더 ─── */
   return (
-    <div className="enroll-result container mx-auto p-4 text-center">
-      <h1 className="text-3xl font-bold mb-4">수강신청 완료!</h1>
-      <p className="mb-6 text-lg">해당 강의실의 강의 목록과 후기를 확인할 수 있습니다.</p>
-      <button
-        onClick={goToDetail}
-        className="btn-primary mr-4"
-      >
-        강의 보러 가기
-      </button>
-      <button
-        onClick={goToList}
-        className="btn-outline"
-      >
-        목록으로 돌아가기
-      </button>
+    <div className="container mx-auto p-8 text-center space-y-6">
+      <h1 className="text-3xl font-bold">수강신청이 완료되었습니다!</h1>
+      <p className="text-lg text-gray-700">
+        강의 목록과 수강평을 확인하실 수 있습니다.
+      </p>
+
+      <div className="flex justify-center space-x-4 mt-8">
+        <button
+          onClick={goDetail}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded"
+        >
+          강의실로 이동
+        </button>
+        <button
+          onClick={goList}
+          className="bg-gray-300 hover:bg-gray-400 px-6 py-3 rounded"
+        >
+          목록으로 돌아가기
+        </button>
+      </div>
     </div>
   );
 };
