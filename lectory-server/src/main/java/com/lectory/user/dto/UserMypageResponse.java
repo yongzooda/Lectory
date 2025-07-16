@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class MypageResponse {
+public class UserMypageResponse {
     private String email;
     private String nickname;
     private String userType;
