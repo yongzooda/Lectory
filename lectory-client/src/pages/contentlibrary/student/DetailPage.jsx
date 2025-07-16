@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { getLectureDetail, enroll } from '../../api/studentApi';
-import LectureCard from '../../components/contentlibrary/common/LectureCard';
-import ChapterList from '../../components/contentlibrary/common/ChapterList';
-import CommentSection from '../../components/contentlibrary/common/CommentSection';
-import EnrollButton from '../../components/contentlibrary/student/EnrollButton';
-import Pagination from '../../components/contentlibrary/common/Pagination';
+import { getLectureDetail, enroll } from '../../../api/studentApi';
+import LectureCard from '../../../components/contentlibrary/common/LectureCard';
+import ChapterList from '../../../components/contentlibrary/common/ChapterList';
+import CommentSection from '../../../components/contentlibrary/common/CommentSection';
+import EnrollButton from '../../../components/contentlibrary/student/EnrollButton';
+import Pagination from '../../../components/contentlibrary/common/Pagination';
 
 const DetailPage = () => {
   const { lectureRoomId } = useParams();

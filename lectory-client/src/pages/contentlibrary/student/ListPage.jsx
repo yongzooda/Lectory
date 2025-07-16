@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { listLectureRooms, searchLectureRooms } from '../../api/studentApi';
-import LectureCard from '../../components/contentlibrary/common/LectureCard';
-import Pagination from '../../components/contentlibrary/common/Pagination';
+import { listLectureRooms, searchLectureRooms } from '../../../api/studentApi';
+import LectureCard from '../../../components/contentlibrary/common/LectureCard';
+import Pagination from '../../../components/contentlibrary/common/Pagination';
 
 const ListPage = () => {
   const [searchParams] = useSearchParams();

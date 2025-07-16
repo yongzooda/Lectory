@@ -2,6 +2,7 @@ package com.lectory.user.controller;
 
 import com.lectory.user.dto.UserMypageResponse;
 import com.lectory.user.dto.UserSignUpRequest;
+import com.lectory.user.dto.UserUpdateRequest;
 import com.lectory.user.security.CustomUserDetail;
 import com.lectory.user.service.UserService;
 import jakarta.validation.Valid;
@@ -27,6 +28,12 @@ public class UserController {
     public ResponseEntity<UserMypageResponse> myPage(@AuthenticationPrincipal CustomUserDetail userDetail){
         UserMypageResponse response = userService.getUserMypage(userDetail.getUser());
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<String> updateMyInfo(@AuthenticationPrincipal CustomUserDetail userDetail, @Valid @RequestBody UserUpdateRequest request) {
+        userService.updateUserInfo(userDetail.getUser(), request);
+        return ResponseEntity.ok("회원 정보가 수정되었습니다.");
     }
 
 }

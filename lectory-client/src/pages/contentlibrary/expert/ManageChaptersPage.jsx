@@ -5,8 +5,8 @@ import {
   createChapter,
   updateChapter,
   deleteChapter
-} from '../../api/expertApi';
-import ChapterForm from '../../components/contentlibrary/expert/ChapterForm';
+} from '../../../api/expertApi';
+import ChapterForm from '../../../components/contentlibrary/expert/ChapterForm';
 
 const ManageChaptersPage = () => {
   const { lectureRoomId } = useParams();
