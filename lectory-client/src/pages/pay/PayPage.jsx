@@ -1,8 +1,8 @@
 import React from "react";
-import { Footer } from "./sections/Footer";
-import { NavbarLightDefault } from "./sections/NavbarLightDefault";
-import { Pay } from "./sections/Pay";
-import "../assets/css/page.css";
+import { Footer } from "../sections/Footer";
+import { NavbarLightDefault } from "../sections/NavbarLightDefault";
+import { Pay } from "../sections/Pay";
+import "../../assets/css/page.css";
 import { useSearchParams } from "react-router-dom";
 
 export const PayPage = () => {

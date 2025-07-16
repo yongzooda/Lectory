@@ -1,8 +1,8 @@
 import React from "react";
-import { Footer } from "./sections/Footer";
-import { NavbarLightDefault } from "./sections/NavbarLightDefault";
-import { PaySuccess } from "./sections/Pay";
-import "../assets/css/page.css";
+import { Footer } from "../sections/Footer";
+import { NavbarLightDefault } from "../sections/NavbarLightDefault";
+import { PaySuccess } from "../sections/Pay";
+import "../../assets/css/page.css";
 
 export const PayPageSuccess = () => {
   return (

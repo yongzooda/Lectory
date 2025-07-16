@@ -21,7 +21,7 @@ import EditLecturePage from "./pages/contentlibrary/expert/EditLecturePage";
 import ManageChaptersPage from "./pages/contentlibrary/expert/ManageChaptersPage";
 
 // 결제 페이지
-import PayPage from "./pages/PayPage";
+import PayPage from "./pages/pay/PayPage";
 import PaySuccessPage from "./pages/sections/PaySuccess";
 function App() {
   return (
