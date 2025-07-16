@@ -1,0 +1,48 @@
+.outline-small {
+  align-items: center;
+  border: 1px solid;
+  border-color: #1b1b1b99;
+  border-radius: 12px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  padding: 8px 16px;
+  position: relative;
+}
+
+.outline-small .text-2 {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  position: relative;
+}
+
+.outline-small .timelapse-px {
+  height: 16px;
+  position: relative;
+  width: 16px;
+}
+
+.outline-small .icon-image-timelapse-2 {
+  height: 13px;
+  left: 1px;
+  position: absolute;
+  top: 1px;
+  width: 13px;
+}
+
+.outline-small .enabled-2 {
+  color: var(--object-black-60);
+  font-family: var(--bold-12pt-LH-1-3-font-family);
+  font-size: var(--bold-12pt-LH-1-3-font-size);
+  font-style: var(--bold-12pt-LH-1-3-font-style);
+  font-weight: var(--bold-12pt-LH-1-3-font-weight);
+  letter-spacing: var(--bold-12pt-LH-1-3-letter-spacing);
+  line-height: var(--bold-12pt-LH-1-3-line-height);
+  margin-top: -1.00px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}

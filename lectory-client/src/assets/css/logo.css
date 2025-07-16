@@ -1,0 +1,60 @@
+.logo {
+  height: 190px;
+  position: relative;
+  width: 670px;
+}
+
+.logo .overlap-group-wrapper {
+  background-color: #3dcbb1;
+  border-radius: 190px;
+  height: 190px;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  width: 190px;
+}
+
+.logo .overlap-group {
+  height: 225px;
+  left: 21px;
+  position: relative;
+  top: 20px;
+  width: 149px;
+}
+
+.logo .rectangle-3 {
+  background-color: #3dcbb1;
+  border-radius: 74.22px;
+  height: 148px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 148px;
+}
+
+.logo .text-wrapper-17 {
+  color: #ffffff;
+  font-family: "Gilroy-Heavy", Helvetica;
+  font-size: 171px;
+  font-weight: 400;
+  left: 3px;
+  letter-spacing: 0;
+  line-height: 224.5px;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+
+.logo .mycourse-io {
+  color: #000000;
+  font-family: "Gilroy-ExtraBold", Helvetica;
+  font-size: 78.6px;
+  font-weight: 800;
+  left: 220px;
+  letter-spacing: 0;
+  line-height: 103.1px;
+  position: absolute;
+  top: 43px;
+  white-space: nowrap;
+}

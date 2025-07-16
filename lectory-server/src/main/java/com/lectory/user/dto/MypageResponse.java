@@ -1,0 +1,17 @@
+package com.lectory.user.dto;
+
+import lombok.Builder;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Builder
+public class MypageResponse {
+    private String email;
+    private String nickname;
+    private String userType;
+    private LocalDateTime subscriptionStartDate;
+    private LocalDateTime subscriptionEndDate;
+
+}
