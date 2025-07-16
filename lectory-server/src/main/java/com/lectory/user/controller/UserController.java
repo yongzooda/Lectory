@@ -25,15 +25,7 @@ public class UserController {
 
     @GetMapping("/mypage")
     public ResponseEntity<UserMypageResponse> myPage(@AuthenticationPrincipal CustomUserDetail userDetail){
-
-        UserMypageResponse response = UserMypageResponse.builder()
-                .email(userDetail.getUsername())
-                .nickname(userDetail.getUser().getNickname())
-                .userType(userDetail.getUser().getUserType().getUserType())
-                .subscriptionStartDate(userDetail.getUser().getSubscriptionStartDate())
-                .subscriptionEndDate(userDetail.getUser().getSubscriptionEndDate())
-                .build();
-
+        UserMypageResponse response = userService.getUserMypage(userDetail.getUser());
         return ResponseEntity.ok(response);
     }
 
