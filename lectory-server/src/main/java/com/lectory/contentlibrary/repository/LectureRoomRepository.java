@@ -36,4 +36,18 @@ public interface LectureRoomRepository extends JpaRepository<LectureRoom, Long> 
     """)
     Page<LectureRoom> findAllOrderByEnrollmentCountDesc(Pageable pageable);
 
+    /**
+     * 전문가(expert.user.userId)가 등록한 강의실 목록 조회
+     */
+    Page<LectureRoom> findByExpertUserUserId(Long userId, Pageable pageable);
+
+    /**
+     * 전문가(expert.user.userId) + 제목 키워드 검색
+     */
+    Page<LectureRoom> findByExpertUserUserIdAndTitleContainingIgnoreCase(
+            Long userId,
+            String keyword,
+            Pageable pageable
+    );
+
 }
