@@ -3,10 +3,10 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import {
   getLectureDetail as getExpertLectureDetail,
   deleteLecture as deleteExpertLecture
-} from '../../api/expertApi';
-import LectureCard from '../../components/contentlibrary/common/LectureCard';
-import ChapterList from '../../components/contentlibrary/common/ChapterList';
-import CommentSection from '../../components/contentlibrary/common/CommentSection';
+} from '../../../api/expertApi';
+import LectureCard from '../../../components/contentlibrary/common/LectureCard';
+import ChapterList from '../../../components/contentlibrary/common/ChapterList';
+import CommentSection from '../../../components/contentlibrary/common/CommentSection';
 
 const ExpertDetailPage = () => {
   const { lectureRoomId } = useParams();

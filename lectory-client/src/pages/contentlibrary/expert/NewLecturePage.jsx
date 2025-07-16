@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { createLecture } from '../../api/expertApi';
+import { createLecture } from '../../../api/expertApi';
 
 const NewLecturePage = () => {
   const [searchParams] = useSearchParams();

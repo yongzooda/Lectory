@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { getLectureDetail as getExpertLectureDetail, updateLecture } from '../../api/expertApi';
+import { getLectureDetail as getExpertLectureDetail, updateLecture } from '../../../api/expertApi';
 
 const EditLecturePage = () => {
   const { lectureRoomId } = useParams();

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { listMyLectures, searchMyLectures } from '../../api/expertApi';
-import LectureCard from '../../components/contentlibrary/common/LectureCard';
-import Pagination from '../../components/contentlibrary/common/Pagination';
+import { listMyLectures, searchMyLectures } from '../../../api/expertApi';
+import LectureCard from '../../../components/contentlibrary/common/LectureCard';
+import Pagination from '../../../components/contentlibrary/common/Pagination';
 
 const ExpertListPage = () => {
   const [searchParams] = useSearchParams();
