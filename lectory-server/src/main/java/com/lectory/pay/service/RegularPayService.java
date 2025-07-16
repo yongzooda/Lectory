@@ -1,4 +1,4 @@
-package com.lectory.pay.Service;
+package com.lectory.pay.service;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lectory.common.domain.pay.RegularPay;
-import com.lectory.pay.Repository.RegularPayRepository;
+import com.lectory.pay.repository.RegularPayRepository;
 
 @Service
 public class RegularPayService {

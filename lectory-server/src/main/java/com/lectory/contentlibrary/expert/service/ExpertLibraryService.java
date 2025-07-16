@@ -45,12 +45,28 @@ public class ExpertLibraryService {
         return PageDto.of(dtos);
     }
 
-    /** 2) 내 강의 검색 */
-    public PageDto<LectureRoomSummaryDto> searchMyLectures(Long expertId, String keyword, List<String> tags, int page, int size, String sort) {
+    /** 2) 내 강의 검색 (제목·태그) */
+    public PageDto<LectureRoomSummaryDto> searchMyLectures(
+            Long expertId,
+            String keyword,
+            List<String> tags,
+            int page,
+            int size,
+            String sort
+    ) {
         Pageable pg = toPageable(page, size, sort);
-        Page<LectureRoom> rooms = lectureRoomRepo.findByExpertUserUserIdAndTitleContainingIgnoreCase(expertId, keyword, pg);
-        Page<LectureRoomSummaryDto> dtos = rooms.map(this::toSummary);
-        return PageDto.of(dtos);
+        Page<LectureRoom> rooms;
+
+        if (tags != null && !tags.isEmpty()) {
+            // 태그 검색 모드
+            rooms = lectureRoomRepo.findByExpertAndLectureTagNames(expertId, tags, pg);
+        } else {
+            // 제목(키워드) 검색 모드
+            rooms = lectureRoomRepo
+                    .findByExpertUserUserIdAndTitleContainingIgnoreCase(expertId, keyword, pg);
+        }
+
+        return PageDto.of(rooms.map(this::toSummary));
     }
 
     /**

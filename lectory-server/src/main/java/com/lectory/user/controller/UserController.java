@@ -1,6 +1,6 @@
 package com.lectory.user.controller;
 
-import com.lectory.user.dto.MypageResponse;
+import com.lectory.user.dto.UserMypageResponse;
 import com.lectory.user.dto.UserSignUpRequest;
 import com.lectory.user.security.CustomUserDetail;
 import com.lectory.user.service.UserService;
@@ -24,16 +24,8 @@ public class UserController {
     }
 
     @GetMapping("/mypage")
-    public ResponseEntity<MypageResponse> myPage(@AuthenticationPrincipal CustomUserDetail userDetail){
-
-        MypageResponse response = MypageResponse.builder()
-                .email(userDetail.getUsername())
-                .nickname(userDetail.getUser().getNickname())
-                .userType(userDetail.getUser().getUserType().getUserType())
-                .subscriptionStartDate(userDetail.getUser().getSubscriptionStartDate())
-                .subscriptionEndDate(userDetail.getUser().getSubscriptionEndDate())
-                .build();
-
+    public ResponseEntity<UserMypageResponse> myPage(@AuthenticationPrincipal CustomUserDetail userDetail){
+        UserMypageResponse response = userService.getUserMypage(userDetail.getUser());
         return ResponseEntity.ok(response);
     }
 
