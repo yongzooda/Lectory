@@ -61,7 +61,7 @@ public class CommentServiceImpl implements CommentService {
 
         validateUser(comment, userDetail.getUser());
 
-        if ("EXPERT".equals(userDetail.getUser().getUserType())) {
+        if ("EXPERT".equals(userDetail.getUser().getUserType().getUserType())) {
             logicalDelete(comment);
             commentRepository.save(comment);
         } else {
