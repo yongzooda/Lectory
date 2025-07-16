@@ -55,7 +55,7 @@ public class UserService {
     public void updatePaidUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
-        var paidType = userTypeRepository.findById("PAID").orElseThrow(() -> new IllegalStateException("유료 타입 없음"));
+        var paidType = userTypeRepository.findById("PAID").orElseThrow(() -> new IllegalStateException("유료 회원 권한이 존재하지 않습니다."));
 
         LocalDateTime now = LocalDateTime.now();
 
