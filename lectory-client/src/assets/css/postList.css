@@ -1,0 +1,272 @@
+.postList {
+  height: 735px;
+  left: 291px;
+  position: absolute;
+  top: 183px;
+  width: 826px;
+}
+
+.postList .div-2 {
+  height: 159px;
+  left: 2px;
+  position: absolute;
+  top: 576px;
+  width: 814px;
+}
+
+.postList .group {
+  height: 127px;
+  left: 20px;
+  position: absolute;
+  top: 1px;
+  width: 794px;
+}
+
+.postList .frame {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+  position: relative;
+  width: 794px;
+}
+
+.postList .frame-2 {
+  align-items: flex-start;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 1px 9px;
+  position: relative;
+  width: 304px;
+}
+
+.postList .text-wrapper-11 {
+  color: #191919;
+  font-family: "Roboto", Helvetica;
+  font-size: 22px;
+  font-weight: 400;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: -1px;
+  white-space: nowrap;
+}
+
+.postList .div-wrapper {
+  align-items: center;
+  background-color: #3dcbb1;
+  border-radius: 20px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 4px 9px;
+  position: relative;
+}
+
+.postList .text-wrapper-12 {
+  color: #ffffff;
+  font-family: "Roboto", Helvetica;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.postList .frame-3 {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 13px;
+  position: relative;
+}
+
+.postList .text-wrapper-13 {
+  color: #292929;
+  font-family: "Roboto", Helvetica;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  width: 60.42px;
+}
+
+.postList .text-wrapper-14 {
+  color: #757575;
+  font-family: "Roboto", Helvetica;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  width: 73.14px;
+}
+
+.postList .p {
+  align-self: stretch;
+  color: #292929;
+  font-family: "Roboto", Helvetica;
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: 24px;
+  position: relative;
+}
+
+.postList .line {
+  height: 1px;
+  left: 20px;
+  object-fit: cover;
+  position: absolute;
+  top: 158px;
+  width: 794px;
+}
+
+.postList .rectangle-2 {
+  background-color: #3dcbb1;
+  border-radius: 28px;
+  height: 159px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: rotate(180deg);
+  width: 4px;
+}
+
+.postList .div-3 {
+  height: 159px;
+  left: 0;
+  position: absolute;
+  top: 373px;
+  width: 816px;
+}
+
+.postList .frame-wrapper {
+  height: 127px;
+  left: 22px;
+  position: absolute;
+  top: 1px;
+  width: 794px;
+}
+
+.postList .frame-4 {
+  align-items: center;
+  background-color: #1f1d1b26;
+  border-radius: 20px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 4px 9px;
+  position: relative;
+}
+
+.postList .text-wrapper-15 {
+  color: #1f1d1b;
+  font-family: "Roboto", Helvetica;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.postList .img {
+  height: 1px;
+  left: 22px;
+  object-fit: cover;
+  position: absolute;
+  top: 158px;
+  width: 794px;
+}
+
+.postList .div-4 {
+  height: 158px;
+  left: 22px;
+  position: absolute;
+  top: 190px;
+  width: 794px;
+}
+
+.postList .group-2 {
+  height: 127px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 794px;
+}
+
+.postList .line-2 {
+  height: 1px;
+  left: 0;
+  object-fit: cover;
+  position: absolute;
+  top: 157px;
+  width: 794px;
+}
+
+.postList .div-5 {
+  height: 161px;
+  left: 22px;
+  position: absolute;
+  top: 0;
+  width: 804px;
+}
+
+.postList .group-3 {
+  height: 130px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 794px;
+}
+
+.postList .frame-5 {
+  align-items: center;
+  background-color: #1f1d1b26;
+  border-radius: 1000px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 4px 8px;
+  position: relative;
+}
+
+.postList .text-wrapper-16 {
+  color: #1f1d1b;
+  font-family: "Space Grotesk", Helvetica;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  width: fit-content;
+}
+
+.postList .line-3 {
+  height: 1px;
+  left: 10px;
+  object-fit: cover;
+  position: absolute;
+  top: 160px;
+  width: 794px;
+}
