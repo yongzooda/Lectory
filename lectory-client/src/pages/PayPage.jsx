@@ -1,17 +1,18 @@
 import React from "react";
 import { Footer } from "./sections/Footer";
 import { NavbarLightDefault } from "./sections/NavbarLightDefault";
-import { PostDetail } from "./sections/PostDetail";
+import { Pay } from "./sections/Pay";
 import "../assets/css/page.css";
+import { useSearchParams } from "react-router-dom";
 
-export const PostDetailPage = () => {
+export const PayPage = () => {
   return (
-    <div className="page" data-model-id="2810:13554">
+    <div className="page" data-model-id="2823:13576">
       <NavbarLightDefault />
       <Footer />
-      <PostDetail />
+      <Pay />
     </div>
   );
 };
 
-export default PostDetailPage;
+export default PayPage;

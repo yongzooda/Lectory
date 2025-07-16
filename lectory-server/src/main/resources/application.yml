@@ -1,12 +1,12 @@
 server:
-  port: 8080
+  port: 8888
 
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/lectory
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: LectoryUser
-    password: 1234
+    username: mydb
+    password: root
 
   jpa:
     hibernate:
