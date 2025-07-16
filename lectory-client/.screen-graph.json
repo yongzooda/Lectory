@@ -76,13 +76,28 @@
       "routes": [
         "/library/expert/:lectureRoomId/chapters"
       ]
+    },
+    {
+      "id": "src/pages/pay/PayPage.jsx",
+      "label": "PayPage",
+      "routes": [
+        "/pay"
+      ],
+      "dataModelId": "2823:13576"
+    },
+    {
+      "id": "src/pages/sections/PaySuccess.jsx",
+      "label": "PaySuccess",
+      "routes": [
+        "/pay/success"
+      ]
     }
   ],
   "edges": [
     {
-      "id": "src/pages/contentlibrary/student/ListPage.jsx:66:8-to-src/pages/contentlibrary/student/ListPage.jsx",
-      "source": "src/pages/contentlibrary/student/ListPage.jsx",
-      "target": "src/pages/contentlibrary/student/ListPage.jsx",
+      "id": "src\\pages\\contentlibrary\\student\\ListPage.jsx:66:8-to-src\\pages\\contentlibrary\\student\\ListPage.jsx",
+      "source": "src\\pages\\contentlibrary\\student\\ListPage.jsx",
+      "target": "src\\pages\\contentlibrary\\student\\ListPage.jsx",
       "data": {
         "viaRoute": "/library",
         "trigger": {
@@ -91,14 +106,14 @@
           "endLine": 70,
           "column": 8,
           "endColumn": 10,
-          "sourceFile": "src/pages/contentlibrary/student/ListPage.jsx"
+          "sourceFile": "src\\pages\\contentlibrary\\student\\ListPage.jsx"
         }
       }
     },
     {
-      "id": "src/pages/contentlibrary/student/ListPage.jsx:66:8-to-src/pages/contentlibrary/student/ListPage.jsx",
-      "source": "src/pages/contentlibrary/student/SearchPage.jsx",
-      "target": "src/pages/contentlibrary/student/ListPage.jsx",
+      "id": "src\\pages\\contentlibrary\\student\\ListPage.jsx:66:8-to-src\\pages\\contentlibrary\\student\\ListPage.jsx",
+      "source": "src\\pages\\contentlibrary\\student\\SearchPage.jsx",
+      "target": "src\\pages\\contentlibrary\\student\\ListPage.jsx",
       "data": {
         "viaRoute": "/library",
         "trigger": {
@@ -107,7 +122,7 @@
           "endLine": 70,
           "column": 8,
           "endColumn": 10,
-          "sourceFile": "src/pages/contentlibrary/student/ListPage.jsx"
+          "sourceFile": "src\\pages\\contentlibrary\\student\\ListPage.jsx"
         }
       }
     }
