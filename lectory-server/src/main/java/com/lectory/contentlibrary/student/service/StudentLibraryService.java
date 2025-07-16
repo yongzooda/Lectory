@@ -1,21 +1,14 @@
+// File: com.lectory.contentlibrary.student.service.StudentLibraryService.java
 package com.lectory.contentlibrary.student.service;
 
-import com.lectory.common.domain.lecture.LectureRoom;
+import com.lectory.common.domain.lecture.*;
 import com.lectory.common.domain.user.User;
 import com.lectory.contentlibrary.dto.*;
-import com.lectory.common.domain.lecture.LectureComment;
-import com.lectory.common.domain.lecture.Membership;
-import com.lectory.contentlibrary.repository.LectureCommentRepository;
-import com.lectory.contentlibrary.repository.LectureRepository;
-import com.lectory.contentlibrary.repository.LectureRoomRepository;
-import com.lectory.contentlibrary.repository.MembershipRepository;
+import com.lectory.contentlibrary.repository.*;
 import com.lectory.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -24,71 +17,69 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class StudentLibraryService {
-    private final LectureRoomRepository lectureRoomRepo;
-    private final LectureRepository lectureRepo;
-    private final MembershipRepository membershipRepo;
+
+    /* ─── Repository 의존성 ─── */
+    private final LectureRoomRepository    lectureRoomRepo;
+    private final LectureRepository        lectureRepo;
+    private final MembershipRepository     membershipRepo;
     private final LectureCommentRepository commentRepo;
-    private final UserRepository userRepo;
+    private final UserRepository           userRepo;
 
-    private static final DateTimeFormatter ISO_FMT = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    private static final DateTimeFormatter ISO_FMT =
+            DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
-    /** 1) 목록 조회 (생성일 순 or 인기순) */
+    /* ───────────────────────────────────────────────────────────────
+     * 1) 전체 목록 (최신순 / 인기순)
+     * ---------------------------------------------------------------- */
     public PageDto<LectureRoomSummaryDto> listLectureRooms(
-            Long memberId, int page, int size, String sort
-    ) {
-        Pageable pageable = toPageable(page, size, sort);
-        boolean popularity = pageable.getSort()
-                .stream()
+            Long memberId, int page, int size, String sort) {
+
+        Pageable pageable  = toPageable(page, size, sort);
+        boolean byPop      = pageable.getSort().stream()
                 .anyMatch(o -> o.getProperty().equals("popularity"));
 
-        Page<LectureRoom> rooms = popularity
+        Page<LectureRoom> rooms = byPop
                 ? lectureRoomRepo.findAllOrderByEnrollmentCountDesc(pageable)
                 : lectureRoomRepo.findAll(pageable);
 
-        Page<LectureRoomSummaryDto> dtos = rooms.map(r -> toSummary(r, memberId));
-        return PageDto.of(dtos);
+        return PageDto.of(rooms.map(r -> toSummary(r, memberId)));
     }
 
-    /** 2) 키워드·태그 검색 */
+    /* 2) 키워드·태그 검색 */
     public PageDto<LectureRoomSummaryDto> searchLectureRooms(
-            Long memberId,
-            String keyword,
-            List<String> tags,
-            int page,
-            int size,
-            String sort
-    ) {
+            Long memberId, String keyword, List<String> tags,
+            int page, int size, String sort) {
+
         Pageable pageable = toPageable(page, size, sort);
-        Page<LectureRoom> rooms;
+        Page<LectureRoom> rooms = (tags != null && !tags.isEmpty())
+                ? lectureRoomRepo.findByLectureTagNames(tags, pageable)
+                : lectureRoomRepo.findByTitleContainingIgnoreCase(keyword, pageable);
 
-        if (tags != null && !tags.isEmpty()) {
-            // 태그 검색 우선
-            rooms = lectureRoomRepo.findByLectureTagNames(tags, pageable);
-        } else {
-            // 기존 제목(키워드) 검색
-            rooms = lectureRoomRepo.findByTitleContainingIgnoreCase(keyword, pageable);
-        }
-
-        Page<LectureRoomSummaryDto> dtos = rooms
-                .map(r -> toSummary(r, memberId));
-
-        return PageDto.of(dtos);
+        return PageDto.of(rooms.map(r -> toSummary(r, memberId)));
     }
 
-    /** 3) 상세 조회 */
+    /* 3) 상세 조회 */
     public LectureDetailDto getLectureDetail(Long memberId, Long lectureRoomId) {
-        LectureRoom room = lectureRoomRepo
-                .findByLectureRoomId(lectureRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의실: " + lectureRoomId));
 
+        LectureRoom room = lectureRoomRepo.findByLectureRoomId(lectureRoomId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("존재하지 않는 강의실: " + lectureRoomId));
+
+        /* ── 챕터 → DTO ── */
         List<ChapterDto> chapters = lectureRepo
                 .findByLectureRoom_LectureRoomIdOrderByOrderNumAsc(lectureRoomId)
                 .stream()
-                .map(l -> new ChapterDto(l.getChapterName(), l.getExpectedTime()))
+                .map(l -> new ChapterDto(
+                        l.getLectureId(),
+                        l.getChapterName(),
+                        l.getExpectedTime(),
+                        l.getOrderNum(),
+                        l.getVideoUrl()
+                ))
                 .collect(Collectors.toList());
 
-        List<CommentDto> comments = commentRepo
-                .findAllByLectureRoomId(lectureRoomId)
+        /* ── 댓글 → DTO ── */
+        List<CommentDto> comments = commentRepo.findAllByLectureRoomId(lectureRoomId)
                 .stream()
                 .map(c -> {
                     String nick = userRepo.findById(c.getUserId())
@@ -107,24 +98,40 @@ public class StudentLibraryService {
                 .findByUserIdAndLectureRoomId(memberId, lectureRoomId)
                 .isPresent();
 
-        return new LectureDetailDto(
-                room.getTitle(),
-                room.getCoverImageUrl(),
-                room.getDescription(),
-                chapters,
-                comments,
-                enrolled,
-                room.getIsPaid(),
-                !enrolled
-        );
+        int enrolledCnt = membershipRepo
+                .findByLectureRoomId(lectureRoomId).size();
+
+        return LectureDetailDto.builder()
+                .lectureRoomId(room.getLectureRoomId())
+                .title(room.getTitle())
+                .description(room.getDescription())
+                .coverImageUrl(room.getCoverImageUrl())
+                .expertName(room.getExpert().getUser().getNickname())
+                .createdAt(room.getCreatedAt().format(ISO_FMT))
+                .updatedAt(room.getUpdatedAt().format(ISO_FMT))
+                .enrollmentCount(enrolledCnt)
+                .chapters(chapters)
+                .lectureComments(comments)
+                .isEnrolled(enrolled)
+                .isPaid(room.getIsPaid())
+                .canEnroll(!enrolled)
+                .build();
     }
 
-    /** 4) 수강신청 */
+    /* 4) 수강신청 (무료·유료 통합) */
     public EnrollResponseDto enroll(Long memberId, Long lectureRoomId) {
+
+        LectureRoom room = lectureRoomRepo.findById(lectureRoomId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("존재하지 않는 강의실입니다."));
+
         membershipRepo.findByUserIdAndLectureRoomId(memberId, lectureRoomId)
-                .ifPresent(m -> {
-                    throw new IllegalArgumentException("이미 수강신청된 강의입니다.");
-                });
+                .ifPresent(m -> { throw new IllegalArgumentException("이미 수강신청된 강의입니다."); });
+
+        /* ── 유료 강의실이면 유료 구독자인지 확인 ── */
+        if (room.getIsPaid() && !userIsPaidSubscriber(memberId)) {
+            throw new IllegalArgumentException("유료 구독자 전용 강의입니다.");
+        }
 
         Membership m = Membership.builder()
                 .userId(memberId)
@@ -140,10 +147,9 @@ public class StudentLibraryService {
                 .build();
     }
 
-    /** 5) 댓글 작성 */
-    public CommentResponseDto postComment(
-            Long memberId, Long lectureRoomId, String content
-    ) {
+    /* 5) 댓글 작성 */
+    public CommentResponseDto postComment(Long memberId, Long lectureRoomId, String content) {
+
         membershipRepo.findByUserIdAndLectureRoomId(memberId, lectureRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("수강신청이 필요합니다."));
 
@@ -162,12 +168,12 @@ public class StudentLibraryService {
                 .commentId(saved.getLectureCommentId())
                 .author(nick)
                 .content(saved.getContent())
-                .createdAt(saved.getCreatedAt().toString())
+                .createdAt(saved.getCreatedAt().format(ISO_FMT))
                 .success(true)
                 .build();
     }
 
-    // ─────── private helpers ───────
+    /* ───────────────── private helpers ───────────────── */
 
     private Pageable toPageable(int page, int size, String sort) {
         Sort s;
@@ -183,11 +189,12 @@ public class StudentLibraryService {
     }
 
     private LectureRoomSummaryDto toSummary(LectureRoom room, Long memberId) {
+
         boolean enrolled = membershipRepo
                 .findByUserIdAndLectureRoomId(memberId, room.getLectureRoomId())
                 .isPresent();
-        int count = membershipRepo
-                .findByLectureRoomId(room.getLectureRoomId()).size();
+
+        int count = membershipRepo.findByLectureRoomId(room.getLectureRoomId()).size();
 
         String expertNick = room.getExpert().getUser().getNickname();
 
@@ -200,5 +207,12 @@ public class StudentLibraryService {
                 .isPaid(room.getIsPaid())
                 .canEnroll(!enrolled)
                 .build();
+    }
+
+    /* 사용자가 유료 구독자인지 확인하는 도우미
+       실제 구현은 결제/구독 테이블을 조회하도록 교체하세요. */
+    private boolean userIsPaidSubscriber(Long memberId) {
+        // TODO: 구독 정보 확인 로직 (dummy: 항상 false)
+        return false;
     }
 }
