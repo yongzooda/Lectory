@@ -20,6 +20,9 @@ import ExpertDetailPage from "./pages/contentlibrary/expert/DetailPage";
 import EditLecturePage from "./pages/contentlibrary/expert/EditLecturePage";
 import ManageChaptersPage from "./pages/contentlibrary/expert/ManageChaptersPage";
 
+// 관리자 페이지
+import MembershipManagementPage from "./pages/admin/MembershipManagementPage";
+
 // 결제 페이지
 import PayPage from "./pages/pay/PayPage";
 import PaySuccessPage from "./pages/sections/PaySuccess";
@@ -66,6 +69,9 @@ function App() {
         {/** ─── 결제 페이지 ─── */}
         <Route path="/pay" element={<PayPage />} />
         <Route path="/pay/success" element={<PaySuccessPage />} />
+
+        {/* 관리자 페이지 */}
+        <Route path="/admin/students" element={<MembershipManagementPage />} />
 
         {/** ─── 그 외 경로는 루트로 리다이렉트 ─── */}
         <Route path="*" element={<Navigate to="/" replace />} />
