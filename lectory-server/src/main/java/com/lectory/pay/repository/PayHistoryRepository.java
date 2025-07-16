@@ -1,4 +1,4 @@
-package com.lectory.pay.Repository;
+package com.lectory.pay.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
