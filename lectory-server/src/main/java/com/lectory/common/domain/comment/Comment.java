@@ -73,4 +73,16 @@ public class Comment {
     /** 논리적 삭제 여부 */
     @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isDeleted = false;
+
+    // 댓글 수정
+    public void updateContent(String content) {
+        this.content = content;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // 대댓글 등록
+    public void addReply(Comment reply) {
+        replies.add(reply);
+        this.updatedAt = LocalDateTime.now();
+    }
 }
