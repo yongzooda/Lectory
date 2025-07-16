@@ -6,8 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -47,6 +49,48 @@ public interface LectureRoomRepository extends JpaRepository<LectureRoom, Long> 
     Page<LectureRoom> findByExpertUserUserIdAndTitleContainingIgnoreCase(
             Long userId,
             String keyword,
+            Pageable pageable
+    );
+
+    /**
+     * 전문가(expert.user.userId)가 등록한 강의실 중,
+     * 내부 챕터(Lecture) → LectureTag → Tag.name 으로 필터링
+     */
+    @Query("""
+      SELECT DISTINCT lr
+        FROM LectureRoom lr
+             , Lecture lec
+             , LectureTag lt
+             , Tag t
+       WHERE lec.lectureRoom = lr
+         AND lt.lectureId   = lec.lectureId
+         AND t.tagId        = lt.tagId
+         AND lr.expert.user.userId = :expertId
+         AND t.name IN :tags
+    """)
+    Page<LectureRoom> findByExpertAndLectureTagNames(
+            @Param("expertId") Long expertId,
+            @Param("tags")     List<String> tags,
+            Pageable pageable
+    );
+
+    /**
+     * 전체 강의실 중,
+     * 내부 챕터(Lecture) → LectureTag → Tag.name 으로 필터링
+     */
+    @Query("""
+      SELECT DISTINCT lr
+        FROM LectureRoom lr
+             , Lecture lec
+             , LectureTag lt
+             , Tag t
+       WHERE lec.lectureRoom = lr
+         AND lt.lectureId = lec.lectureId
+         AND t.tagId      = lt.tagId
+         AND t.name IN :tags
+    """)
+    Page<LectureRoom> findByLectureTagNames(
+            @Param("tags")   List<String> tags,
             Pageable pageable
     );
 
