@@ -1,14 +1,14 @@
 package com.lectory.user.controller;
 
+import com.lectory.user.dto.MypageResponse;
 import com.lectory.user.dto.UserSignUpRequest;
+import com.lectory.user.security.CustomUserDetail;
 import com.lectory.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -21,6 +21,20 @@ public class UserController {
     public ResponseEntity<String> signUp(@Valid @RequestBody UserSignUpRequest request) {
         userService.register(request);
         return ResponseEntity.ok("회원가입이 완료되었습니다.");
+    }
+
+    @GetMapping("/mypage")
+    public ResponseEntity<MypageResponse> myPage(@AuthenticationPrincipal CustomUserDetail userDetail){
+
+        MypageResponse response = MypageResponse.builder()
+                .email(userDetail.getUsername())
+                .nickname(userDetail.getUser().getNickname())
+                .userType(userDetail.getUser().getUserType().getUserType())
+                .subscriptionStartDate(userDetail.getUser().getSubscriptionStartDate())
+                .subscriptionEndDate(userDetail.getUser().getSubscriptionEndDate())
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
 }
