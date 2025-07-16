@@ -1,0 +1,72 @@
+.pay-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.pay-section {
+  background: #ffffff;
+  border-radius: 12px;
+  background-color: #ddf0e0;
+  padding: 40px 30px;
+  width: 800px;
+  height: 400px;
+}
+
+.pay-title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.pay-label {
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+}
+
+.pay-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.pay-input:focus {
+  border-color: #0070f3;
+  outline: none;
+}
+
+.pay-static-text {
+  padding: 10px 12px;
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  color: #333;
+  font-size: 1rem;
+}
+
+.pay-button {
+  width: 100%;
+  margin-top: 30px;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #0070f3;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.pay-button:hover {
+  background-color: #005bb5;
+}

@@ -6,7 +6,9 @@ target/
 *.iws
 *.iml
 *.ipr
-
+lectory-server/pom.xml
+lectory-server/src/main/resources/application.properties
+lectory-server/src/main/resources/application.yml
 ### Eclipse ###
 .apt_generated
 .classpath
