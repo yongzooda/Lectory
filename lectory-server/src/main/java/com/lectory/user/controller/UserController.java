@@ -30,7 +30,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/mypage")
     public ResponseEntity<String> updateMyInfo(@AuthenticationPrincipal CustomUserDetail userDetail, @Valid @RequestBody UserUpdateRequest request) {
         userService.updateUserInfo(userDetail.getUser(), request);
         return ResponseEntity.ok("회원 정보가 수정되었습니다.");
