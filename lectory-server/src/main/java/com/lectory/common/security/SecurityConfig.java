@@ -1,6 +1,8 @@
 package com.lectory.common.security;
 
 import com.lectory.user.security.CustomUserDetailService;
+import com.lectory.user.security.JwtAuthenticationFilter;
+import com.lectory.user.security.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -9,14 +11,18 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
     private final CustomUserDetailService userDetailService;
+    private final JwtUtil jwtUtil;
+
 
     public SecurityConfig(CustomUserDetailService userDetailsService) {
         this.userDetailService = userDetailsService;
+        this.jwtUtil = new JwtUtil();
     }
 
     @Bean
@@ -53,6 +59,11 @@ public class SecurityConfig {
                 // 5) 개발 편의상 CSRF 비활성화 (필요시 켜세요)
                 .csrf(csrf -> csrf.disable())
         ;
+
+        http.addFilterBefore(
+                new JwtAuthenticationFilter(jwtUtil, userDetailService),
+                UsernamePasswordAuthenticationFilter.class
+        );
 
         return http.build();
     }
