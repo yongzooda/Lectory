@@ -77,6 +77,14 @@ public class Comment {
     // 댓글 수정
     public void updateContent(String content) {
         this.content = content;
+    }
+
+    // 채택
+    public void accept() {
+        this.isAccepted = true;
+    }
+    @PreUpdate
+    public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 }

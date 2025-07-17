@@ -2,8 +2,13 @@ package com.lectory.comment.service;
 
 import com.lectory.comment.dto.CommentRequestDto;
 import com.lectory.comment.dto.CommentResponseDto;
+import com.lectory.comment.dto.LikeRequestDto;
+import com.lectory.comment.dto.LikeResponseDto;
+import com.lectory.comment.repository.CommentLikeRepository;
 import com.lectory.comment.repository.CommentRepository;
 import com.lectory.comment.service.mapper.CommentMapper;
+import com.lectory.common.domain.Like;
+import com.lectory.common.domain.LikeTarget;
 import com.lectory.common.domain.comment.Comment;
 import com.lectory.common.domain.user.User;
 import com.lectory.exception.CustomErrorCode;
@@ -15,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -22,6 +28,7 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
     private final CommentMapper commentMapper;
 
     @Transactional
@@ -40,6 +47,7 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.getCommentResponse(comment);
     }
 
+    @Transactional
     @Override
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto req, CustomUserDetail userDetail) {
         Comment comment = commentRepository.findById(commentId)
@@ -50,6 +58,7 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.getCommentResponse(comment);
     }
 
+    @Transactional
     @Override
     public void deleteComment(Long postId, Long commentId, CustomUserDetail userDetail) {
         Comment comment = commentRepository.findById(commentId)
@@ -70,12 +79,78 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
+    @Transactional
     @Override
     public List<CommentResponseDto> getComments(Long postId) {
         List<Comment> comment = commentRepository.findByPost_PostIdAndParentIsNullOrderByCreatedAtAsc(postId);
         return comment.stream()
                 .map(commentMapper::getCommentReplies)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public CommentResponseDto acceptComment(Long postId, Long commentId, CustomUserDetail userDetail) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(CustomErrorCode.COMMENT_NOT_FOUND));
+
+        if (!comment.getPost().getPostId().equals(postId)) {
+            throw new IllegalArgumentException("댓글이 해당 게시글에 속하지 않습니다.");
+        }
+
+        Long userId = comment.getPost().getUserId().getUserId();
+        Long currentId = userDetail.getUser().getUserId();
+
+        if (!userId.equals(currentId)) {
+            throw new CustomException(CustomErrorCode.COMMENT_UNAUTHORIZED);
+        }
+
+        if (commentRepository.existsByPost_PostIdAndIsAcceptedTrue(postId)) {
+            throw new CustomException(CustomErrorCode.COMMENT_ALREADY_ACCEPTED);
+        }
+
+        comment.accept();
+        commentRepository.save(comment);
+
+        return commentMapper.getCommentResponse(comment);
+    }
+
+    @Transactional
+    @Override
+    public LikeResponseDto likeComment(Long postId, LikeRequestDto req, CustomUserDetail userDetail) {
+
+        LikeTarget target = req.getTarget();
+        Long commentId = req.getTargetId();
+        Long userId = userDetail.getUser().getUserId();
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(CustomErrorCode.COMMENT_NOT_FOUND));
+
+        if (!comment.getPost().getPostId().equals(postId)) {
+            throw new IllegalArgumentException("댓글이 해당 게시글에 속하지 않습니다.");
+        }
+
+        Optional<Like>  exist = commentLikeRepository.findByTargetAndTargetIdAndUser_UserId(LikeTarget.COMMENT, commentId, userId);
+
+        if (exist.isPresent()) {
+            commentLikeRepository.delete(exist.get());
+        } else {
+            Like like = Like.builder()
+                    .target(target)
+                    .targetId(commentId)
+                    .user(userDetail.getUser())
+                    .build();
+            commentLikeRepository.save(like);
+        }
+
+        Long likeCount = commentLikeRepository.countByTargetAndTargetId(target, commentId);
+        boolean liked = commentLikeRepository.findByTargetAndTargetIdAndUser_UserId(target, commentId, userId).isPresent();
+
+        return LikeResponseDto.builder()
+                .commentId(commentId)
+                .likeCount(likeCount)
+                .liked(liked)
+                .build();
     }
 
     private void logicalDelete(Comment comment) {

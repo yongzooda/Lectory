@@ -2,6 +2,8 @@ package com.lectory.comment.controller;
 
 import com.lectory.comment.dto.CommentRequestDto;
 import com.lectory.comment.dto.CommentResponseDto;
+import com.lectory.comment.dto.LikeRequestDto;
+import com.lectory.comment.dto.LikeResponseDto;
 import com.lectory.comment.service.CommentServiceImpl;
 import com.lectory.user.security.CustomUserDetail;
 import jakarta.validation.Valid;
@@ -50,5 +52,19 @@ public class CommentController {
     public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable Long postId) {
         List<CommentResponseDto> comments = commentService.getComments(postId);
         return ResponseEntity.ok(comments);
+    }
+
+    // 채택
+    @PostMapping("/{commentId}/accept")
+    public ResponseEntity<CommentResponseDto> acceptComment(@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal CustomUserDetail userDetail) {
+        CommentResponseDto comment = commentService.acceptComment(postId, commentId, userDetail);
+        return ResponseEntity.ok(comment);
+    }
+
+    // 좋아요
+    @PostMapping("/{commentId}/like")
+    public ResponseEntity<LikeResponseDto> likeComment(@PathVariable Long postId, @PathVariable LikeRequestDto req, @AuthenticationPrincipal CustomUserDetail userDetail) {
+        LikeResponseDto comment = commentService.likeComment(postId, req, userDetail);
+        return ResponseEntity.ok(comment);
     }
 }
