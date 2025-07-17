@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/library")
+@RequestMapping("/api/library")
 @RequiredArgsConstructor
 public class StudentLibraryController {
 

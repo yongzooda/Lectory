@@ -3,6 +3,8 @@ package com.lectory.user.controller;
 import com.lectory.common.domain.user.Expert;
 import com.lectory.user.dto.ExpertMypageResponse;
 import com.lectory.user.dto.ExpertSignUpRequest;
+import com.lectory.user.dto.ExpertUpdateRequest;
+import com.lectory.user.dto.UserUpdateRequest;
 import com.lectory.user.security.CustomUserDetail;
 import com.lectory.user.service.ExpertService;
 import com.lectory.user.service.UserService;
@@ -29,6 +31,12 @@ public class ExpertController {
     public ResponseEntity<ExpertMypageResponse> expertMyPage(@AuthenticationPrincipal CustomUserDetail userDetail){
         ExpertMypageResponse response = expertService.getExpertMypage(userDetail.getUser());
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/mypage")
+    public ResponseEntity<String> updateExpertInfo(@AuthenticationPrincipal CustomUserDetail userDetail, @Valid @RequestBody ExpertUpdateRequest request) {
+        expertService.updateExpertInfo(userDetail.getUser(), request);
+        return ResponseEntity.ok("회원 정보가 수정되었습니다.");
     }
 
 }

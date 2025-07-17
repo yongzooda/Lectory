@@ -30,10 +30,16 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/mypage")
     public ResponseEntity<String> updateMyInfo(@AuthenticationPrincipal CustomUserDetail userDetail, @Valid @RequestBody UserUpdateRequest request) {
         userService.updateUserInfo(userDetail.getUser(), request);
         return ResponseEntity.ok("회원 정보가 수정되었습니다.");
+    }
+
+    @DeleteMapping("/mypage")
+    public ResponseEntity<String> deleteMyInfo(@AuthenticationPrincipal CustomUserDetail userDetail){
+        userService.deleteUser(userDetail.getUser().getUserId());
+        return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
     }
 
 }

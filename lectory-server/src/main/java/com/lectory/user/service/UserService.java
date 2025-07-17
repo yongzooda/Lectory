@@ -1,5 +1,6 @@
 package com.lectory.user.service;
 
+import com.lectory.common.domain.user.Expert;
 import com.lectory.common.domain.user.User;
 import com.lectory.user.dto.UserMypageResponse;
 import com.lectory.user.dto.UserSignUpRequest;
@@ -116,6 +117,26 @@ public class UserService {
             user.setPassword(encodedPassword);
         }
         userRepository.save(user);
+    }
+
+    //일반 유저는 하드 탈퇴 전문가는 소프트 탈퇴 로직 구현
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalStateException("유저를 찾을 수 없습니다."));
+
+        String userType = user.getUserType().getUserType();
+
+        if("EXPERT".equals(userType)){
+            user.setIsDeleted(true);
+            user.setDeletedAt(LocalDateTime.now());
+
+            Expert expert = user.getExpert();
+            if(expert != null){
+                expert.setApprovalStatus(Expert.ApprovalStatus.REJECTED);
+            }
+        } else {
+            userRepository.delete(user);
+        }
     }
 
     //구독에 따른 유저 업데이트
