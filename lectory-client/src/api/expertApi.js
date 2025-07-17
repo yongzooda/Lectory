@@ -1,84 +1,47 @@
-import axios from 'axios';
+// src/api/expertApi.js
+import api from './axiosInstance';
 
-// 1) 내 강의 목록 조회
-export function listMyLectures({ expertId, page, size, sort }) {
-  return axios.get('/library/expert', {
-    params: { expertId, page, size, sort }
-  });
-}
+/* ---------------- 콘텐츠 라이브러리 (전문가) -------------------- */
 
-// 2) 내 강의 검색 (제목·태그)
-export function searchMyLectures({ expertId, keyword, tags, page, size, sort }) {
-  return axios.get('/library/expert/search', {
-    params: { expertId, keyword, tags, page, size, sort }
-  });
-}
+/** 1) 내 강의실 목록 */
+export const listMyLectures = ({ expertId, page, size, sort }) =>
+  api.get('/library/expert', { params: { expertId, page, size, sort } });
 
-// 3) 강의실 상세 조회
-export function getLectureDetail({ lectureRoomId, expertId }) {
-  return axios.get(`/library/expert/${lectureRoomId}`, {
-    params: { expertId }
+/** 2) 내 강의실 검색 (제목·태그) */
+export const searchMyLectures = ({ expertId, keyword, tags, page, size, sort }) =>
+  api.get('/library/expert/search', {
+    params: { expertId, keyword, tags, page, size, sort },
   });
-}
 
-// 4) 강의실 등록
-export function createLecture({ expertId, thumbnail, title, description, fileUrl, isPaid, tags }) {
-  return axios.post('/library/expert', {
-    expertId,
-    thumbnail,
-    title,
-    description,
-    fileUrl,
-    isPaid,
-    tags
-  });
-}
+/** 3) 강의실 상세 (전문가 뷰) */
+export const getLectureDetail = ({ lectureRoomId, expertId }) =>
+  api.get(`/library/expert/${lectureRoomId}`, { params: { expertId } });
 
-// 5) 강의실 수정
-export function updateLecture({ lectureRoomId, expertId, thumbnail, title, description, fileUrl, isPaid }) {
-  return axios.put(`/library/expert/${lectureRoomId}`, {
-    expertId,
-    thumbnail,
-    title,
-    description,
-    fileUrl,
-    isPaid
-  });
-}
+/** 4) 강의실 신규 등록 */
+export const createLecture = (payload) =>
+  api.post('/library/expert', payload);  // payload: { expertId, title, ... }
 
-// 6) 강의실 삭제
-export function deleteLecture({ lectureRoomId, expertId }) {
-  return axios.delete(`/library/expert/${lectureRoomId}`, {
-    params: { expertId }
-  });
-}
+/** 5) 강의실 수정 */
+export const updateLecture = ({ lectureRoomId, expertId, ...rest }) =>
+  api.put(`/library/expert/${lectureRoomId}`, { expertId, ...rest });
 
-// 7) 챕터 등록
-export function createChapter({ lectureRoomId, expertId, chapterName, expectedTime, orderNum, videoUrl }) {
-  return axios.post('/library/expert/chapters', {
-    lectureRoomId,
-    expertId,
-    chapterName,
-    expectedTime,
-    orderNum,
-    videoUrl
-  });
-}
+/** 6) 강의실 삭제 */
+export const deleteLecture = ({ lectureRoomId, expertId }) =>
+  api.delete(`/library/expert/${lectureRoomId}`, { params: { expertId } });
 
-// 8) 챕터 수정
-export function updateChapter({ chapterId, expertId, chapterName, expectedTime, orderNum, videoUrl }) {
-  return axios.put(`/library/expert/chapters/${chapterId}`, {
-    expertId,
-    chapterName,
-    expectedTime,
-    orderNum,
-    videoUrl
-  });
-}
+/* ---- 챕터 CRUD (전문가) --------------------------------------- */
 
-// 9) 챕터 삭제
-export function deleteChapter({ chapterId, expertId }) {
-  return axios.delete(`/library/expert/chapters/${chapterId}`, {
-    params: { expertId }
-  });
-}
+/** 7) 챕터 생성 */
+export const createChapter = (payload) =>
+  api.post('/library/expert/chapters', payload); // { lectureRoomId, expertId, ... }
+
+/** 8) 챕터 수정 */
+export const updateChapter = ({ chapterId, expertId, ...rest }) =>
+  api.put(`/library/expert/chapters/${chapterId}`, { expertId, ...rest });
+
+/** 9) 챕터 삭제 */
+export const deleteChapter = ({ chapterId, expertId }) =>
+  api.delete(`/library/expert/chapters/${chapterId}`, { params: { expertId } });
+
+/* ---- 공통 태그 풀 --------------------------------------------- */
+export const fetchAllTags = () => api.get('/library/tags');
