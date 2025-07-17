@@ -10,6 +10,7 @@ import lombok.*;
 @Entity
 @Table(name = "expert")
 @Data
+@ToString(exclude = "user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
