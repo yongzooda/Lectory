@@ -41,7 +41,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html",    // Swagger UI redirect 페이지
                                 "/swagger-ui/**",      // Swagger 정적 리소스
                                 "/webjars/**",         // Swagger UI 의존 웹자바
-                                "/library/**",
+                                "/api/library/**",
+                                "/api/tags/**",
                                 "/admin/**",
                                 "/pay/**"
                         ).permitAll()

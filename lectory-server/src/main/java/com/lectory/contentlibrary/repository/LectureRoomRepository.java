@@ -105,6 +105,18 @@ AND   (
             @Param("tags") List<String> tags,
             Pageable pageable);
 
+    /** ③-B 키워드만 (태그 조건 없음) */
+    @Query("""
+SELECT lr
+FROM   LectureRoom lr
+       JOIN lr.expert e
+       JOIN e.user    u
+WHERE  LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
+   OR  LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
+""")
+    Page<LectureRoom> searchByKeywordOnly(@Param("kw") String keyword,
+                                          Pageable pageable);
+
     /** ④ 전문가 + 키워드 + 태그 AND 조건 */
     @Query("""
 SELECT lr

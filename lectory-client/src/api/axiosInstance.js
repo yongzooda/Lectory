@@ -1,5 +1,6 @@
 // src/api/axiosInstance.js
 import axios from 'axios';
+import qs from 'qs';
 
 /** ------------------------------------------------------------------
  *  공통 axios 인스턴스
@@ -14,6 +15,10 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+    /* 배열 파라미터 직렬화 방식:
+     tags=Java&tags=Spring (repeat 방식) */
+      paramsSerializer: params =>
+      qs.stringify(params, { arrayFormat: 'repeat' }),
 });
 
 /* ----- 요청 인터셉터 : 토큰 주입 (옵션) ---------------------------- */

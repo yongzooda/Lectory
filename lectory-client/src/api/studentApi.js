@@ -8,10 +8,19 @@ export const listLectureRooms = ({ memberId, page, size, sort }) =>
   api.get('/library', { params: { memberId, page, size, sort } });
 
 /** 2) 제목·태그 검색 */
-export const searchLectureRooms = ({ memberId, search, tags, page, size, sort }) =>
-  api.get('/library/search', {
-    params: { memberId, search, tags, page, size, sort },
-  });
+export const searchLectureRooms = ({
+  memberId, search, tags, page, size, sort,
+}) => {
+  const params = { memberId, page, size, sort };
+
+  /* search가 빈 문자열이면 아예 보내지 않음 */
+  if (search)         params.search = search;
+
+  /* tags가 있을 때만 전달 (배열 그대로) */
+  if (tags?.length)   params.tags   = tags;
+
+  return api.get('/library/search', { params });
+};
 
 /** 3) 강의실 상세 조회 */
 export const getLectureDetail = ({ lectureRoomId, memberId }) =>

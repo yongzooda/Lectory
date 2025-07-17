@@ -47,11 +47,8 @@ public class StudentLibraryService {
 
     /* 2) 키워드·태그 검색 */
     public PageDto<LectureRoomSummaryDto> searchLectureRooms(
-            Long memberId,
-            String keyword,           // "" 또는 null 가능
-            List<String> tags,        // [] 또는 null 가능
-            int page, int size,
-            String sort) {
+            Long memberId, String keyword, List<String> tags,
+            int page, int size, String sort) {
 
         Pageable pageable = toPageable(page, size, sort);
 
@@ -60,22 +57,26 @@ public class StudentLibraryService {
 
         Page<LectureRoom> rooms;
 
-        if (hasTags && hasKw) {
-            // ① 태그 ∩ 키워드 교집합
-            rooms = lectureRoomRepo.searchByKeywordAndLectureTagNames(
-                    keyword, tags, pageable);
-        } else if (hasTags) {
-            // ② 태그만
-            rooms = lectureRoomRepo.findByLectureTagNames(
-                    tags, pageable);
-        } else {
-            // ③ 키워드만 (혹은 아무 조건 없음)
-            rooms = lectureRoomRepo.findByTitleContainingIgnoreCase(
-                    keyword == null ? "" : keyword, pageable);
+        if (hasTags && hasKw) {                 // ① 태그 ∩ 키워드
+            rooms = lectureRoomRepo
+                    .searchByKeywordAndLectureTagNames(keyword, tags, pageable);
+
+        } else if (hasTags) {                   // ② 태그만
+            rooms = lectureRoomRepo
+                    .findByLectureTagNames(tags, pageable);
+
+        } else if (hasKw) {                     // ③ 키워드만 ★
+            rooms = lectureRoomRepo
+                    .searchByKeywordOnly(keyword, pageable);
+
+        } else {                                // ④ 조건 없음
+            rooms = lectureRoomRepo
+                    .findAll(pageable);
         }
 
         return PageDto.of(rooms.map(r -> toSummary(r, memberId)));
     }
+
 
 
     /* 3) 상세 조회 */
