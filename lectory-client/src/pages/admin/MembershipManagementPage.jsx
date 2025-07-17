@@ -1,5 +1,5 @@
 import React from 'react';
-import StudentList from './StudentList';
+import StudentList from './UserManagementList';
 
 
 const MembershipManagementPage = () => {
