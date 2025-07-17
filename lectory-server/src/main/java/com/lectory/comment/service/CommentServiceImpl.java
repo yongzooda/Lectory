@@ -2,17 +2,18 @@ package com.lectory.comment.service;
 
 import com.lectory.comment.dto.CommentRequestDto;
 import com.lectory.comment.dto.CommentResponseDto;
-import com.lectory.comment.dto.LikeRequestDto;
 import com.lectory.comment.dto.LikeResponseDto;
 import com.lectory.comment.repository.CommentLikeRepository;
 import com.lectory.comment.repository.CommentRepository;
 import com.lectory.comment.service.mapper.CommentMapper;
-import com.lectory.common.domain.Like;
-import com.lectory.common.domain.LikeTarget;
+import com.lectory.common.domain.*;
 import com.lectory.common.domain.comment.Comment;
 import com.lectory.common.domain.user.User;
 import com.lectory.exception.CustomErrorCode;
 import com.lectory.exception.CustomException;
+import com.lectory.post.dto.LikeRequestDto;
+import com.lectory.post.dto.ReportRequestDto;
+import com.lectory.post.repository.ReportRepository;
 import com.lectory.user.security.CustomUserDetail;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final ReportRepository reportRepository;
     private final CommentMapper commentMapper;
 
     @Transactional
@@ -151,6 +153,27 @@ public class CommentServiceImpl implements CommentService {
                 .likeCount(likeCount)
                 .liked(liked)
                 .build();
+    }
+
+    @Override
+    public void reportComment(Long postId, ReportRequestDto req, CustomUserDetail userDetail) {
+        ReportTarget target = req.getTarget();
+        Long commentId = req.getTargetId();
+        Long userId = userDetail.getUser().getUserId();
+
+        if (reportRepository.existsByTargetAndTargetIdAndUser_UserId(target, commentId, userId)) {
+            throw new RuntimeException("이미 신고한 대상입니다");
+        }
+
+        Report report = Report.builder()
+                .target(target)
+                .targetId(commentId)
+                .user(userDetail.getUser())
+                .content(req.getContent())
+                .status(ReportStatus.PENDING)
+                .build();
+
+        reportRepository.save(report);
     }
 
     private void logicalDelete(Comment comment) {

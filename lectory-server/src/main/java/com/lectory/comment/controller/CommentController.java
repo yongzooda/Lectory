@@ -2,9 +2,10 @@ package com.lectory.comment.controller;
 
 import com.lectory.comment.dto.CommentRequestDto;
 import com.lectory.comment.dto.CommentResponseDto;
-import com.lectory.comment.dto.LikeRequestDto;
 import com.lectory.comment.dto.LikeResponseDto;
 import com.lectory.comment.service.CommentServiceImpl;
+import com.lectory.post.dto.LikeRequestDto;
+import com.lectory.post.dto.ReportRequestDto;
 import com.lectory.user.security.CustomUserDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/post/{postId}/comment")
+@RequestMapping("/api/post/{postId}/comment")
 public class CommentController {
 
     private final CommentServiceImpl commentService;
@@ -66,5 +67,12 @@ public class CommentController {
     public ResponseEntity<LikeResponseDto> likeComment(@PathVariable Long postId, @PathVariable LikeRequestDto req, @AuthenticationPrincipal CustomUserDetail userDetail) {
         LikeResponseDto comment = commentService.likeComment(postId, req, userDetail);
         return ResponseEntity.ok(comment);
+    }
+
+    // 신고
+    @PostMapping("/{commentId}/report")
+    public ResponseEntity<Void> reportComment(@PathVariable Long postId, @PathVariable ReportRequestDto req, @AuthenticationPrincipal CustomUserDetail userDetail) {
+        commentService.reportComment(postId, req, userDetail);
+        return ResponseEntity.ok().build();
     }
 }

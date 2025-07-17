@@ -2,8 +2,9 @@ package com.lectory.comment.service;
 
 import com.lectory.comment.dto.CommentRequestDto;
 import com.lectory.comment.dto.CommentResponseDto;
-import com.lectory.comment.dto.LikeRequestDto;
 import com.lectory.comment.dto.LikeResponseDto;
+import com.lectory.post.dto.LikeRequestDto;
+import com.lectory.post.dto.ReportRequestDto;
 import com.lectory.user.security.CustomUserDetail;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface CommentService {
     CommentResponseDto acceptComment(Long postId, Long commentId, CustomUserDetail userDetail);
 
     LikeResponseDto likeComment(Long postId, LikeRequestDto req, CustomUserDetail userDetail);
+
+    void reportComment(Long postId, ReportRequestDto req, CustomUserDetail userDetail);
 }
