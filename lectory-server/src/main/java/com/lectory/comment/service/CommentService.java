@@ -20,5 +20,5 @@ public interface CommentService {
 
     LikeResponseDto likeComment(Long postId, LikeRequestDto req, CustomUserDetail userDetail);
 
-    void reportComment(Long postId, ReportRequestDto req, CustomUserDetail userDetail);
+    void reportComment(ReportRequestDto req, CustomUserDetail userDetail);
 }

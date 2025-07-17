@@ -71,8 +71,8 @@ public class CommentController {
 
     // 신고
     @PostMapping("/{commentId}/report")
-    public ResponseEntity<Void> reportComment(@PathVariable Long postId, @PathVariable ReportRequestDto req, @AuthenticationPrincipal CustomUserDetail userDetail) {
-        commentService.reportComment(postId, req, userDetail);
+    public ResponseEntity<Void> reportComment(@PathVariable ReportRequestDto req, @AuthenticationPrincipal CustomUserDetail userDetail) {
+        commentService.reportComment(req, userDetail);
         return ResponseEntity.ok().build();
     }
 }

@@ -156,7 +156,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void reportComment(Long postId, ReportRequestDto req, CustomUserDetail userDetail) {
+    public void reportComment(ReportRequestDto req, CustomUserDetail userDetail) {
         ReportTarget target = req.getTarget();
         Long commentId = req.getTargetId();
         Long userId = userDetail.getUser().getUserId();
