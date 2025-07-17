@@ -42,10 +42,11 @@ public class SecurityConfig {
                                 "/swagger-ui/**",      // Swagger 정적 리소스
                                 "/webjars/**",         // Swagger UI 의존 웹자바
                                 "/library/**",
-                                "/admin/**"
+                                "/admin/**",
+                                "/pay/**"
                         ).permitAll()
                         /*.requestMatchers("/api/expert/**", "/api/library/expert/**").hasRole("EXPERT")
-                        .requestMatchers("/api/admin").hasRole("ADMIN") */
+                        .requestMatchers("/api/admin").hasRole("ADMIN") 테스트용으로 전부 열어놨다가 마지막에 열 예정*/
                         // 2) 그 외 요청은 인증 필요
                         .anyRequest().authenticated()
                 )
