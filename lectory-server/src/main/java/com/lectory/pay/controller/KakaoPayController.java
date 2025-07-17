@@ -16,7 +16,7 @@ import com.lectory.pay.service.KakaoPayService;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/pay")
+@RequestMapping("/api/pay")
 public class KakaoPayController {
     @Autowired
     private KakaoPayService kakaoPayService;
