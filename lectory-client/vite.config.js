@@ -1,4 +1,5 @@
 // vite.config.js
+import tailwind from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { screenGraphPlugin } from "@animaapp/vite-plugin-screen-graph";
@@ -6,6 +7,7 @@ import { screenGraphPlugin } from "@animaapp/vite-plugin-screen-graph";
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
+    tailwind(),
     mode === "development" && screenGraphPlugin()
   ].filter(Boolean),
 
