@@ -7,6 +7,7 @@ import com.lectory.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ public class StudentServiceImpl implements StudentService {
                         .userId(user.getUserId())
                         .email(user.getEmail())
                         .nickname(user.getNickname())
+                        .createdAt(user.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")))
                         .userType(user.getUserType().getUserType())
                         .build())
                 .collect(Collectors.toList());

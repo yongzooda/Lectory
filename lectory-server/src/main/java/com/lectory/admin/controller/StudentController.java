@@ -7,12 +7,13 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/students")
+@RequestMapping("api/admin/students")
 @RequiredArgsConstructor
 public class StudentController {
 
@@ -28,6 +29,7 @@ public class StudentController {
             content = @Content(mediaType = "application/json")
     )
     // @param type FREE 또는 PAID (없으면 전체 조회)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
     public List<StudentResponseDto> getStudents(
             @Parameter(
@@ -37,7 +39,6 @@ public class StudentController {
             )
             @RequestParam(value = "type", required = false) String type
     ) {
-    //getStudents(@RequestParam(value = "type", required = false) String type) {
         return studentService.getStudentsByType(type);
     }
 }

@@ -5,15 +5,23 @@ const StudentList = () => {
   const [filter, setFilter] = useState(null); // null | "FREE" | "PAID"
 
   useEffect(() => {
-    let url = '/admin/students';
+    let url = '/api/admin/students';
     if (filter) {
       url += `?type=${filter}`;
     }
 
     fetch(url)
-      .then(res => res.json())
+      .then(async (res) => {
+            if (res.status === 403) {
+              const message = await res.text(); // 백엔드 메시지 받기
+              throw new Error(message);
+            }
+            return res.json();
+      })
       .then(data => setStudents(data))
-      .catch(err => console.error('학생 목록 불러오기 실패:', err));
+      .catch(err => {
+            alert(err.message); // "관리자만 사용할 수 있는 기능입니다."
+      });
   }, [filter]);
 
   return (
