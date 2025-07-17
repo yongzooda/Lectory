@@ -22,9 +22,9 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
 
 
-    public SecurityConfig(CustomUserDetailService userDetailsService) {
+    public SecurityConfig(CustomUserDetailService userDetailsService, JwtUtil jwtUtil) {
         this.userDetailService = userDetailsService;
-        this.jwtUtil = new JwtUtil();
+        this.jwtUtil = jwtUtil;
     }
 
     @Bean
@@ -33,18 +33,20 @@ public class SecurityConfig {
                 // 1) 로그인·로그아웃·Swagger 엔드포인트 전부 허용
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/login",              // 로그인 폼 접근
+                                "/api/auth/**",
+                                "/api/users/signup", // 로그인 폼 접근
                                 "/logout",             // 로그아웃 엔드포인트
                                 "/error",            // ← 추가!
-                                "/api/**",
-                                "/pay/**",
                                 "/v3/api-docs/**",     // OpenAPI JSON
                                 "/swagger-ui.html",    // Swagger UI redirect 페이지
                                 "/swagger-ui/**",      // Swagger 정적 리소스
                                 "/webjars/**",         // Swagger UI 의존 웹자바
                                 "/library/**",
-                                "/admin/**"
+                                "/admin/**",
+                                "/pay/**"
                         ).permitAll()
+                        /*.requestMatchers("/api/expert/**", "/api/library/expert/**").hasRole("EXPERT")
+                        .requestMatchers("/api/admin").hasRole("ADMIN") 테스트용으로 전부 열어놨다가 마지막에 열 예정*/
                         // 2) 그 외 요청은 인증 필요
                         .anyRequest().authenticated()
                 )

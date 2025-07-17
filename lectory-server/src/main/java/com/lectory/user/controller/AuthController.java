@@ -32,11 +32,14 @@ public class AuthController {
                             loginRequest.getEmail(),
                             loginRequest.getPassword()));
 
-            String accessToken = jwtUtil.generateToken(loginRequest.getEmail());
+            String email = authentication.getName();
+
+            String accessToken = jwtUtil.generateToken(email);
             return ResponseEntity.ok(new JwtResponse(accessToken));
 
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401).body("로그인 실패: " + e.getMessage());
         }
     }
+
 }

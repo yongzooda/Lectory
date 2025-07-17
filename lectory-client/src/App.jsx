@@ -6,6 +6,14 @@ import PostListPage   from './pages/PostListPage';
 import PostWritePage  from './pages/PostWritePage';
 import PostDetailPage from './pages/PostDetailPage';
 
+/* ─── 로그인 및 회원가입 ─── */
+import LoginPage from './pages/user/LoginForm';
+import SignUpPage from './pages/user/SignUpPage';
+
+/* ─── 마이페이지 ─── */
+import UserMyPage from './pages/user/MyPage.jsx';
+import ExpertMyPage from './pages/user/ExpertMyPage.jsx';
+
 /* ─── 결제 ─── */
 import PayPage        from './pages/pay/PayPage';
 import PaySuccessPage from './pages/sections/PaySuccess';
@@ -27,43 +35,51 @@ import MembershipManagementPage from './pages/admin/MembershipManagementPage';
 
 export default function App() {
   return (
-    <BrowserRouter
-      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-    >
-      <Routes>
-        {/* ─── 게시글 영역 ─── */}
-        <Route path="/"                    element={<PostListPage />}   />
-        <Route path="/post-write"          element={<PostWritePage />}  />
-        <Route path="/post-detail/:postId" element={<PostDetailPage />} />
+      <BrowserRouter
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <Routes>
+          {/* ─── 로그인 및 회원가입 ─── */}
+          <Route path="/login"            element={<LoginPage/>} />
+          <Route path="/signup"           element={<SignUpPage/>} />
 
-        {/* ─── 콘텐츠 라이브러리 · 수강생 ─── */}
-        <Route path="/library"                        element={<StudentLibraryHome />} />
-        <Route path="/library/search"                 element={<Navigate to="/library" replace />} />
-        <Route path="/library/:lectureRoomId"         element={<StudentLectureDetail />} />
-        <Route path="/library/:lectureRoomId/enroll-result"
-               element={<EnrollResultPage />} />
+          {/* ─── 마이페이지 ─── */}
+          <Route path="/users/mypage"     element={<UserMyPage/>} />
+          <Route path="/experts/mypage"   element={<ExpertMyPage/>} />
 
-        {/* ─── 콘텐츠 라이브러리 · 전문가 ─── */}
-        <Route path="/library/expert"                 element={<ExpertLibraryHome />} />
-        <Route path="/library/expert/search"          element={<Navigate to="/library/expert" replace />} />
-        <Route path="/library/expert/new"             element={<NewLecturePage />} />
-        <Route path="/library/expert/:lectureRoomId"  element={<ExpertLectureDetail />} />
-        <Route path="/library/expert/:lectureRoomId/edit"
-               element={<EditLecturePage />} />
-        <Route path="/library/expert/:lectureRoomId/chapters"
-               element={<ManageChaptersPage />} />
+          {/* ─── 게시글 영역 ─── */}
+          <Route path="/"                    element={<PostListPage />}   />
+          <Route path="/post-write"          element={<PostWritePage />}  />
+          <Route path="/post-detail/:postId" element={<PostDetailPage />} />
 
-        {/* ─── 관리자 페이지 ─── */}
-        <Route path="/admin/students"
-               element={<MembershipManagementPage />} />
+          {/* ─── 콘텐츠 라이브러리 · 수강생 ─── */}
+          <Route path="/library"                        element={<StudentLibraryHome />} />
+          <Route path="/library/search"                 element={<Navigate to="/library" replace />} />
+          <Route path="/library/:lectureRoomId"         element={<StudentLectureDetail />} />
+          <Route path="/library/:lectureRoomId/enroll-result"
+                 element={<EnrollResultPage />} />
 
-        {/* ─── 결제 ─── */}
-        <Route path="/pay"           element={<PayPage />}        />
-        <Route path="/pay/success"   element={<PaySuccessPage />} />
+          {/* ─── 콘텐츠 라이브러리 · 전문가 ─── */}
+          <Route path="/library/expert"                 element={<ExpertLibraryHome />} />
+          <Route path="/library/expert/search"          element={<Navigate to="/library/expert" replace />} />
+          <Route path="/library/expert/new"             element={<NewLecturePage />} />
+          <Route path="/library/expert/:lectureRoomId"  element={<ExpertLectureDetail />} />
+          <Route path="/library/expert/:lectureRoomId/edit"
+                 element={<EditLecturePage />} />
+          <Route path="/library/expert/:lectureRoomId/chapters"
+                 element={<ManageChaptersPage />} />
 
-        {/* ─── 그 외 모든 경로 → 루트 ─── */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* ─── 관리자 페이지 ─── */}
+          <Route path="/admin/students"
+                 element={<MembershipManagementPage />} />
+
+          {/* ─── 결제 ─── */}
+          <Route path="/pay"           element={<PayPage />}        />
+          <Route path="/pay/success"   element={<PaySuccessPage />} />
+
+          {/* ─── 그 외 모든 경로 → 루트 ─── */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
   );
 }
