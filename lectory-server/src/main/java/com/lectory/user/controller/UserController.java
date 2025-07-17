@@ -36,4 +36,10 @@ public class UserController {
         return ResponseEntity.ok("회원 정보가 수정되었습니다.");
     }
 
+    @DeleteMapping("/mypage")
+    public ResponseEntity<String> deleteMyInfo(@AuthenticationPrincipal CustomUserDetail userDetail){
+        userService.deleteUser(userDetail.getUser().getUserId());
+        return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
+    }
+
 }
