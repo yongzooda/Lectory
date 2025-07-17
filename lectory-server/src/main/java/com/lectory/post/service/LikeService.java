@@ -6,33 +6,37 @@ import com.lectory.common.domain.Like;
 import com.lectory.common.domain.LikeTarget;
 import com.lectory.common.domain.user.User;
 import com.lectory.post.repository.LikeRepository;
+import com.lectory.post.repository.PostRepository;
 import com.lectory.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class LikeService {
 
     private final LikeRepository likeRepository;
+    private final PostRepository postRepository;
     private final UserRepository userRepository;
 
     @Transactional
-    public void create(LikeTarget target, Long targetId, Long userId) {
-        if (likeRepository.existsByTargetAndTargetIdAndUser_UserId(target, targetId, userId)) {
-            throw new RuntimeException("이미 좋아요를 누른 대상입니다.");
+    public void toggle(LikeTarget targetType, Long targetId, Long userId) {
+        Optional<Like> existingLike = likeRepository.findByTargetAndTargetIdAndUser_UserId(
+                targetType, targetId, userId
+        );
+
+        if (existingLike.isPresent()) {
+            likeRepository.delete(existingLike.get());
+        } else {
+            Like like = Like.builder()
+                    .target(targetType)
+                    .targetId(targetId)
+                    .user(userRepository.getReferenceById(userId))
+                    .build();
+            likeRepository.save(like);
         }
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        Like like = Like.builder()
-                .target(target)
-                .targetId(targetId)
-                .user(user)
-                .build();
-
-        likeRepository.save(like);
     }
 }

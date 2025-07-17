@@ -26,7 +26,7 @@ public class LikeController {
             @AuthenticationPrincipal CustomUserDetail userDetail) {
 
         Long userId = userDetail.getUser().getUserId();
-        likeService.create(LikeTarget.POST, postId, userId);
+        likeService.toggle(LikeTarget.POST, postId, userId);
         return ResponseEntity.ok().build();
     }
 }
