@@ -1,5 +1,5 @@
 // lectory-client/src/components/library/LectureCard.jsx
-import React from 'react';
+import React from "react";
 
 /**
  * 강의실 카드 – 라이브러리 목록/grid 전용
@@ -10,6 +10,7 @@ import React from 'react';
  *  • expertName       : String
  *  • enrollmentCount  : Number
  *  • isPaid           : Boolean
+ *  • tags             : Array<string>
  *  • onClick()        : 클릭 핸들러 (필수)
  */
 const LectureCard = ({
@@ -18,22 +19,28 @@ const LectureCard = ({
   expertName,
   enrollmentCount = 0,
   isPaid = false,
+  tags = [],
   onClick,
 }) => {
   return (
     <div
-      className="cursor-pointer border rounded-lg overflow-hidden shadow hover:shadow-md transition"
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={(e) => e.key === "Enter" && onClick?.()}
+      className="cursor-pointer rounded-xl overflow-hidden bg-white shadow
+                 hover:shadow-lg hover:-translate-y-1 transition-transform duration-150"
     >
       {/* ── 썸네일 ── */}
       {thumbnail ? (
         <img
           src={thumbnail}
           alt={title}
-          className="w-full h-40 object-cover"
+          loading="lazy"
+          className="w-full aspect-video object-cover"
         />
       ) : (
-        <div className="w-full h-40 flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
+        <div className="w-full aspect-video flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
           No Image
         </div>
       )}
@@ -42,11 +49,26 @@ const LectureCard = ({
       <div className="p-4 space-y-1">
         <h3 className="text-base font-semibold line-clamp-2">{title}</h3>
 
+        {/* 태그 뱃지 */}
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-1">
+            {tags.map((t) => (
+              <span
+                key={t}
+                className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded
+                           max-w-[96px] truncate"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
+
         <p className="text-sm text-gray-600">강사: {expertName}</p>
         <p className="text-sm text-gray-600">수강생: {enrollmentCount}</p>
 
         {isPaid && (
-          <span className="inline-block mt-1 px-2 py-0.5 bg-rose-100 text-rose-700 text-xs rounded">
+          <span className="inline-block mt-1 px-2 py-0.5 bg-rose-500/10 text-rose-600 text-xs rounded">
             유료
           </span>
         )}

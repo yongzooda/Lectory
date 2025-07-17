@@ -34,11 +34,11 @@ public class ExpertLibraryController {
         );
     }
 
-    /* 2) 내 강의 검색 (제목 / 태그) */
+    /* 2) 내 강의 검색 (제목·태그) */
     @GetMapping("/search")
     public ResponseEntity<PageDto<LectureRoomSummaryDto>> search(
             @RequestParam Long expertId,
-            @RequestParam String keyword,
+            @RequestParam(required = false, defaultValue = "") String keyword,
             @RequestParam(required = false) List<String> tags,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

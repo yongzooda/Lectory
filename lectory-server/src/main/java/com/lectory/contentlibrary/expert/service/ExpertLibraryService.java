@@ -25,16 +25,19 @@ public class ExpertLibraryService {
     private final LectureCommentRepository commentRepo;
     private final MembershipRepository     membershipRepo;
     private final UserRepository           userRepo;
-    private final ExpertRepository expertRepo;
+    private final ExpertRepository         expertRepo;
 
     private static final DateTimeFormatter ISO_FMT =
             DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
-    /* 1) 내 강의 목록 */
+    /* ────────────────────────────────────────────────────────────────
+     * 1) 내 강의 목록 (전체)
+     * ---------------------------------------------------------------- */
     public PageDto<LectureRoomSummaryDto> listMyLectures(
             Long expertId, int page, int size, String sort) {
 
         Pageable pg = toPageable(page, size, sort);
+
         return PageDto.of(
                 lectureRoomRepo
                         .findByExpertUserUserId(expertId, pg)
@@ -42,32 +45,45 @@ public class ExpertLibraryService {
         );
     }
 
-    /* 2) 내 강의 검색 (제목·태그) */
+    /* ────────────────────────────────────────────────────────────────
+     * 2) 내 강의 검색 (키워드·태그)
+     * ---------------------------------------------------------------- */
     public PageDto<LectureRoomSummaryDto> searchMyLectures(
             Long expertId, String keyword, List<String> tags,
             int page, int size, String sort) {
 
         Pageable pg = toPageable(page, size, sort);
-        Page<LectureRoom> rooms = (tags != null && !tags.isEmpty())
-                ? lectureRoomRepo.findByExpertAndLectureTagNames(expertId, tags, pg)
-                : lectureRoomRepo.findByExpertUserUserIdAndTitleContainingIgnoreCase(
-                expertId, keyword, pg);
+
+        boolean hasTags    = tags != null && !tags.isEmpty();
+        boolean hasKeyword = keyword != null && !keyword.isBlank();
+
+        Page<LectureRoom> rooms;
+        if (hasTags && hasKeyword) {                              // 태그 + 키워드
+            rooms = lectureRoomRepo.searchByExpertAndTagAndKeyword(
+                    expertId, keyword, tags, pg);
+        } else if (hasTags) {                                     // 태그만
+            rooms = lectureRoomRepo.findByExpertAndLectureTagNames(
+                    expertId, tags, pg);
+        } else {                                                  // 키워드만
+            rooms = lectureRoomRepo
+                    .findByExpertUserUserIdAndTitleContainingIgnoreCase(
+                            expertId, keyword, pg);
+        }
 
         return PageDto.of(rooms.map(this::toSummary));
     }
 
-    /* 3) 강의실 상세 (전문가) */
+    /* ────────────────────────────────────────────────────────────────
+     * 3) 강의실 상세 (전문가)
+     * ---------------------------------------------------------------- */
     public LectureDetailDto getLectureDetailForExpert(Long lectureRoomId, Long expertId) {
 
-        // ① 소유 확인
         LectureRoom room = fetchOwnedRoom(expertId, lectureRoomId);
 
-        // ② 챕터 엔티티 조회
-        List<Lecture> chapterEntities =
-                lectureRepo.findByLectureRoom_LectureRoomIdOrderByOrderNumAsc(lectureRoomId);
-
-        // ③ 엔티티 → DTO 변환
-        List<ChapterDto> chapters = chapterEntities.stream()
+        /* 챕터 목록 → DTO */
+        List<ChapterDto> chapters = lectureRepo
+                .findByLectureRoom_LectureRoomIdOrderByOrderNumAsc(lectureRoomId)
+                .stream()
                 .map(l -> new ChapterDto(
                         l.getLectureId(),
                         l.getChapterName(),
@@ -75,13 +91,12 @@ public class ExpertLibraryService {
                         l.getOrderNum(),
                         l.getVideoUrl()
                 ))
-                .toList(); // (Java 16+)  ─ Java 8이면 Collectors.toList()
+                .toList();
 
-        // ④ 댓글, 수강생 수
-        List<CommentDto> comments   = listComments(lectureRoomId);
-        int enrolledCnt             = membershipRepo.findByLectureRoomId(lectureRoomId).size();
+        /* 댓글 + 수강생 수 */
+        List<CommentDto> comments = listComments(lectureRoomId);
+        int enrolledCnt = membershipRepo.findByLectureRoomId(lectureRoomId).size();
 
-        // ⑤ DTO 빌드
         return LectureDetailDto.builder()
                 .lectureRoomId(room.getLectureRoomId())
                 .title(room.getTitle())
@@ -92,23 +107,22 @@ public class ExpertLibraryService {
                 .createdAt(room.getCreatedAt().format(ISO_FMT))
                 .updatedAt(room.getUpdatedAt().format(ISO_FMT))
                 .enrollmentCount(enrolledCnt)
-                .chapters(chapters)          // ← 변환된 DTO 리스트 전달
+                .chapters(chapters)
                 .lectureComments(comments)
-                .isEnrolled(true)            // 전문가 본인은 항상 true
+                .isEnrolled(true)       // 전문가 본인은 항상 수강 상태
                 .build();
     }
 
-
-    /* 4) 강의실 신규 생성 (Expert PK 사용) */
+    /* ────────────────────────────────────────────────────────────────
+     * 4) 강의실 신규 생성
+     * ---------------------------------------------------------------- */
     public Long createLecture(LectureCreateRequestDto req) {
 
-        // 1. Expert 엔티티 직접 조회 (PK = expertId)
         Expert expert = expertRepo.findById(req.getExpertId())
                 .orElseThrow(() -> new IllegalArgumentException("전문가 계정을 찾을 수 없습니다."));
 
-        // 2. LectureRoom 생성
         LectureRoom room = LectureRoom.builder()
-                .expert(expert)                         // 이미 관리 상태 엔티티
+                .expert(expert)
                 .coverImageUrl(req.getThumbnail())
                 .title(req.getTitle())
                 .description(req.getDescription())
@@ -120,8 +134,6 @@ public class ExpertLibraryService {
         // TODO: 태그 저장 로직
         return room.getLectureRoomId();
     }
-
-
 
     /* 5) 강의 수정 */
     public void updateLecture(Long expertId, Long roomId, LectureUpdateRequestDto req) {
@@ -187,7 +199,8 @@ public class ExpertLibraryService {
                 .collect(Collectors.toList());
     }
 
-    /* ----- helpers ------------------------------------------------ */
+    /* ────────────────────────── private helpers ─────────────────── */
+
     private LectureRoom fetchOwnedRoom(Long expertId, Long roomId) {
         LectureRoom room = lectureRoomRepo.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의실입니다."));
@@ -220,7 +233,15 @@ public class ExpertLibraryService {
     }
 
     private LectureRoomSummaryDto toSummary(LectureRoom room) {
-        int count = membershipRepo.findByLectureRoomId(room.getLectureRoomId()).size();
+
+        int  count = membershipRepo
+                .findByLectureRoomId(room.getLectureRoomId())
+                .size();
+
+        // ① 태그 이름 리스트 조회
+        List<String> tags = lectureRepo
+                .findDistinctTagNamesByRoomId(room.getLectureRoomId());
+
         return LectureRoomSummaryDto.builder()
                 .lectureRoomId(room.getLectureRoomId())
                 .thumbnail(room.getCoverImageUrl())
@@ -228,7 +249,9 @@ public class ExpertLibraryService {
                 .expertName(room.getExpert().getUser().getNickname())
                 .enrollmentCount(count)
                 .isPaid(room.getIsPaid())
-                .canEnroll(false)
+                .canEnroll(false)   // 전문가 뷰에서만 사용
+                .tags(tags)         // ② Builder에 세팅
                 .build();
     }
+
 }

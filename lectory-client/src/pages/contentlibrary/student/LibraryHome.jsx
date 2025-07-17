@@ -1,24 +1,22 @@
-// lectory-client/src/pages/contentlibrary/student/LibraryHome.jsx
 import React, {
   useCallback,
   useEffect,
   useMemo,
   useState,
-} from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+} from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import {
   listLectureRooms,
   searchLectureRooms,
-  // (선택) 전체 태그 조회 API가 있다면 import
-  // fetchAllTags,
-} from '../../../api/studentApi';
+  fetchAllTags,
+} from "../../../api/studentApi";
 
-import SearchBar    from '../../../components/library/SearchBar';
-import TagFilterBar from '../../../components/library/TagFilterBar';
-import SortDropdown from '../../../components/library/SortDropdown';
-import LectureCard  from '../../../components/library/LectureCard';
-import Pagination   from '../../../components/library/Pagination';
+import SearchBar    from "../../../components/library/SearchBar";
+import TagFilterBar from "../../../components/library/TagFilterBar";
+import SortDropdown from "../../../components/library/SortDropdown";
+import LectureCard  from "../../../components/library/LectureCard";
+import Pagination   from "../../../components/library/Pagination";
 
 /**
  * 수강생용 콘텐츠 라이브러리 메인
@@ -29,36 +27,36 @@ const StudentLibraryHome = () => {
   const [searchParams] = useSearchParams();
   const navigate       = useNavigate();
 
-  const memberId = searchParams.get('memberId') || '';
-  const search   = searchParams.get('search')   || '';
-  const sort     = searchParams.get('sort')     || 'createdAt,desc';
-  const page     = parseInt(searchParams.get('page') || '0',  10);
-  const size     = parseInt(searchParams.get('size') || '10', 10);
+  const memberId = searchParams.get("memberId") || "";
+  const search   = searchParams.get("search")   || "";
+  const sort     = searchParams.get("sort")     || "createdAt,desc";
+  const page     = parseInt(searchParams.get("page") || "0",  10);
+  const size     = parseInt(searchParams.get("size") || "10", 10);
 
   /* tags 는 다중 파라미터 */
-  const tags   = useMemo(() => searchParams.getAll('tags'), [searchParams]);
-  const tagKey = tags.slice().sort().join(',');                  // 의존성 키
+  const tags   = useMemo(() => searchParams.getAll("tags"), [searchParams]);
+  const tagKey = tags.slice().sort().join(",");
 
   /* ─── 상태 ─── */
   const [rooms,    setRooms]    = useState([]);
   const [pageInfo, setPageInfo] = useState(null);
   const [loading,  setLoading]  = useState(true);
-  const [allTags,  setAllTags]  = useState([]);  // 전체 태그 (필터 바용)
+  const [allTags,  setAllTags]  = useState([]);  그
 
   /* ─── 리스트 데이터 로딩 ─── */
   const fetchList = useCallback(async () => {
     setLoading(true);
     try {
-      const params = { memberId, page, size, sort };
-      const res = (search || tags.length)
-        ? await searchLectureRooms({ ...params, search, tags })
-        : await listLectureRooms(params);
+      const base = { memberId, page, size, sort };
+      const res  = (search || tags.length)
+        ? await searchLectureRooms({ ...base, search, tags })
+        : await listLectureRooms(base);
 
       setRooms(res.data.content ?? []);
       setPageInfo(res.data);
     } catch (err) {
       console.error(err);
-      alert('목록을 불러오지 못했습니다.');
+      alert("목록을 불러오지 못했습니다.");
     } finally {
       setLoading(false);
     }
@@ -68,12 +66,11 @@ const StudentLibraryHome = () => {
     fetchList();
   }, [fetchList]);
 
-  /* ─── 태그 풀 로딩 (선택적) ─── */
+  /* ─── 태그 풀 로딩 ─── */
   useEffect(() => {
-    // 백엔드 태그 목록 API가 있다면 호출
-    // fetchAllTags().then((res) => setAllTags(res.data));
-    // 데모용: 하드코딩
-    setAllTags(['React', 'Spring', 'DB', 'AWS']);
+    fetchAllTags()
+      .then((res) => setAllTags(res.data))
+      .catch(console.error);
   }, []);
 
   /* ─── 상세 이동 ─── */
@@ -83,7 +80,7 @@ const StudentLibraryHome = () => {
 
   /* ─── 렌더 ─── */
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8 space-y-10">
       {/* 검색창 */}
       <SearchBar
         memberId={memberId}
@@ -95,7 +92,8 @@ const StudentLibraryHome = () => {
 
       {/* 태그 필터 */}
       <TagFilterBar
-        memberId={memberId}
+        idValue={memberId}
+        idKey="memberId"
         selected={tags}
         allTags={allTags}
         search={search}
@@ -103,7 +101,7 @@ const StudentLibraryHome = () => {
         basePath="/library"
       />
 
-      {/* 정렬 셀렉트 */}
+      {/* 정렬 드롭다운 */}
       <div className="flex justify-end">
         <SortDropdown
           memberId={memberId}
@@ -123,7 +121,7 @@ const StudentLibraryHome = () => {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
             {rooms.map((r) => (
               <LectureCard
                 key={r.lectureRoomId}
@@ -132,6 +130,7 @@ const StudentLibraryHome = () => {
                 expertName={r.expertName}
                 enrollmentCount={r.enrollmentCount}
                 isPaid={r.isPaid}
+                tags={r.tags}
                 onClick={() => goDetail(r.lectureRoomId)}
               />
             ))}

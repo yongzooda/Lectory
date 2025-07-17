@@ -34,7 +34,7 @@ public class StudentLibraryController {
     @GetMapping("/search")
     public ResponseEntity<PageDto<LectureRoomSummaryDto>> search(
             @RequestParam Long memberId,
-            @RequestParam String search,
+            @RequestParam(required = false, defaultValue = "") String search,   // 🔹 변경
             @RequestParam(required = false) List<String> tags,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

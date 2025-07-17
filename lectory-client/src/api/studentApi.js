@@ -25,5 +25,9 @@ export const enroll = ({ lectureRoomId, memberId }) =>
 export const postComment = ({ lectureRoomId, memberId, content }) =>
   api.post(`/library/${lectureRoomId}/comments`, { memberId, content });
 
-/** 6) 태그 풀 (필터 바) */
-export const fetchAllTags = () => api.get('/library/tags');
+/** 6) 태그 풀 (필터 바)  */
+/*  전체 목록:       GET /api/tags
+    접두어 검색(q): GET /api/tags?q=Re  → ["React", …]   */
+export const fetchAllTags = (q = "") =>
+  api.get("/tags", { params: q ? { q } : {} });
+

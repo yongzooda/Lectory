@@ -47,16 +47,36 @@ public class StudentLibraryService {
 
     /* 2) 키워드·태그 검색 */
     public PageDto<LectureRoomSummaryDto> searchLectureRooms(
-            Long memberId, String keyword, List<String> tags,
-            int page, int size, String sort) {
+            Long memberId,
+            String keyword,           // "" 또는 null 가능
+            List<String> tags,        // [] 또는 null 가능
+            int page, int size,
+            String sort) {
 
         Pageable pageable = toPageable(page, size, sort);
-        Page<LectureRoom> rooms = (tags != null && !tags.isEmpty())
-                ? lectureRoomRepo.findByLectureTagNames(tags, pageable)
-                : lectureRoomRepo.findByTitleContainingIgnoreCase(keyword, pageable);
+
+        boolean hasTags = tags != null && !tags.isEmpty();
+        boolean hasKw   = keyword != null && !keyword.isBlank();
+
+        Page<LectureRoom> rooms;
+
+        if (hasTags && hasKw) {
+            // ① 태그 ∩ 키워드 교집합
+            rooms = lectureRoomRepo.searchByKeywordAndLectureTagNames(
+                    keyword, tags, pageable);
+        } else if (hasTags) {
+            // ② 태그만
+            rooms = lectureRoomRepo.findByLectureTagNames(
+                    tags, pageable);
+        } else {
+            // ③ 키워드만 (혹은 아무 조건 없음)
+            rooms = lectureRoomRepo.findByTitleContainingIgnoreCase(
+                    keyword == null ? "" : keyword, pageable);
+        }
 
         return PageDto.of(rooms.map(r -> toSummary(r, memberId)));
     }
+
 
     /* 3) 상세 조회 */
     public LectureDetailDto getLectureDetail(Long memberId, Long lectureRoomId) {
@@ -173,44 +193,62 @@ public class StudentLibraryService {
                 .build();
     }
 
-    /* ───────────────── private helpers ───────────────── */
-
+    /*
+    프런트에서 넘어온 page/size/sort 파라미터를
+     Spring Data JPA 의 Pageable 객체로 변환해 주는 유틸리티.
+     */
     private Pageable toPageable(int page, int size, String sort) {
+
         Sort s;
+
+        // ① "필드,방향" 형태로 들어왔을 때
         if (sort != null && sort.contains(",")) {
             String[] arr = sort.split(",", 2);
             s = Sort.by(Sort.Direction.fromString(arr[1].trim()), arr[0].trim());
+
+            // ② 방향이 생략된 경우(예: "popularity")
         } else if (sort != null && !sort.isEmpty()) {
-            s = Sort.by(sort);
+            s = Sort.by(sort);   // 기본 ASC
+
+            // ③ sort 가 비어 있으면 기본값: createdAt DESC
         } else {
             s = Sort.by("createdAt").descending();
         }
+
+        // ④ 최종 Pageable 반환
         return PageRequest.of(page, size, s);
     }
 
     private LectureRoomSummaryDto toSummary(LectureRoom room, Long memberId) {
 
+        /* 1) 수강 신청 여부 · 수강생 수 */
         boolean enrolled = membershipRepo
                 .findByUserIdAndLectureRoomId(memberId, room.getLectureRoomId())
                 .isPresent();
 
-        int count = membershipRepo.findByLectureRoomId(room.getLectureRoomId()).size();
+        int count = membershipRepo
+                .findByLectureRoomId(room.getLectureRoomId())
+                .size();
 
-        String expertNick = room.getExpert().getUser().getNickname();
+        /* 2) 강의실이 보유한 태그 이름 집계 */
+        List<String> tags = lectureRepo
+                .findDistinctTagNamesByRoomId(room.getLectureRoomId());
 
+        /* 3) DTO 빌드 */
         return LectureRoomSummaryDto.builder()
                 .lectureRoomId(room.getLectureRoomId())
                 .thumbnail(room.getCoverImageUrl())
                 .title(room.getTitle())
-                .expertName(expertNick)
+                .expertName(room.getExpert().getUser().getNickname())
                 .enrollmentCount(count)
                 .isPaid(room.getIsPaid())
                 .canEnroll(!enrolled)
+                .tags(tags)            // ← 추가
                 .build();
     }
 
     /* 사용자가 유료 구독자인지 확인하는 도우미
-       실제 구현은 결제/구독 테이블을 조회하도록 교체하세요. */
+       실제 구현은 결제/구독 테이블을 조회하도록 교체 */
     private boolean userIsPaidSubscriber(Long memberId) {
         // TODO: 구독 정보 확인 로직 (dummy: 항상 false)
         return false;
