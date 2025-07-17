@@ -44,4 +44,4 @@ export const deleteChapter = ({ chapterId, expertId }) =>
   api.delete(`/library/expert/chapters/${chapterId}`, { params: { expertId } });
 
 /* ---- 공통 태그 풀 --------------------------------------------- */
-export const fetchAllTags = () => api.get('/library/tags');
+export const fetchAllTags = () => api.get('/tags');

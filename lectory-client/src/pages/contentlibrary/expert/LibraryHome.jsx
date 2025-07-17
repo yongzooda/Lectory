@@ -1,10 +1,11 @@
-// lectory-client/src/pages/contentlibrary/expert/LibraryHome.jsx
+// lectory-client/src/pages/contentlibrary/expert/ExpertLibraryHome.jsx
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import {
   listMyLectures,
   searchMyLectures,
+  fetchAllTags,                     // 태그 목록 API
 } from '../../../api/expertApi';
 
 import SearchBar    from '../../../components/library/SearchBar';
@@ -23,26 +24,27 @@ const ExpertLibraryHome = () => {
   const navigate       = useNavigate();
 
   const expertId = searchParams.get('expertId') || '';
-  const search   = searchParams.get('keyword')  || '';        // 검색 파라미터 이름을 keyword 로 통일
+  const search   = searchParams.get('search')   || '';
   const sort     = searchParams.get('sort')     || 'createdAt,desc';
   const page     = parseInt(searchParams.get('page') || '0', 10);
   const size     = parseInt(searchParams.get('size') || '10', 10);
 
   /* tags 는 다중 파라미터 */
-  const tags = useMemo(() => searchParams.getAll('tags'), [searchParams]);
+  const tags   = useMemo(() => searchParams.getAll('tags'), [searchParams]);
   const tagKey = tags.slice().sort().join(',');
 
   /* ─── 상태 ─── */
   const [lectures, setLectures] = useState([]);
   const [pageInfo, setPageInfo] = useState(null);
   const [loading,  setLoading]  = useState(true);
-  const [allTags,  setAllTags]  = useState([]);      // TODO: 백엔드 태그 목록 API 연결
+  const [allTags,  setAllTags]  = useState([]);
 
   /* ─── 데이터 로딩 ─── */
   const fetchList = useCallback(async () => {
     setLoading(true);
     try {
       const params = { expertId, page, size, sort };
+
       const res = (search || tags.length)
         ? await searchMyLectures({ ...params, keyword: search, tags })
         : await listMyLectures(params);
@@ -57,11 +59,16 @@ const ExpertLibraryHome = () => {
     }
   }, [expertId, page, size, sort, search, tagKey]);
 
-  useEffect(() => {
-    fetchList();
-  }, [fetchList]);
+  useEffect(() => { fetchList(); }, [fetchList]);
 
-  /* ─── 카드 클릭 ─── */
+  /* ─── 태그 풀 로딩 ─── */
+  useEffect(() => {
+    fetchAllTags()
+      .then(res => setAllTags(res.data))
+      .catch(console.error);
+  }, []);
+
+  /* ─── 상세 이동 ─── */
   const goDetail = (id) => {
     navigate(`/library/expert/${id}?expertId=${expertId}`);
   };
@@ -74,7 +81,7 @@ const ExpertLibraryHome = () => {
   /* ─── 렌더 ─── */
   return (
     <div className="container mx-auto p-6 space-y-8">
-      {/* 헤더 영역 */}
+      {/* 헤더 */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0">
         <h1 className="text-2xl font-bold">내 강의실</h1>
         <button
@@ -93,14 +100,17 @@ const ExpertLibraryHome = () => {
         sort={sort}
         basePath="/library/expert"
       />
+
       <TagFilterBar
-        memberId={expertId}
+        idValue={expertId}
+        idKey="expertId"
         selected={tags}
         allTags={allTags}
         search={search}
         sort={sort}
         basePath="/library/expert"
       />
+
       <div className="flex justify-end">
         <SortDropdown
           memberId={expertId}
@@ -127,6 +137,7 @@ const ExpertLibraryHome = () => {
                 expertName={lec.expertName}
                 enrollmentCount={lec.enrollmentCount}
                 isPaid={lec.isPaid}
+                tags={lec.tags}
                 onClick={() => goDetail(lec.lectureRoomId)}
               />
             ))}
@@ -136,7 +147,7 @@ const ExpertLibraryHome = () => {
             <Pagination
               pageInfo={pageInfo}
               basePath="/library/expert"
-              query={{ expertId, keyword: search, tags, sort }}
+              query={{ expertId, search, tags, sort }}
             />
           )}
         </>
