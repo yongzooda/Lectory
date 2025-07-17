@@ -64,14 +64,14 @@ public class CommentController {
 
     // 좋아요
     @PostMapping("/{commentId}/like")
-    public ResponseEntity<LikeResponseDto> likeComment(@PathVariable Long postId, @PathVariable LikeRequestDto req, @AuthenticationPrincipal CustomUserDetail userDetail) {
+    public ResponseEntity<LikeResponseDto> likeComment(@PathVariable Long postId, @Valid @RequestBody LikeRequestDto req, @AuthenticationPrincipal CustomUserDetail userDetail) {
         LikeResponseDto comment = commentService.likeComment(postId, req, userDetail);
         return ResponseEntity.ok(comment);
     }
 
     // 신고
     @PostMapping("/{commentId}/report")
-    public ResponseEntity<Void> reportComment(@PathVariable ReportRequestDto req, @AuthenticationPrincipal CustomUserDetail userDetail) {
+    public ResponseEntity<Void> reportComment(@Valid @RequestBody ReportRequestDto req, @AuthenticationPrincipal CustomUserDetail userDetail) {
         commentService.reportComment(req, userDetail);
         return ResponseEntity.ok().build();
     }
