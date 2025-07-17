@@ -265,6 +265,10 @@ public class ExpertLibraryService {
     }
 
     private LectureRoomSummaryDto toSummary(LectureRoom room) {
+
+        // 전문가 본인은 항상 “수강중” 처리
+        boolean enrolled = true;
+
         int count = membershipRepo.findByLectureRoomId(room.getLectureRoomId()).size();
         List<String> tags = lectureRepo.findDistinctTagNamesByRoomId(room.getLectureRoomId());
         return LectureRoomSummaryDto.builder()
@@ -274,6 +278,7 @@ public class ExpertLibraryService {
                 .expertName(room.getExpert().getUser().getNickname())
                 .enrollmentCount(count)
                 .isPaid(room.getIsPaid())
+                .isEnrolled(enrolled)
                 .canEnroll(false)
                 .tags(tags)
                 .build();

@@ -10,6 +10,7 @@ import React from "react";
  *  • expertName       : String
  *  • enrollmentCount  : Number
  *  • isPaid           : Boolean
+ *  • isEnrolled       : Boolean  ← 추가 (수강중 여부)
  *  • tags             : Array<string>
  *  • onClick()        : 클릭 핸들러 (필수)
  */
@@ -19,6 +20,7 @@ const LectureCard = ({
   expertName,
   enrollmentCount = 0,
   isPaid = false,
+  isEnrolled = false,   // ← 디폴트 값 추가
   tags = [],
   onClick,
 }) => {
@@ -67,9 +69,17 @@ const LectureCard = ({
         <p className="text-sm text-gray-600">강사: {expertName}</p>
         <p className="text-sm text-gray-600">수강생: {enrollmentCount}</p>
 
+        {/* 유료 뱃지 */}
         {isPaid && (
           <span className="inline-block mt-1 px-2 py-0.5 bg-rose-500/10 text-rose-600 text-xs rounded">
             유료
+          </span>
+        )}
+
+        {/* 수강중 뱃지 */}
+        {isEnrolled && (
+          <span className="inline-block mt-1 px-2 py-0.5 bg-green-500/10 text-green-600 text-xs rounded">
+            수강중
           </span>
         )}
       </div>
