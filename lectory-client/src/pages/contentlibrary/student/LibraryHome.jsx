@@ -41,7 +41,7 @@ const StudentLibraryHome = () => {
   const [rooms,    setRooms]    = useState([]);
   const [pageInfo, setPageInfo] = useState(null);
   const [loading,  setLoading]  = useState(true);
-  const [allTags,  setAllTags]  = useState([]);  그
+  const [allTags,  setAllTags]  = useState([]);
 
   /* ─── 리스트 데이터 로딩 ─── */
   const fetchList = useCallback(async () => {
