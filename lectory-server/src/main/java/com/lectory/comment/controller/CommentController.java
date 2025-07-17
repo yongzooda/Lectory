@@ -2,7 +2,10 @@ package com.lectory.comment.controller;
 
 import com.lectory.comment.dto.CommentRequestDto;
 import com.lectory.comment.dto.CommentResponseDto;
+import com.lectory.comment.dto.LikeResponseDto;
 import com.lectory.comment.service.CommentServiceImpl;
+import com.lectory.post.dto.LikeRequestDto;
+import com.lectory.post.dto.ReportRequestDto;
 import com.lectory.user.security.CustomUserDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/post/{postId}/comment")
+@RequestMapping("/api/post/{postId}/comment")
 public class CommentController {
 
     private final CommentServiceImpl commentService;
@@ -50,5 +53,26 @@ public class CommentController {
     public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable Long postId) {
         List<CommentResponseDto> comments = commentService.getComments(postId);
         return ResponseEntity.ok(comments);
+    }
+
+    // 채택
+    @PostMapping("/{commentId}/accept")
+    public ResponseEntity<CommentResponseDto> acceptComment(@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal CustomUserDetail userDetail) {
+        CommentResponseDto comment = commentService.acceptComment(postId, commentId, userDetail);
+        return ResponseEntity.ok(comment);
+    }
+
+    // 좋아요
+    @PostMapping("/{commentId}/like")
+    public ResponseEntity<LikeResponseDto> likeComment(@PathVariable Long postId, @PathVariable LikeRequestDto req, @AuthenticationPrincipal CustomUserDetail userDetail) {
+        LikeResponseDto comment = commentService.likeComment(postId, req, userDetail);
+        return ResponseEntity.ok(comment);
+    }
+
+    // 신고
+    @PostMapping("/{commentId}/report")
+    public ResponseEntity<Void> reportComment(@PathVariable ReportRequestDto req, @AuthenticationPrincipal CustomUserDetail userDetail) {
+        commentService.reportComment(req, userDetail);
+        return ResponseEntity.ok().build();
     }
 }
