@@ -10,136 +10,335 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * 강의실(LectureRoom) 조회 전용 Repository
- *
- * ────────────────────────── 태그 관련 쿼리 설계 참고 ──────────────────────────
- * • Lecture ― LectureTag(조인 테이블) ― Tag  3단계 구조.
- * • Lecture 엔티티에 tags 필드가 없으므로 JPQL JOIN ON 또는 EXISTS 서브쿼리 사용.
- * ---------------------------------------------------------------------------*/
 @Repository
 public interface LectureRoomRepository extends JpaRepository<LectureRoom, Long> {
 
-    /* ───────────────── 기본 메서드 ───────────────── */
+    // ─── 0) 단건 조회 ────────────────────────────────────────────────────────────
     Optional<LectureRoom> findByLectureRoomId(Long lectureRoomId);
 
-    Page<LectureRoom> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+    // ─── 1) 전체 목록 ────────────────────────────────────────────────────────────
 
-    /* 인기순(수강생 수 DESC) */
+    /** 1-a) 기본: pageable 에 담긴 sort (createdAt DESC 또는 title ASC) 적용 */
+    Page<LectureRoom> findAll(Pageable pageable);
+
+    /** 1-b) 수강자순: 서브쿼리로 enrollment count DESC */
     @Query("""
-SELECT lr
-FROM   LectureRoom lr
-ORDER  BY (
-  SELECT COUNT(m)
-  FROM   Membership m
-  WHERE  m.lectureRoomId = lr.lectureRoomId
-) DESC
-""")
-    Page<LectureRoom> findAllOrderByEnrollmentCountDesc(Pageable pageable);
+      SELECT lr
+      FROM LectureRoom lr
+      ORDER BY (
+        SELECT COUNT(m)
+        FROM Membership m
+        WHERE m.lectureRoomId = lr.lectureRoomId
+      ) DESC
+    """)
+    Page<LectureRoom> findAllByPopularity(Pageable pageable);
 
-    /* ─────────────── 전문가 전용 목록/검색 ─────────────── */
-    Page<LectureRoom> findByExpertUserUserId(Long userId, Pageable pageable);
+    // ─── 2) 키워드(제목 or 전문가명) 검색 ──────────────────────────────────────────
 
-    Page<LectureRoom> findByExpertUserUserIdAndTitleContainingIgnoreCase(
-            Long userId, String keyword, Pageable pageable);
-
-    /** ① 전문가 + 태그 필터 */
+    /** 2-a) 기본 정렬 (pageable.sort 사용) */
     @Query("""
-SELECT lr
-FROM   LectureRoom lr
-WHERE  lr.expert.user.userId = :expertId
-AND    EXISTS (
-  SELECT 1
-  FROM   Lecture         lec
-         JOIN LectureTag lt ON lt.lectureId = lec.lectureId
-         JOIN Tag        t  ON t.tagId      = lt.tagId
-  WHERE  lec.lectureRoom = lr
-  AND    t.name          IN :tags
-)
-""")
-    Page<LectureRoom> findByExpertAndLectureTagNames(
-            @Param("expertId") Long expertId,
-            @Param("tags")     List<String> tags,
-            Pageable pageable);
+      SELECT lr
+      FROM LectureRoom lr
+      JOIN lr.expert e
+      JOIN e.user u
+      WHERE LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
+         OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
+    """)
+    Page<LectureRoom> findByKeyword(
+            @Param("kw") String keyword,
+            Pageable pageable
+    );
 
-    /* ─────────────── 전체 검색/필터 ─────────────── */
-
-    /** ② 전체 + 태그 필터 */
+    /** 2-b) 수강자순 */
     @Query("""
-SELECT lr
-FROM   LectureRoom lr
-WHERE  EXISTS (
-  SELECT 1
-  FROM   Lecture         lec
-         JOIN LectureTag lt ON lt.lectureId = lec.lectureId
-         JOIN Tag        t  ON t.tagId      = lt.tagId
-  WHERE  lec.lectureRoom = lr
-  AND    t.name          IN :tags
-)
-""")
-    Page<LectureRoom> findByLectureTagNames(
+      SELECT lr
+      FROM LectureRoom lr
+      JOIN lr.expert e
+      JOIN e.user u
+      WHERE LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
+         OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
+      ORDER BY (
+        SELECT COUNT(m)
+        FROM Membership m
+        WHERE m.lectureRoomId = lr.lectureRoomId
+      ) DESC
+    """)
+    Page<LectureRoom> findByKeywordByPopularity(
+            @Param("kw") String keyword,
+            Pageable pageable
+    );
+
+    // ─── 3) 태그 검색 ────────────────────────────────────────────────────────────
+
+    /** 3-a) 기본 정렬 (pageable.sort 사용) */
+    @Query("""
+      SELECT lr
+      FROM LectureRoom lr
+      WHERE EXISTS (
+        SELECT 1
+        FROM Lecture lec
+        JOIN LectureTag lt ON lt.lectureId = lec.lectureId
+        JOIN Tag t ON t.tagId = lt.tagId
+        WHERE lec.lectureRoom = lr
+          AND t.name IN :tags
+      )
+    """)
+    Page<LectureRoom> findByTags(
             @Param("tags") List<String> tags,
-            Pageable pageable);
+            Pageable pageable
+    );
 
-    /** ③ 키워드 + 태그 AND 조건 (수강생 화면) */
+    /** 3-b) 수강자순 */
     @Query("""
-SELECT lr
-FROM   LectureRoom lr
-       JOIN lr.expert e
-       JOIN e.user    u
-WHERE  EXISTS (
-  SELECT 1
-  FROM   Lecture         lec
-         JOIN LectureTag lt ON lt.lectureId = lec.lectureId
-         JOIN Tag        t  ON t.tagId      = lt.tagId
-  WHERE  lec.lectureRoom = lr
-  AND    t.name          IN :tags
-)
-AND   (
-       LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
-    OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
-)
-""")
-    Page<LectureRoom> searchByKeywordAndLectureTagNames(
+      SELECT lr
+      FROM LectureRoom lr
+      WHERE EXISTS (
+        SELECT 1
+        FROM Lecture lec
+        JOIN LectureTag lt ON lt.lectureId = lec.lectureId
+        JOIN Tag t ON t.tagId = lt.tagId
+        WHERE lec.lectureRoom = lr
+          AND t.name IN :tags
+      )
+      ORDER BY (
+        SELECT COUNT(m)
+        FROM Membership m
+        WHERE m.lectureRoomId = lr.lectureRoomId
+      ) DESC
+    """)
+    Page<LectureRoom> findByTagsByPopularity(
+            @Param("tags") List<String> tags,
+            Pageable pageable
+    );
+
+    // ─── 4) 키워드 + 태그 검색 ──────────────────────────────────────────────────
+
+    /** 4-a) 기본 정렬 (pageable.sort 사용) */
+    @Query("""
+      SELECT lr
+      FROM LectureRoom lr
+      JOIN lr.expert e
+      JOIN e.user u
+      WHERE EXISTS (
+        SELECT 1
+        FROM Lecture lec
+        JOIN LectureTag lt ON lt.lectureId = lec.lectureId
+        JOIN Tag t ON t.tagId = lt.tagId
+        WHERE lec.lectureRoom = lr
+          AND t.name IN :tags
+      )
+      AND (
+        LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
+        OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
+      )
+    """)
+    Page<LectureRoom> findByKeywordAndTags(
             @Param("kw")   String keyword,
             @Param("tags") List<String> tags,
-            Pageable pageable);
+            Pageable pageable
+    );
 
-    /** ③-B 키워드만 (태그 조건 없음) */
+    /** 4-b) 수강자순 */
     @Query("""
-SELECT lr
-FROM   LectureRoom lr
-       JOIN lr.expert e
-       JOIN e.user    u
-WHERE  LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
-   OR  LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
-""")
-    Page<LectureRoom> searchByKeywordOnly(@Param("kw") String keyword,
-                                          Pageable pageable);
+      SELECT lr
+      FROM LectureRoom lr
+      JOIN lr.expert e
+      JOIN e.user u
+      WHERE EXISTS (
+        SELECT 1
+        FROM Lecture lec
+        JOIN LectureTag lt ON lt.lectureId = lec.lectureId
+        JOIN Tag t ON t.tagId = lt.tagId
+        WHERE lec.lectureRoom = lr
+          AND t.name IN :tags
+      )
+      AND (
+        LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
+        OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
+      )
+      ORDER BY (
+        SELECT COUNT(m)
+        FROM Membership m
+        WHERE m.lectureRoomId = lr.lectureRoomId
+      ) DESC
+    """)
+    Page<LectureRoom> findByKeywordAndTagsByPopularity(
+            @Param("kw")   String keyword,
+            @Param("tags") List<String> tags,
+            Pageable pageable
+    );
 
-    /** ④ 전문가 + 키워드 + 태그 AND 조건 */
+    // ─── 5) 전문가 전용 목록 ─────────────────────────────────────────────────────
+
+    /** 5-a) 내 전체 강의 (pageable.sort 로 createdAt DESC 또는 title ASC) */
+    Page<LectureRoom> findByExpertUserUserId(Long expertId, Pageable pageable);
+
+    /** 5-b) 내 인기순 정렬 강의 */
     @Query("""
-SELECT lr
-FROM   LectureRoom lr
-       JOIN lr.expert e
-       JOIN e.user    u
-WHERE  lr.expert.user.userId = :expertId
-AND    EXISTS (
-  SELECT 1
-  FROM   Lecture         lec
-         JOIN LectureTag lt ON lt.lectureId = lec.lectureId
-         JOIN Tag        t  ON t.tagId      = lt.tagId
-  WHERE  lec.lectureRoom = lr
-  AND    t.name          IN :tags
-)
-AND (
-       LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
-    OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
-)
-""")
-    Page<LectureRoom> searchByExpertAndTagAndKeyword(
+      SELECT lr
+      FROM LectureRoom lr
+      WHERE lr.expert.user.userId = :expertId
+      ORDER BY (
+        SELECT COUNT(m)
+        FROM Membership m
+        WHERE m.lectureRoomId = lr.lectureRoomId
+      ) DESC
+    """)
+    Page<LectureRoom> findByExpertByPopularity(
+            @Param("expertId") Long expertId,
+            Pageable pageable
+    );
+
+    // ─── 6) 전문가 전용 검색(키워드·태그) ─────────────────────────────────────────
+
+    /** 6-a) 키워드만 */
+    @Query("""
+      SELECT lr
+      FROM LectureRoom lr
+      JOIN lr.expert e
+      JOIN e.user u
+      WHERE lr.expert.user.userId = :expertId
+        AND (
+          LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
+          OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
+        )
+    """)
+    Page<LectureRoom> findByExpertAndKeyword(
+            @Param("expertId") Long expertId,
+            @Param("kw")       String keyword,
+            Pageable pageable
+    );
+
+    /** 6-b) 태그만 */
+    @Query("""
+      SELECT lr
+      FROM LectureRoom lr
+      WHERE lr.expert.user.userId = :expertId
+        AND EXISTS (
+          SELECT 1
+          FROM Lecture lec
+          JOIN LectureTag lt ON lt.lectureId = lec.lectureId
+          JOIN Tag t ON t.tagId = lt.tagId
+          WHERE lec.lectureRoom = lr
+            AND t.name IN :tags
+        )
+    """)
+    Page<LectureRoom> findByExpertAndTags(
+            @Param("expertId") Long expertId,
+            @Param("tags")     List<String> tags,
+            Pageable pageable
+    );
+
+    /** 6-c) 키워드+태그 */
+    @Query("""
+      SELECT lr
+      FROM LectureRoom lr
+      JOIN lr.expert e
+      JOIN e.user u
+      WHERE lr.expert.user.userId = :expertId
+        AND EXISTS (
+          SELECT 1
+          FROM Lecture lec
+          JOIN LectureTag lt ON lt.lectureId = lec.lectureId
+          JOIN Tag t ON t.tagId = lt.tagId
+          WHERE lec.lectureRoom = lr
+            AND t.name IN :tags
+        )
+        AND (
+          LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
+          OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
+        )
+    """)
+    Page<LectureRoom> findByExpertAndKeywordAndTags(
             @Param("expertId") Long expertId,
             @Param("kw")       String keyword,
             @Param("tags")     List<String> tags,
-            Pageable pageable);
+            Pageable pageable
+    );
+
+    /** 6-d) 전문가 + 키워드+태그 + 인기순 */
+    @Query("""
+      SELECT lr
+      FROM LectureRoom lr
+      JOIN lr.expert e
+      JOIN e.user u
+      WHERE lr.expert.user.userId = :expertId
+        AND EXISTS (
+          SELECT 1
+          FROM Lecture lec
+          JOIN LectureTag lt ON lt.lectureId = lec.lectureId
+          JOIN Tag t ON t.tagId = lt.tagId
+          WHERE lec.lectureRoom = lr
+            AND t.name IN :tags
+        )
+        AND (
+          LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
+          OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
+        )
+      ORDER BY (
+        SELECT COUNT(m)
+        FROM Membership m
+        WHERE m.lectureRoomId = lr.lectureRoomId
+      ) DESC
+    """)
+    Page<LectureRoom> findByExpertAndKeywordAndTagsByPopularity(
+            @Param("expertId") Long expertId,
+            @Param("kw")       String keyword,
+            @Param("tags")     List<String> tags,
+            Pageable pageable
+    );
+
+    /**
+     * 전문가 + 키워드만 (수강자순)
+     */
+    @Query("""
+      SELECT lr
+      FROM LectureRoom lr
+      JOIN lr.expert e
+      JOIN e.user u
+      WHERE lr.expert.user.userId = :expertId
+        AND (
+          LOWER(lr.title)   LIKE LOWER(CONCAT('%', :kw, '%'))
+          OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :kw, '%'))
+        )
+      ORDER BY (
+        SELECT COUNT(m)
+        FROM Membership m
+        WHERE m.lectureRoomId = lr.lectureRoomId
+      ) DESC
+    """)
+    Page<LectureRoom> findByExpertAndKeywordByPopularity(
+            @Param("expertId") Long expertId,
+            @Param("kw")       String keyword,
+            Pageable pageable
+    );
+
+    /**
+     * 전문가 + 태그만 (수강자순)
+     */
+    @Query("""
+      SELECT lr
+      FROM LectureRoom lr
+      WHERE lr.expert.user.userId = :expertId
+        AND EXISTS (
+          SELECT 1
+          FROM Lecture lec
+            JOIN LectureTag lt ON lt.lectureId = lec.lectureId
+            JOIN Tag t ON t.tagId = lt.tagId
+          WHERE lec.lectureRoom = lr
+            AND t.name IN :tags
+        )
+      ORDER BY (
+        SELECT COUNT(m)
+        FROM Membership m
+        WHERE m.lectureRoomId = lr.lectureRoomId
+      ) DESC
+    """)
+    Page<LectureRoom> findByExpertAndTagsByPopularity(
+            @Param("expertId") Long expertId,
+            @Param("tags")     List<String> tags,
+            Pageable pageable
+    );
+
+
 }

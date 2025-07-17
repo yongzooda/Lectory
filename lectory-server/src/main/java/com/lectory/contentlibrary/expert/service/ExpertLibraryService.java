@@ -30,48 +30,80 @@ public class ExpertLibraryService {
     private static final DateTimeFormatter ISO_FMT =
             DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
-    /* ────────────────────────────────────────────────────────────────
-     * 1) 내 강의 목록 (전체)
-     * ---------------------------------------------------------------- */
+    /**
+     * 1) 내 강의 목록 (최신순 / 수강자순 / 제목순)
+     */
     public PageDto<LectureRoomSummaryDto> listMyLectures(
             Long expertId, int page, int size, String sort) {
 
-        Pageable pg = toPageable(page, size, sort);
+        // 인기순 여부 판단
+        boolean byPopularity = sort != null && sort.startsWith("popularity");
 
-        return PageDto.of(
-                lectureRoomRepo
-                        .findByExpertUserUserId(expertId, pg)
-                        .map(this::toSummary)
-        );
+        // pageable 생성: 인기순이면 Sort 없이, 아니면 toPageable 으로 createdAt/title 정렬
+        Pageable pg = byPopularity
+                ? PageRequest.of(page, size)
+                : toPageable(page, size, sort);
+
+        // 실제 호출: 인기순 전용 메서드 vs. 기본 전체 목록 메서드
+        Page<LectureRoom> rooms = byPopularity
+                ? lectureRoomRepo.findByExpertByPopularity(expertId, pg)
+                : lectureRoomRepo.findByExpertUserUserId(expertId, pg);
+
+        return PageDto.of(rooms.map(this::toSummary));
     }
 
-    /* ────────────────────────────────────────────────────────────────
-     * 2) 내 강의 검색 (키워드·태그)
-     * ---------------------------------------------------------------- */
+    /**
+     * 2) 내 강의 검색 (키워드·태그 + 최신순/수강자순/제목순)
+     */
     public PageDto<LectureRoomSummaryDto> searchMyLectures(
-            Long expertId, String keyword, List<String> tags,
-            int page, int size, String sort) {
+            Long expertId,
+            String keyword,
+            List<String> tags,
+            int page,
+            int size,
+            String sort) {
 
-        Pageable pg = toPageable(page, size, sort);
+        boolean hasTags     = tags    != null && !tags.isEmpty();
+        boolean hasKeyword  = keyword != null && !keyword.isBlank();
+        boolean byPopularity = sort   != null && sort.startsWith("popularity");
 
-        boolean hasTags    = tags != null && !tags.isEmpty();
-        boolean hasKeyword = keyword != null && !keyword.isBlank();
+        // ① Pageable 생성
+        Pageable pg = byPopularity
+                ? PageRequest.of(page, size)
+                : toPageable(page, size, sort);
 
         Page<LectureRoom> rooms;
-        if (hasTags && hasKeyword) {                              // 태그 + 키워드
-            rooms = lectureRoomRepo.searchByExpertAndTagAndKeyword(
+
+        if (hasTags && hasKeyword) {
+            // 키워드 + 태그
+            rooms = byPopularity
+                    ? lectureRoomRepo.findByExpertAndKeywordAndTagsByPopularity(
+                    expertId, keyword, tags, pg)
+                    : lectureRoomRepo.findByExpertAndKeywordAndTags(
                     expertId, keyword, tags, pg);
-        } else if (hasTags) {                                     // 태그만
-            rooms = lectureRoomRepo.findByExpertAndLectureTagNames(
-                    expertId, tags, pg);
-        } else {                                                  // 키워드만
-            rooms = lectureRoomRepo
-                    .findByExpertUserUserIdAndTitleContainingIgnoreCase(
-                            expertId, keyword, pg);
+
+        } else if (hasTags) {
+            // 태그만
+            rooms = byPopularity
+                    ? lectureRoomRepo.findByExpertAndTagsByPopularity(expertId, tags, pg)
+                    : lectureRoomRepo.findByExpertAndTags(expertId, tags, pg);
+
+        } else if (hasKeyword) {
+            // 키워드만 (제목 or 닉네임)
+            rooms = byPopularity
+                    ? lectureRoomRepo.findByExpertAndKeywordByPopularity(expertId, keyword, pg)
+                    : lectureRoomRepo.findByExpertAndKeyword(expertId, keyword, pg);
+
+        } else {
+            // 필터 없음
+            rooms = byPopularity
+                    ? lectureRoomRepo.findByExpertByPopularity(expertId, pg)
+                    : lectureRoomRepo.findByExpertUserUserId(expertId, pg);
         }
 
         return PageDto.of(rooms.map(this::toSummary));
     }
+
 
     /* ────────────────────────────────────────────────────────────────
      * 3) 강의실 상세 (전문가)
@@ -225,23 +257,16 @@ public class ExpertLibraryService {
             String[] arr = sort.split(",", 2);
             s = Sort.by(Sort.Direction.fromString(arr[1].trim()), arr[0].trim());
         } else if (sort != null && !sort.isEmpty()) {
-            s = Sort.by(sort);
+            s = Sort.by(sort);   // 기본 ASC
         } else {
-            s = Sort.by("createdAt").descending();
+            s = Sort.by("createdAt").descending();  // 최신순 기본
         }
         return PageRequest.of(page, size, s);
     }
 
     private LectureRoomSummaryDto toSummary(LectureRoom room) {
-
-        int  count = membershipRepo
-                .findByLectureRoomId(room.getLectureRoomId())
-                .size();
-
-        // ① 태그 이름 리스트 조회
-        List<String> tags = lectureRepo
-                .findDistinctTagNamesByRoomId(room.getLectureRoomId());
-
+        int count = membershipRepo.findByLectureRoomId(room.getLectureRoomId()).size();
+        List<String> tags = lectureRepo.findDistinctTagNamesByRoomId(room.getLectureRoomId());
         return LectureRoomSummaryDto.builder()
                 .lectureRoomId(room.getLectureRoomId())
                 .thumbnail(room.getCoverImageUrl())
@@ -249,8 +274,8 @@ public class ExpertLibraryService {
                 .expertName(room.getExpert().getUser().getNickname())
                 .enrollmentCount(count)
                 .isPaid(room.getIsPaid())
-                .canEnroll(false)   // 전문가 뷰에서만 사용
-                .tags(tags)         // ② Builder에 세팅
+                .canEnroll(false)
+                .tags(tags)
                 .build();
     }
 

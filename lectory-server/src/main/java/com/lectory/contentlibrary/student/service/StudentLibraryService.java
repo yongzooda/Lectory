@@ -28,65 +28,82 @@ public class StudentLibraryService {
     private static final DateTimeFormatter ISO_FMT =
             DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
-    /* ───────────────────────────────────────────────────────────────
-     * 1) 전체 목록 (최신순 / 인기순)
-     * ---------------------------------------------------------------- */
+    /**
+     * 1) 전체 목록 (최신순 / 수강자순 / 제목순)
+     */
     public PageDto<LectureRoomSummaryDto> listLectureRooms(
             Long memberId, int page, int size, String sort) {
 
-        Pageable pageable  = toPageable(page, size, sort);
-        boolean byPop      = pageable.getSort().stream()
-                .anyMatch(o -> o.getProperty().equals("popularity"));
+        boolean byPopularity = sort != null && sort.startsWith("popularity");
 
-        Page<LectureRoom> rooms = byPop
-                ? lectureRoomRepo.findAllOrderByEnrollmentCountDesc(pageable)
-                : lectureRoomRepo.findAll(pageable);
+        // 인기순이면 Sort 없이, 그 외엔 createdAt 혹은 title 기준 Sort 포함
+        Pageable pg = byPopularity
+                ? PageRequest.of(page, size)
+                : toPageable(page, size, sort);
+
+        Page<LectureRoom> rooms = byPopularity
+                ? lectureRoomRepo.findAllByPopularity(pg)
+                : lectureRoomRepo.findAll(pg);
 
         return PageDto.of(rooms.map(r -> toSummary(r, memberId)));
     }
 
-    /* 2) 키워드·태그 검색 */
+    /**
+     * 2) 키워드·태그 검색 (최신순 / 수강자순 / 제목순)
+     */
     public PageDto<LectureRoomSummaryDto> searchLectureRooms(
-            Long memberId, String keyword, List<String> tags,
-            int page, int size, String sort) {
+            Long memberId,
+            String keyword,
+            List<String> tags,
+            int page, int size,
+            String sort) {
 
-        Pageable pageable = toPageable(page, size, sort);
-
+        boolean byPopularity = sort != null && sort.startsWith("popularity");
         boolean hasTags = tags != null && !tags.isEmpty();
         boolean hasKw   = keyword != null && !keyword.isBlank();
 
+        // 인기순이면 Sort 없이, 그 외엔 createdAt 혹은 title 기준 Sort 포함
+        Pageable pg = byPopularity
+                ? PageRequest.of(page, size)
+                : toPageable(page, size, sort);
+
         Page<LectureRoom> rooms;
 
-        if (hasTags && hasKw) {                 // ① 태그 ∩ 키워드
-            rooms = lectureRoomRepo
-                    .searchByKeywordAndLectureTagNames(keyword, tags, pageable);
+        if (hasTags && hasKw) {
+            // 키워드 + 태그
+            rooms = byPopularity
+                    ? lectureRoomRepo.findByKeywordAndTagsByPopularity(keyword, tags, pg)
+                    : lectureRoomRepo.findByKeywordAndTags(keyword, tags, pg);
 
-        } else if (hasTags) {                   // ② 태그만
-            rooms = lectureRoomRepo
-                    .findByLectureTagNames(tags, pageable);
+        } else if (hasTags) {
+            // 태그만
+            rooms = byPopularity
+                    ? lectureRoomRepo.findByTagsByPopularity(tags, pg)
+                    : lectureRoomRepo.findByTags(tags, pg);
 
-        } else if (hasKw) {                     // ③ 키워드만 ★
-            rooms = lectureRoomRepo
-                    .searchByKeywordOnly(keyword, pageable);
+        } else if (hasKw) {
+            // 키워드만
+            rooms = byPopularity
+                    ? lectureRoomRepo.findByKeywordByPopularity(keyword, pg)
+                    : lectureRoomRepo.findByKeyword(keyword, pg);
 
-        } else {                                // ④ 조건 없음
-            rooms = lectureRoomRepo
-                    .findAll(pageable);
+        } else {
+            // 조건 없음
+            rooms = byPopularity
+                    ? lectureRoomRepo.findAllByPopularity(pg)
+                    : lectureRoomRepo.findAll(pg);
         }
 
         return PageDto.of(rooms.map(r -> toSummary(r, memberId)));
     }
 
-
-
-    /* 3) 상세 조회 */
+    /**
+     * 3) 상세 조회
+     */
     public LectureDetailDto getLectureDetail(Long memberId, Long lectureRoomId) {
-
         LectureRoom room = lectureRoomRepo.findByLectureRoomId(lectureRoomId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("존재하지 않는 강의실: " + lectureRoomId));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의실: " + lectureRoomId));
 
-        /* ── 챕터 → DTO ── */
         List<ChapterDto> chapters = lectureRepo
                 .findByLectureRoom_LectureRoomIdOrderByOrderNumAsc(lectureRoomId)
                 .stream()
@@ -99,7 +116,6 @@ public class StudentLibraryService {
                 ))
                 .collect(Collectors.toList());
 
-        /* ── 댓글 → DTO ── */
         List<CommentDto> comments = commentRepo.findAllByLectureRoomId(lectureRoomId)
                 .stream()
                 .map(c -> {
@@ -119,8 +135,7 @@ public class StudentLibraryService {
                 .findByUserIdAndLectureRoomId(memberId, lectureRoomId)
                 .isPresent();
 
-        int enrolledCnt = membershipRepo
-                .findByLectureRoomId(lectureRoomId).size();
+        int enrolledCnt = membershipRepo.findByLectureRoomId(lectureRoomId).size();
 
         return LectureDetailDto.builder()
                 .lectureRoomId(room.getLectureRoomId())
@@ -194,48 +209,29 @@ public class StudentLibraryService {
                 .build();
     }
 
-    /*
-    프런트에서 넘어온 page/size/sort 파라미터를
-     Spring Data JPA 의 Pageable 객체로 변환해 주는 유틸리티.
+    /**
+     * Pageable 생성 유틸: sort 파라미터를 "필드,방향" 으로 파싱
+     * (예: "createdAt,desc", "title,asc")
      */
     private Pageable toPageable(int page, int size, String sort) {
-
         Sort s;
-
-        // ① "필드,방향" 형태로 들어왔을 때
         if (sort != null && sort.contains(",")) {
             String[] arr = sort.split(",", 2);
             s = Sort.by(Sort.Direction.fromString(arr[1].trim()), arr[0].trim());
-
-            // ② 방향이 생략된 경우(예: "popularity")
         } else if (sort != null && !sort.isEmpty()) {
-            s = Sort.by(sort);   // 기본 ASC
-
-            // ③ sort 가 비어 있으면 기본값: createdAt DESC
+            s = Sort.by(sort);  // 단일 필드, ASC
         } else {
-            s = Sort.by("createdAt").descending();
+            s = Sort.by("createdAt").descending();  // 기본 최신순
         }
-
-        // ④ 최종 Pageable 반환
         return PageRequest.of(page, size, s);
     }
 
     private LectureRoomSummaryDto toSummary(LectureRoom room, Long memberId) {
-
-        /* 1) 수강 신청 여부 · 수강생 수 */
         boolean enrolled = membershipRepo
                 .findByUserIdAndLectureRoomId(memberId, room.getLectureRoomId())
                 .isPresent();
-
-        int count = membershipRepo
-                .findByLectureRoomId(room.getLectureRoomId())
-                .size();
-
-        /* 2) 강의실이 보유한 태그 이름 집계 */
-        List<String> tags = lectureRepo
-                .findDistinctTagNamesByRoomId(room.getLectureRoomId());
-
-        /* 3) DTO 빌드 */
+        int count = membershipRepo.findByLectureRoomId(room.getLectureRoomId()).size();
+        List<String> tags = lectureRepo.findDistinctTagNamesByRoomId(room.getLectureRoomId());
         return LectureRoomSummaryDto.builder()
                 .lectureRoomId(room.getLectureRoomId())
                 .thumbnail(room.getCoverImageUrl())
@@ -244,7 +240,7 @@ public class StudentLibraryService {
                 .enrollmentCount(count)
                 .isPaid(room.getIsPaid())
                 .canEnroll(!enrolled)
-                .tags(tags)            // ← 추가
+                .tags(tags)
                 .build();
     }
 
