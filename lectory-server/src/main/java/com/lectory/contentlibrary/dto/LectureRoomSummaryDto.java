@@ -19,6 +19,7 @@ public class LectureRoomSummaryDto {
     private final String expertName;
     private final Integer enrollmentCount;
     private final Boolean isPaid;
+    private boolean isEnrolled;   // ← 새로 추가
     private final Boolean canEnroll;
     private List<String> tags;
 
