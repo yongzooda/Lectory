@@ -18,14 +18,15 @@ import CommentSection from '../../../components/detail/CommentSection';
  * URL: /library/:lectureRoomId?memberId=#
  */
 const StudentLectureDetail = () => {
-  const { lectureRoomId }  = useParams();
-  const [searchParams]     = useSearchParams();
-  const memberId           = searchParams.get('memberId');
-  const navigate           = useNavigate();
+  const { lectureRoomId }    = useParams();
+  const [searchParams]       = useSearchParams();
+  const memberId             = searchParams.get('memberId');
+  const navigate             = useNavigate();
 
-  const [detail, setDetail] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [detail, setDetail]  = useState(null);
+  const [loading, setLoading]= useState(true);
 
+  // 상세 데이터 로드
   const fetchDetail = useCallback(async () => {
     setLoading(true);
     try {
@@ -43,16 +44,31 @@ const StudentLectureDetail = () => {
     fetchDetail();
   }, [fetchDetail]);
 
+  // 수강신청 핸들러
   const handleEnroll = async () => {
     try {
+      // 1) 수강신청 API 호출
       await enroll({ lectureRoomId, memberId });
-      navigate(`/library/${lectureRoomId}/enroll-result?memberId=${memberId}`);
+
+      // 2) 성공 시, 상세 데이터를 다시 가져와서 "수강중" UI로 전환
+      await fetchDetail();
     } catch (err) {
+      const status = err.response?.status;
+      const data   = err.response?.data || {};
+
+      // 3) 402 결제 필요 & paymentUrl 이면 결제 페이지로 리다이렉트
+      if (status === 402 && data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+        return;
+      }
+
+      // 4) 그 외 오류
       console.error(err);
-      alert(err.response?.data?.message || '수강신청 실패');
+      alert(data.message || '수강신청 실패');
     }
   };
 
+  // 댓글 등록 핸들러
   const handleAddComment = async (content) => {
     try {
       await postComment({ lectureRoomId, memberId, content });
@@ -87,7 +103,7 @@ const StudentLectureDetail = () => {
         </div>
       )}
 
-      {/* ── 강의 전체 태그 ── */}
+      {/* ── 전체 태그 ── */}
       {detail.tags && detail.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-4">
           {detail.tags.map((tag) => (

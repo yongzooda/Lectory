@@ -294,7 +294,7 @@ public class ExpertLibraryService {
                 .expertName(room.getExpert().getUser().getNickname())
                 .enrollmentCount(count)
                 .isPaid(room.getIsPaid())
-                .isEnrolled(enrolled)
+                .enrolled(enrolled)
                 .canEnroll(false)
                 .tags(tags)
                 .build();
