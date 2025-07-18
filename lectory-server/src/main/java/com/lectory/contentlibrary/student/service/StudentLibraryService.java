@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -186,9 +187,16 @@ public class StudentLibraryService {
                 .ifPresent(m -> { throw new IllegalArgumentException("이미 수강신청된 강의입니다."); });
 
         /* ── 유료 강의실이면 유료 구독자인지 확인 ── */
-        if (room.getIsPaid() && !userIsPaidSubscriber(memberId)) {
-            throw new IllegalArgumentException("유료 구독자 전용 강의입니다.");
-        }
+           if (room.getIsPaid() && !userIsPaidSubscriber(memberId)) {
+               // 결제 페이지로 보낼 URL (프론트 라우팅에 맞춰 조정)
+                           String paymentUrl = "/pay?memberId=" + memberId;
+                   return EnrollResponseDto.builder()
+                                   .success(false)
+                                   .message("유료 구독이 필요합니다.")
+                                   .lectureRoomId(lectureRoomId)
+                                   .paymentUrl(paymentUrl)
+                                   .build();
+               }
 
         Membership m = Membership.builder()
                 .userId(memberId)
@@ -266,10 +274,13 @@ public class StudentLibraryService {
                 .build();
     }
 
-    /* 사용자가 유료 구독자인지 확인하는 도우미
-       실제 구현은 결제/구독 테이블을 조회하도록 교체 */
+    /* 사용자가 유료 구독자인지 확인하는 도우미 */
+    // 수정
     private boolean userIsPaidSubscriber(Long memberId) {
-        // TODO: 구독 정보 확인 로직 (dummy: 항상 false)
-        return false;
+        return userRepo.findById(memberId)
+                .filter(u -> u.getUserType().getUserType().equals("PAID"))
+                .filter(u -> u.getSubscriptionEndDate() != null
+                        && u.getSubscriptionEndDate().isAfter(LocalDateTime.now()))
+                .isPresent();
     }
 }

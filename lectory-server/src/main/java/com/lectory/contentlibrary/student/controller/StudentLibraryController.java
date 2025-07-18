@@ -4,6 +4,7 @@ import com.lectory.contentlibrary.dto.*;
 import com.lectory.contentlibrary.student.service.StudentLibraryService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,10 +64,19 @@ public class StudentLibraryController {
             @PathVariable Long lectureRoomId,
             @RequestBody EnrollRequestDto req
     ) {
-        return ResponseEntity.ok(
-                svc.enroll(req.getMemberId(), lectureRoomId)
-        );
+        EnrollResponseDto dto = svc.enroll(req.getMemberId(), lectureRoomId);
+
+        // 유료 강의실인데 무료 구독자라서 결제가 필요하면 402 + paymentUrl 응답
+        if (!dto.isSuccess() && dto.getPaymentUrl() != null) {
+            return ResponseEntity
+                    .status(HttpStatus.PAYMENT_REQUIRED)     // 402
+                    .body(dto);
+        }
+
+        // 정상 수강신청 완료
+        return ResponseEntity.ok(dto);
     }
+
 
     /** 5) 댓글 작성 */
     @PostMapping("/{lectureRoomId}/comments")
