@@ -102,16 +102,11 @@ public class KakaoPayService {
             LocalDateTime endDate = regularpay.getUser().getSubscriptionEndDate();
 
             if (endDate.isAfter(now.plusMinutes(1))) {
-                System.out.println("아직아님");
                 continue;
             } // 정식배포시 1달 뒤로 설정할 예정
             if (regularpay.isCanceled()) {
                 regularPayService.deleteByUser_UserId(regularpay.getUser().getUserId());
-                User user = regularpay.getUser();
-                UserType userType = user.getUserType();
-                userType.setTypeName("FREE");
-                user.setUserType(userType);
-                userRepository.save(user);
+                userService.cancelSubscription(regularpay.getUser().getUserId());
                 continue;
             }
 
@@ -231,6 +226,7 @@ public class KakaoPayService {
             regularPay.setAid(response.getAid());
             regularPay.setTid(response.getTid());
             regularPay.setSid(response.getSid());
+            regularPay.setCanceled(false);
             regularPayService.save(regularPay);
         }
         return response;
@@ -238,7 +234,6 @@ public class KakaoPayService {
 
     public void kakaopaySubscriptionCancel(Long userId) {
 
-        log.info("정기 결제 취소 요청" + LocalDateTime.now());
         RegularPay regularPay = regularPayService.findByUser_UserId(userId);
         regularPay.setCanceled(true);
         regularPayService.save(regularPay);
