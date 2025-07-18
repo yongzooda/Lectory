@@ -14,4 +14,7 @@ public interface ExpertManageRepository extends JpaRepository<Expert, Long> {
         WHERE u.isDeleted = false
     """)
     List<Expert> findAllActiveExperts();
+
+    @Query("SELECT e FROM Expert e JOIN FETCH e.user u WHERE u.isDeleted = false AND e.approvalStatus = 'PENDING'")
+    List<Expert> findAllPendingExperts();
 }
