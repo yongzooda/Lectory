@@ -268,7 +268,7 @@ public class StudentLibraryService {
                 .expertName(room.getExpert().getUser().getNickname())
                 .enrollmentCount(count)
                 .isPaid(room.getIsPaid())
-                .isEnrolled(enrolled)
+                .enrolled(enrolled)
                 .canEnroll(!enrolled)
                 .tags(tags)
                 .build();
