@@ -1,6 +1,6 @@
 // src/pages/contentlibrary/expert/ManageChapters.jsx
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   getLectureDetail,
   createChapter,
@@ -13,31 +13,27 @@ import DeleteConfirm from '../../../components/expert/DeleteConfirm';
 
 /**
  * 전문가용 – 챕터 관리 페이지
- * URL: /library/expert/:lectureRoomId/chapters?expertId=#
+ * URL: /library/expert/:lectureRoomId/chapters
  *
  * 기능
  *  • 현재 강의실의 모든 챕터를 한눈에 확인
  *  • 챕터 추가 / 수정 / 삭제
  */
 const ManageChaptersPage = () => {
-  const { lectureRoomId }  = useParams();
-  const [searchParams]     = useSearchParams();
-  const expertId           = searchParams.get('expertId');
+  const { lectureRoomId } = useParams();
 
-  /* ─── 상태 ─── */
   const [chapters, setChapters] = useState([]);
-  const [loading,  setLoading]  = useState(true);
+  const [loading, setLoading]   = useState(true);
 
-  /* 현재 수정 대상 */
-  const [editingId,        setEditingId] = useState(null);
-  const [showDeleteModal,  setShowDeleteModal] = useState(false);
-  const [deleteTargetId,   setDeleteTargetId]  = useState(null);
+  const [editingId,       setEditingId]      = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteTargetId,  setDeleteTargetId]  = useState(null);
 
-  /* ─── 데이터 로딩 ─── */
   const fetchChapters = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getLectureDetail({ lectureRoomId, expertId });
+      // 백엔드가 JWT에서 expertId를 꺼내므로 파라미터 없이 호출
+      const res = await getLectureDetail({ lectureRoomId });
       setChapters(res.data.chapters ?? []);
     } catch (err) {
       console.error(err);
@@ -45,44 +41,41 @@ const ManageChaptersPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [lectureRoomId, expertId]);
+  }, [lectureRoomId]);
 
   useEffect(() => {
     fetchChapters();
   }, [fetchChapters]);
 
-  /* ─── CRUD 핸들러 ─── */
   const handleCreate = async (payload) => {
-    await createChapter({ expertId, lectureRoomId, ...payload });
+    await createChapter({ lectureRoomId, ...payload });
     await fetchChapters();
   };
 
   const handleUpdate = async (chapterId, payload) => {
-    await updateChapter({ chapterId, expertId, ...payload });
+    await updateChapter({ chapterId, ...payload });
     setEditingId(null);
     await fetchChapters();
   };
 
   const handleDelete = async () => {
-    await deleteChapter({ chapterId: deleteTargetId, expertId });
+    await deleteChapter({ chapterId: deleteTargetId });
     setShowDeleteModal(false);
     setDeleteTargetId(null);
     await fetchChapters();
   };
 
-  /* ─── 렌더 ─── */
   return (
     <div className="container mx-auto p-8 space-y-10">
       <h1 className="text-2xl font-bold">챕터 관리</h1>
 
-      {/* ── 챕터 리스트 ── */}
       {loading ? (
         <div className="text-center py-20">Loading…</div>
       ) : chapters.length === 0 ? (
         <p className="text-center text-gray-500">등록된 챕터가 없습니다.</p>
       ) : (
         <ul className="space-y-4">
-          {chapters.map((c) =>
+          {chapters.map(c =>
             editingId === c.chapterId ? (
               <li key={c.chapterId} className="border rounded p-4">
                 <ChapterForm
@@ -92,7 +85,7 @@ const ManageChaptersPage = () => {
                     orderNum: c.orderNum,
                     videoUrl: c.videoUrl,
                   }}
-                  onSave={(data) => handleUpdate(c.chapterId, data)}
+                  onSave={data => handleUpdate(c.chapterId, data)}
                   onCancel={() => setEditingId(null)}
                 />
               </li>
@@ -107,7 +100,6 @@ const ManageChaptersPage = () => {
                     예상 시간: {c.expectedTime} · 순서: {c.orderNum}
                   </p>
                 </div>
-
                 <div className="space-x-2">
                   <button
                     onClick={() => setEditingId(c.chapterId)}
@@ -131,13 +123,11 @@ const ManageChaptersPage = () => {
         </ul>
       )}
 
-      {/* ── 새 챕터 추가 ── */}
       <section className="border-t pt-6">
         <h2 className="text-lg font-bold mb-2">새 챕터 추가</h2>
         <ChapterForm onSave={handleCreate} />
       </section>
 
-      {/* ── 삭제 확인 모달 ── */}
       <DeleteConfirm
         open={showDeleteModal}
         message="해당 챕터를 삭제하시겠습니까?"
