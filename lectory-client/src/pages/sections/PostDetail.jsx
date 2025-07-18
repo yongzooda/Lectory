@@ -1,8 +1,68 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Star } from "../../assets/icons/Star";
 import "../../assets/css/postDetail.css";
 
 export const PostDetail = () => {
+
+  const { postId } = useParams(); // URL 파라미터 가져오기
+  const [post, setPost] = useState(null); // 게시글 데이터
+  const [comments, setComments] = useState([]); // 댓글 데이터
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPostAndComments = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          throw new Error("로그인 토큰이 없습니다. 먼저 로그인하세요.");
+        }
+
+        // 게시글 요청
+        const postResponse = await fetch(`/api/posts/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // 토큰 추가
+          "Content-Type": "application/json",
+        },
+      });
+
+        if (!postResponse.ok) {
+          const text = await postResponse.text(); // 응답 내용을 text로 확인
+          console.error("게시글 API 응답:", text);
+          throw new Error("게시글을 불러오는 데 실패했습니다.");
+        }
+        const postData = await postResponse.json();
+
+        // 댓글 요청
+        const commentsResponse = await fetch(`/api/posts/${postId}/comment`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // 토큰 추가
+          "Content-Type": "application/json",
+        },
+      });
+        if (!commentsResponse.ok) {
+          const text = await commentsResponse.text();
+          console.error("댓글 API 응답:", text);
+          throw new Error("댓글을 불러오는 데 실패했습니다.");
+        }
+        const commentsData = await commentsResponse.json();
+
+        // 상태에 데이터 저장
+        setPost(postData);
+        setComments(commentsData);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPostAndComments();
+  }, [postId]);
+
+  if (loading) return <div>로딩 중...</div>;
+  if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
+
   return (
     <div className="postDetail">
       <div className="div-2">
@@ -211,7 +271,7 @@ export const PostDetail = () => {
 
       <div className="overlap-2">
         <div className="div-7">
-          <div className="text-wrapper-20">게시글 제목</div>
+          <div className="text-wrapper-20">{post.title}</div>
 
           <div className="div-8">
             <div className="group-2">
@@ -239,7 +299,7 @@ export const PostDetail = () => {
 
           <div className="div-wrapper-2">
             <p className="text-wrapper-24">
-              게시글 내용 블라블라
+              {post.content}
               <br />
             </p>
           </div>

@@ -48,9 +48,9 @@ export default function App() {
           <Route path="/experts/mypage"   element={<ExpertMyPage/>} />
 
           {/* ─── 게시글 영역 ─── */}
-          <Route path="/"                    element={<PostListPage />}   />
-          <Route path="/post-write"          element={<PostWritePage />}  />
-          <Route path="/post-detail/:postId" element={<PostDetailPage />} />
+          <Route path="/posts"                    element={<PostListPage />}   />
+          <Route path="/posts/write"          element={<PostWritePage />}  />
+          <Route path="/posts/:postId" element={<PostDetailPage />} />
 
           {/* ─── 콘텐츠 라이브러리 · 수강생 ─── */}
           <Route path="/library"                        element={<StudentLibraryHome />} />
