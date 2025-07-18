@@ -71,9 +71,9 @@ public class KakaoPayService {
         body.put("quantity", 1);
         body.put("total_amount", 1000000000);
         body.put("tax_free_amount", 0);
-        body.put("approval_url", "http://localhost:8888/api/pay/success");
-        body.put("cancel_url", "http://localhost:8888/api/pay/cancel");
-        body.put("fail_url", "http://localhost:8888/api/pay/fail");
+        body.put("approval_url", "http://localhost:8080/api/pay/success?userId=" + userId);
+        body.put("cancel_url", "http://localhost:8080/api/pay/cancel");
+        body.put("fail_url", "http://localhost:8080/api/pay/fail");
 
         HttpHeaders headers = getHeader();
         kakaoReadyResponse = restTemplate.postForObject(
@@ -122,9 +122,10 @@ public class KakaoPayService {
             body.put("quantity", 1);
             body.put("total_amount", 1000000000);
             body.put("tax_free_amount", 0);
-            body.put("approval_url", "http://localhost:8888/api/pay/success");
-            body.put("cancel_url", "http://localhost:8888/api/pay/cancel");
-            body.put("fail_url", "http://localhost:8888/api/pay/fail");
+            body.put("approval_url",
+                    "http://localhost:8080/api/pay/success?userId=" + regularpay.getUser().getUserId());
+            body.put("cancel_url", "http://localhost:8080/api/pay/cancel");
+            body.put("fail_url", "http://localhost:8080/api/pay/fail");
 
             HttpHeaders headers = getHeader();
 

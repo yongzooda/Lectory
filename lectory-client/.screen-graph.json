@@ -53,7 +53,7 @@
       "dataModelId": "2810:13554"
     },
     {
-      "id": "src/pages/contentlibrary/student/LibraryHome.jsx",
+      "id": "src/pages/contentlibrary/expert/LibraryHome.jsx",
       "label": "LibraryHome",
       "routes": [
         "/library",
@@ -61,7 +61,7 @@
       ]
     },
     {
-      "id": "src/pages/contentlibrary/student/LectureDetail.jsx",
+      "id": "src/pages/contentlibrary/expert/LectureDetail.jsx",
       "label": "LectureDetail",
       "routes": [
         "/library/:lectureRoomId",
@@ -104,6 +104,20 @@
       ]
     },
     {
+      "id": "src/pages/admin/ExpertApprovalPage.jsx",
+      "label": "ExpertApprovalPage",
+      "routes": [
+        "/admin/expert-approval"
+      ]
+    },
+    {
+      "id": "src/pages/admin/ContentsManagementPage.jsx",
+      "label": "ContentsManagementPage",
+      "routes": [
+        "/admin/contents"
+      ]
+    },
+    {
       "id": "src/pages/pay/PayPage.jsx",
       "label": "PayPage",
       "routes": [
@@ -121,66 +135,66 @@
   ],
   "edges": [
     {
-      "id": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx:85:6-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "source": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "id": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx:96:6-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "source": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "data": {
-        "viaRoute": "/library",
+        "viaRoute": "/library/expert",
         "trigger": {
-          "element": "<SearchBar\n        memberId={memberId}\n        initial={search}\n        tags={tags}\n        sort={sort}\n        basePath=\"/library\"\n      />",
-          "line": 85,
-          "endLine": 91,
-          "column": 6,
-          "endColumn": 8,
-          "sourceFile": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx"
-        }
-      }
-    },
-    {
-      "id": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx:94:6-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "source": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "data": {
-        "viaRoute": "/library",
-        "trigger": {
-          "element": "<TagFilterBar\n        idValue={memberId}\n        idKey=\"memberId\"\n        selected={tags}\n        allTags={allTags}\n        search={search}\n        sort={sort}\n        basePath=\"/library\"\n      />",
-          "line": 94,
+          "element": "<SearchBar\n        memberId={expertId}\n        initial={search}\n        tags={tags}\n        sort={sort}\n        basePath=\"/library/expert\"\n      />",
+          "line": 96,
           "endLine": 102,
           "column": 6,
           "endColumn": 8,
-          "sourceFile": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx"
+          "sourceFile": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx"
         }
       }
     },
     {
-      "id": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx:106:8-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "source": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "id": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx:104:6-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "source": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "data": {
-        "viaRoute": "/library",
+        "viaRoute": "/library/expert",
         "trigger": {
-          "element": "<SortDropdown\n          memberId={memberId}\n          search={search}\n          tags={tags}\n          value={sort}\n          basePath=\"/library\"\n        />",
-          "line": 106,
+          "element": "<TagFilterBar\n        idValue={expertId}\n        idKey=\"expertId\"\n        selected={tags}\n        allTags={allTags}\n        search={search}\n        sort={sort}\n        basePath=\"/library/expert\"\n      />",
+          "line": 104,
           "endLine": 112,
+          "column": 6,
+          "endColumn": 8,
+          "sourceFile": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx:115:8-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "source": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "data": {
+        "viaRoute": "/library/expert",
+        "trigger": {
+          "element": "<SortDropdown\n          memberId={expertId}\n          search={search}\n          tags={tags}\n          value={sort}\n          basePath=\"/library/expert\"\n        />",
+          "line": 115,
+          "endLine": 121,
           "column": 8,
           "endColumn": 10,
-          "sourceFile": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx"
+          "sourceFile": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx"
         }
       }
     },
     {
-      "id": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx:140:12-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "source": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "id": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx:147:12-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "source": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "data": {
-        "viaRoute": "/library",
+        "viaRoute": "/library/expert",
         "trigger": {
-          "element": "<Pagination\n              pageInfo={pageInfo}\n              basePath=\"/library\"\n              query={{ memberId, search, tags, sort }}\n            />",
-          "line": 140,
-          "endLine": 144,
+          "element": "<Pagination\n              pageInfo={pageInfo}\n              basePath=\"/library/expert\"\n              query={{ expertId, search, tags, sort }}\n            />",
+          "line": 147,
+          "endLine": 151,
           "column": 12,
           "endColumn": 14,
-          "sourceFile": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx"
+          "sourceFile": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx"
         }
       }
     }
