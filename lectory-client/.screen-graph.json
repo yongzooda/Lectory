@@ -104,6 +104,20 @@
       ]
     },
     {
+      "id": "src/pages/admin/ExpertApprovalPage.jsx",
+      "label": "ExpertApprovalPage",
+      "routes": [
+        "/admin/expert-approval"
+      ]
+    },
+    {
+      "id": "src/pages/admin/ContentsManagementPage.jsx",
+      "label": "ContentsManagementPage",
+      "routes": [
+        "/admin/contents"
+      ]
+    },
+    {
       "id": "src/pages/pay/PayPage.jsx",
       "label": "PayPage",
       "routes": [
