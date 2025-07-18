@@ -81,7 +81,7 @@
   gap: 16px;
   left: 0;
   padding: 16px 0px;
-  position: absolute;
+  position: relative;
   top: 225px;
   width: 795px;
 }
