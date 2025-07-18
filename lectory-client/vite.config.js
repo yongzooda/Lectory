@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     tailwind(),
-    mode === "development" && screenGraphPlugin()
+    mode === "development" && screenGraphPlugin(),
   ].filter(Boolean),
 
   publicDir: "./static",
@@ -23,11 +23,11 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: false,
       },
-      "/api/pay/ready":{
+      "/api/pay/ready": {
         target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
-      }
-    }
-  }
+      },
+    },
+  },
 }));

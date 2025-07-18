@@ -32,6 +32,8 @@ import ManageChaptersPage   from './pages/contentlibrary/expert/ManageChapters';
 
 /* ─── 관리자 전용 페이지 (다른 개발자 추가) ─── */
 import MembershipManagementPage from './pages/admin/MembershipManagementPage';
+import  ExpertApprovalPage from './pages/admin/ExpertApprovalPage';
+import ContentsManagementPage from './pages/admin/ContentsManagementPage';
 
 export default function App() {
   return (
@@ -70,8 +72,9 @@ export default function App() {
                  element={<ManageChaptersPage />} />
 
           {/* ─── 관리자 페이지 ─── */}
-          <Route path="/admin/students"
-                 element={<MembershipManagementPage />} />
+          <Route path="/admin/students"         element={<MembershipManagementPage />} />
+          <Route path="/admin/expert-approval"  element={<ExpertApprovalPage />} />
+          <Route path="/admin/contents"         element={<ContentsManagementPage />} />
 
           {/* ─── 결제 ─── */}
           <Route path="/pay"           element={<PayPage />}        />
