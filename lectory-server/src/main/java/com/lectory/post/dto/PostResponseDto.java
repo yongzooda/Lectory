@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.lectory.common.domain.post.Post;
+import com.lectory.common.domain.user.User;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -22,10 +23,16 @@ public class PostResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private Long userId;
+    private String userNickname;
+
     public static PostResponseDto fromEntity(Post post) {
         Set<String> tagNames = post.getPostTags().stream()
-                .map(postTag -> postTag.getTag().getName())
+                .map(pt -> pt.getTag().getName())
                 .collect(Collectors.toSet());
+
+        User user = post.getUserId();
+
         return PostResponseDto.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
@@ -35,7 +42,10 @@ public class PostResponseDto {
                 .tags(tagNames)
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
+
+                .userId(user != null ? user.getUserId() : null)
+                .userNickname(user != null ? user.getNickname() : null)
+
                 .build();
     }
-
 }
