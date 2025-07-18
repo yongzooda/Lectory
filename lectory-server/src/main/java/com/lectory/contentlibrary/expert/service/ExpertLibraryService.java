@@ -164,11 +164,10 @@ public class ExpertLibraryService {
     /* ────────────────────────────────────────────────────────────────
      * 4) 강의실 신규 생성
      * ---------------------------------------------------------------- */
-    public Long createLecture(LectureCreateRequestDto req) {
-
-        Expert expert = expertRepo.findById(req.getExpertId())
+    // ── 4) 강의실 신규 생성 ──
+    public Long createLecture(Long expertId, LectureCreateRequestDto req) {
+        Expert expert = expertRepo.findById(expertId)
                 .orElseThrow(() -> new IllegalArgumentException("전문가 계정을 찾을 수 없습니다."));
-
         LectureRoom room = LectureRoom.builder()
                 .expert(expert)
                 .coverImageUrl(req.getThumbnail())
@@ -177,9 +176,7 @@ public class ExpertLibraryService {
                 .fileUrl(req.getFileUrl())
                 .isPaid(req.getIsPaid())
                 .build();
-
         lectureRoomRepo.save(room);
-        // TODO: 태그 저장 로직
         return room.getLectureRoomId();
     }
 
@@ -199,10 +196,9 @@ public class ExpertLibraryService {
         lectureRoomRepo.delete(fetchOwnedRoom(expertId, roomId));
     }
 
-    /* 7) 챕터 신규 생성 */
-    public Long createChapter(ChapterCreateRequestDto req) {
-        LectureRoom room = fetchOwnedRoom(req.getExpertId(), req.getLectureRoomId());
-
+    // ── 7) 챕터 신규 생성 ──
+    public Long createChapter(Long expertId, ChapterCreateRequestDto req) {
+        LectureRoom room = fetchOwnedRoom(expertId, req.getLectureRoomId());
         Lecture chap = Lecture.builder()
                 .lectureRoom(room)
                 .chapterName(req.getChapterName())
@@ -210,7 +206,6 @@ public class ExpertLibraryService {
                 .orderNum(req.getOrderNum())
                 .videoUrl(req.getVideoUrl())
                 .build();
-
         lectureRepo.save(chap);
         return chap.getLectureId();
     }
