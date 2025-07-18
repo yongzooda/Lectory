@@ -50,8 +50,8 @@ public class CommentController {
 
     // 댓글 조회
     @GetMapping
-    public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable Long postId) {
-        List<CommentResponseDto> comments = commentService.getComments(postId);
+    public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable Long postId, @AuthenticationPrincipal CustomUserDetail userDetail) {
+        List<CommentResponseDto> comments = commentService.getComments(postId, userDetail);
         return ResponseEntity.ok(comments);
     }
 

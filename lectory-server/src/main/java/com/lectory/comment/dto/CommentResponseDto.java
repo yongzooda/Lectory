@@ -22,4 +22,5 @@ public class CommentResponseDto {
     private Boolean isAccepted;
     private Boolean isDeleted;
     private List<CommentResponseDto> replies;
+    private boolean isHidden;
 }
