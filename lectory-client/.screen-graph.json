@@ -32,15 +32,14 @@
       "id": "src/pages/PostListPage.jsx",
       "label": "PostListPage",
       "routes": [
-        "/"
-      ],
-      "isRoot": true
+        "/posts"
+      ]
     },
     {
       "id": "src/pages/PostWritePage.jsx",
       "label": "PostWritePage",
       "routes": [
-        "/post-write"
+        "/posts/write"
       ],
       "dataModelId": "2823:13581"
     },
@@ -48,7 +47,7 @@
       "id": "src/pages/PostDetailPage.jsx",
       "label": "PostDetailPage",
       "routes": [
-        "/post-detail/:postId"
+        "/posts/:postId"
       ],
       "dataModelId": "2810:13554"
     },
@@ -135,13 +134,29 @@
   ],
   "edges": [
     {
-      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:85:6-to-src/pages/contentlibrary/student/LibraryHome.jsx",
-      "source": "src/pages/contentlibrary/student/LibraryHome.jsx",
-      "target": "src/pages/contentlibrary/student/LibraryHome.jsx",
+      "id": "src\\pages\\sections\\PostDetail.jsx:122:6-to-src\\pages\\PostListPage.jsx",
+      "source": "src\\pages\\PostDetailPage.jsx",
+      "target": "src\\pages\\PostListPage.jsx",
+      "data": {
+        "viaRoute": "/posts",
+        "trigger": {
+          "element": "navigate(\"/posts\")",
+          "line": 122,
+          "endLine": 122,
+          "column": 6,
+          "endColumn": 24,
+          "sourceFile": "src\\pages\\sections\\PostDetail.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx:85:6-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "source": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
       "data": {
         "viaRoute": "/library",
         "trigger": {
-          "element": "<SearchBar\n        memberId={memberId}\n        initial={search}\n        tags={tags}\n        sort={sort}\n        basePath=\"/library\"\n      />",
+          "element": "<SearchBar\r\n        memberId={memberId}\r\n        initial={search}\r\n        tags={tags}\r\n        sort={sort}\r\n        basePath=\"/library\"\r\n      />",
           "line": 85,
           "endLine": 91,
           "column": 6,
@@ -157,7 +172,7 @@
       "data": {
         "viaRoute": "/library",
         "trigger": {
-          "element": "<TagFilterBar\n        idValue={memberId}\n        idKey=\"memberId\"\n        selected={tags}\n        allTags={allTags}\n        search={search}\n        sort={sort}\n        basePath=\"/library\"\n      />",
+          "element": "<TagFilterBar\r\n        idValue={memberId}\r\n        idKey=\"memberId\"\r\n        selected={tags}\r\n        allTags={allTags}\r\n        search={search}\r\n        sort={sort}\r\n        basePath=\"/library\"\r\n      />",
           "line": 94,
           "endLine": 102,
           "column": 6,
@@ -173,7 +188,7 @@
       "data": {
         "viaRoute": "/library",
         "trigger": {
-          "element": "<SortDropdown\n          memberId={memberId}\n          search={search}\n          tags={tags}\n          value={sort}\n          basePath=\"/library\"\n        />",
+          "element": "<SortDropdown\r\n          memberId={memberId}\r\n          search={search}\r\n          tags={tags}\r\n          value={sort}\r\n          basePath=\"/library\"\r\n        />",
           "line": 106,
           "endLine": 112,
           "column": 8,
@@ -189,7 +204,7 @@
       "data": {
         "viaRoute": "/library",
         "trigger": {
-          "element": "<Pagination\n              pageInfo={pageInfo}\n              basePath=\"/library\"\n              query={{ memberId, search, tags, sort }}\n            />",
+          "element": "<Pagination\r\n              pageInfo={pageInfo}\r\n              basePath=\"/library\"\r\n              query={{ memberId, search, tags, sort }}\r\n            />",
           "line": 140,
           "endLine": 144,
           "column": 12,

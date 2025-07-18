@@ -1,8 +1,134 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Star } from "../../assets/icons/Star";
 import "../../assets/css/postDetail.css";
 
 export const PostDetail = () => {
+
+  const { postId } = useParams(); // URL 파라미터 가져오기
+  const [post, setPost] = useState(null); // 게시글 데이터
+  const [comments, setComments] = useState([]); // 댓글 데이터
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+  const token = localStorage.getItem("accessToken");
+  const userId = localStorage.getItem("userId");
+
+  if (!token || !userId) {
+    alert("로그인 후 이용해주세요.");
+    return;
+  }
+
+  useEffect(() => {
+    const fetchPostAndComments = async () => {
+      try {
+        // 게시글 요청
+        const postResponse = await fetch(`/api/posts/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // 토큰 추가
+          "Content-Type": "application/json",
+        },
+      });
+
+        if (!postResponse.ok) {
+          const text = await postResponse.text(); // 응답 내용을 text로 확인
+          console.error("게시글 API 응답:", text);
+          throw new Error("게시글을 불러오는 데 실패했습니다.");
+        }
+        const postData = await postResponse.json();
+
+        // 댓글 요청
+        const commentsResponse = await fetch(`/api/posts/${postId}/comment`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // 토큰 추가
+          "Content-Type": "application/json",
+        },
+      });
+        if (!commentsResponse.ok) {
+          const text = await commentsResponse.text();
+          console.error("댓글 API 응답:", text);
+          throw new Error("댓글을 불러오는 데 실패했습니다.");
+        }
+        const commentsData = await commentsResponse.json();
+
+        // 상태에 데이터 저장
+        setPost(postData);
+        setComments(commentsData);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPostAndComments();
+  }, [postId]);
+
+  // 수정 요청 함수 (PUT)
+  const handleEdit = async () => {    
+    // 수정할 데이터 임시 입력 받기
+    const newTitle = prompt("수정할 제목을 입력하세요", post.title);
+    const newContent = prompt("수정할 내용을 입력하세요", post.content);
+
+    if (!newTitle || !newContent) {
+      alert("제목과 내용을 모두 입력해야 합니다.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/posts/${postId}?userId=${userId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: newTitle,
+          content: newContent,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "수정 실패");
+      }
+      alert("수정 완료");
+      // 수정 후 상세 페이지 다시 불러오기
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      alert("수정 중 오류 발생");
+    }
+  };
+
+  // 삭제 요청 함수 (DELETE)
+  const handleDelete = async () => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
+    try {
+      const response = await fetch(`/api/posts/${postId}?userId=${userId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "삭제 실패");
+      }
+      alert("삭제 완료");
+      // 삭제 후 게시글 목록 페이지로 이동
+      navigate("/posts");
+    } catch (error) {
+      console.error(error);
+      alert("삭제 중 오류 발생");
+    }
+  };
+
+  if (loading) return <div>로딩 중...</div>;
+  if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
+
   return (
     <div className="postDetail">
       <div className="div-2">
@@ -211,13 +337,13 @@ export const PostDetail = () => {
 
       <div className="overlap-2">
         <div className="div-7">
-          <div className="text-wrapper-20">게시글 제목</div>
+          <div className="text-wrapper-20">{post.title}</div>
 
           <div className="div-8">
             <div className="group-2">
-              <div className="text-wrapper-21">작성자</div>
+              <div className="text-wrapper-21">{post.userNickname}</div>
 
-              <div className="text-wrapper-22">게시글 수정일시</div>
+              <div className="text-wrapper-22">{post.updatedAt}</div>
             </div>
 
             <div className="stats-wrapper-3">
@@ -229,33 +355,31 @@ export const PostDetail = () => {
                     src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
                   />
 
-                  <div className="element">&nbsp;&nbsp;5</div>
+                  <div className="element">&nbsp;&nbsp;{post.likeCount}</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="text-wrapper-23">수정 | 삭제</div>
+          <div className="text-wrapper-23">
+            <button onClick={handleEdit}>수정</button> |{" "}
+            <button onClick={handleDelete}>삭제</button>
+          </div>
 
           <div className="div-wrapper-2">
             <p className="text-wrapper-24">
-              게시글 내용 블라블라
+              {post.content}
               <br />
             </p>
           </div>
 
           <div className="div-9">
-            <div className="frame-9">
-              <div className="text-wrapper-25">태그1</div>
-            </div>
-
-            <div className="frame-9">
-              <div className="text-wrapper-25">태그2</div>
-            </div>
-
-            <div className="frame-9">
-              <div className="text-wrapper-25">태그3</div>
-            </div>
+            {post.tags &&
+              Array.from(post.tags).map((tag, index) => (
+                <div className="frame-9" key={index}>
+                  <div className="text-wrapper-25">{tag}</div>
+                </div>
+              ))}
           </div>
         </div>
 
