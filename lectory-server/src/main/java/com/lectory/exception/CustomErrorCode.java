@@ -16,7 +16,9 @@ public enum CustomErrorCode {
     // 댓글 C
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "C001", "요청하신 댓글을 찾을 수 없습니다."),
     COMMENT_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "C002", "댓글을 수정할 권한이 없습니다."),
-    COMMENT_ALREADY_ACCEPTED(HttpStatus.CONFLICT, "C003", "이미 채택된 댓글이 있습니다.");
+    COMMENT_ALREADY_ACCEPTED(HttpStatus.CONFLICT, "C003", "이미 채택된 댓글이 있습니다."),
+    COMMENT_POST_MISMATCH(HttpStatus.BAD_REQUEST, "C004", "댓글이 해당 게시글에 속하지 않습니다."),
+    REPORT_ALREADY_EXISTS(HttpStatus.CONFLICT, "C005", "이미 신고한 대상입니다");
 
     private final HttpStatus status;
     private final String errorCode;
