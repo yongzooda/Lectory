@@ -10,3 +10,14 @@ export function preparePayment() {
     }
   });
 }
+
+export function cancelPay() {
+  const token = localStorage.getItem('accessToken');
+
+  return axios.get('/api/pay/cancel', {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    }
+  });
+}
