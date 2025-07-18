@@ -32,28 +32,32 @@ public class ExpertLibraryService {
 
     /**
      * 1) 내 강의 목록 (최신순 / 수강자순 / 제목순)
+     *    – expertId 기준으로 통일
      */
     public PageDto<LectureRoomSummaryDto> listMyLectures(
             Long expertId, int page, int size, String sort) {
 
-        // 인기순 여부 판단
+        // 1) 인기순 여부
         boolean byPopularity = sort != null && sort.startsWith("popularity");
 
-        // pageable 생성: 인기순이면 Sort 없이, 아니면 toPageable 으로 createdAt/title 정렬
+        // 2) Pageable 생성
         Pageable pg = byPopularity
-                ? PageRequest.of(page, size)
-                : toPageable(page, size, sort);
+                ? PageRequest.of(page, size)          // 인기순: 정렬 직접 지정
+                : toPageable(page, size, sort);       // createdAt, title 등
 
-        // 실제 호출: 인기순 전용 메서드 vs. 기본 전체 목록 메서드
+        // 3) 조회 – 모두 Expert.expertId 기준 메서드 사용
         Page<LectureRoom> rooms = byPopularity
-                ? lectureRoomRepo.findByExpertByPopularity(expertId, pg)
-                : lectureRoomRepo.findByExpertUserUserId(expertId, pg);
+                ? lectureRoomRepo.findByExpert_ExpertIdByPopularity(expertId, pg)
+                : lectureRoomRepo.findByExpert_ExpertId(expertId, pg);
 
+        // 4) DTO 변환
         return PageDto.of(rooms.map(this::toSummary));
     }
 
+
     /**
-     * 2) 내 강의 검색 (키워드·태그 + 최신순/수강자순/제목순)
+     * 2) 내 강의 검색 (키워드·태그 + 최신순 / 수강자순 / 제목순)
+     *    – 모든 쿼리를 expertId(Expert.expertId) 기준으로 호출
      */
     public PageDto<LectureRoomSummaryDto> searchMyLectures(
             Long expertId,
@@ -63,19 +67,20 @@ public class ExpertLibraryService {
             int size,
             String sort) {
 
-        boolean hasTags     = tags    != null && !tags.isEmpty();
-        boolean hasKeyword  = keyword != null && !keyword.isBlank();
+        boolean hasTags      = tags    != null && !tags.isEmpty();
+        boolean hasKeyword   = keyword != null && !keyword.isBlank();
         boolean byPopularity = sort   != null && sort.startsWith("popularity");
 
-        // ① Pageable 생성
+        // 1) Pageable
         Pageable pg = byPopularity
                 ? PageRequest.of(page, size)
                 : toPageable(page, size, sort);
 
         Page<LectureRoom> rooms;
 
+        /* 2) 필터 조합별 조회 — 모든 메서드가 expertId 기준으로 통일 */
+
         if (hasTags && hasKeyword) {
-            // 키워드 + 태그
             rooms = byPopularity
                     ? lectureRoomRepo.findByExpertAndKeywordAndTagsByPopularity(
                     expertId, keyword, tags, pg)
@@ -83,26 +88,26 @@ public class ExpertLibraryService {
                     expertId, keyword, tags, pg);
 
         } else if (hasTags) {
-            // 태그만
             rooms = byPopularity
                     ? lectureRoomRepo.findByExpertAndTagsByPopularity(expertId, tags, pg)
                     : lectureRoomRepo.findByExpertAndTags(expertId, tags, pg);
 
         } else if (hasKeyword) {
-            // 키워드만 (제목 or 닉네임)
             rooms = byPopularity
                     ? lectureRoomRepo.findByExpertAndKeywordByPopularity(expertId, keyword, pg)
                     : lectureRoomRepo.findByExpertAndKeyword(expertId, keyword, pg);
 
         } else {
-            // 필터 없음
             rooms = byPopularity
-                    ? lectureRoomRepo.findByExpertByPopularity(expertId, pg)
-                    : lectureRoomRepo.findByExpertUserUserId(expertId, pg);
+                    ? lectureRoomRepo.findByExpert_ExpertIdByPopularity(expertId, pg)
+                    : lectureRoomRepo.findByExpert_ExpertId(expertId, pg);
         }
 
+
+        // 3) DTO 변환 후 반환
         return PageDto.of(rooms.map(this::toSummary));
     }
+
 
 
     // ────────────────────────────────────────────────────────────────
@@ -247,7 +252,9 @@ public class ExpertLibraryService {
     private LectureRoom fetchOwnedRoom(Long expertId, Long roomId) {
         LectureRoom room = lectureRoomRepo.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의실입니다."));
-        if (!room.getExpert().getUser().getUserId().equals(expertId)) {
+
+        // ✅ expertId 로 비교
+        if (!room.getExpert().getExpertId().equals(expertId)) {
             throw new IllegalArgumentException("본인 강의실만 접근할 수 있습니다.");
         }
         return room;
@@ -256,11 +263,14 @@ public class ExpertLibraryService {
     private Lecture fetchOwnedChapter(Long expertId, Long chapterId) {
         Lecture chap = lectureRepo.findById(chapterId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 챕터입니다."));
-        if (!chap.getLectureRoom().getExpert().getUser().getUserId().equals(expertId)) {
+
+        // ✅ expertId 로 비교
+        if (!chap.getLectureRoom().getExpert().getExpertId().equals(expertId)) {
             throw new IllegalArgumentException("본인 강의실의 챕터만 수정/삭제할 수 있습니다.");
         }
         return chap;
     }
+
 
     private Pageable toPageable(int page, int size, String sort) {
         Sort s;
