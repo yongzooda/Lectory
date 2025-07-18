@@ -13,6 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableMethodSecurity
@@ -62,7 +65,9 @@ public class SecurityConfig {
                                                 .logoutSuccessUrl("/login?logout")
                                                 .permitAll())
                                 // 5) 개발 편의상 CSRF 비활성화 (필요시 켜세요)
-                                .csrf(csrf -> csrf.disable());
+                                .csrf(csrf -> csrf.disable())
+                                // 6. CORS 허용
+                                .cors(Customizer.withDefaults());
 
                 http.addFilterBefore(
                                 new JwtAuthenticationFilter(jwtUtil, userDetailService),
@@ -76,4 +81,16 @@ public class SecurityConfig {
                 return new BCryptPasswordEncoder();
         }
 
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration config = new CorsConfiguration();
+                config.addAllowedOrigin("http://localhost:5173"); // 리액트 dev 서버 주소
+                config.addAllowedMethod("*");
+                config.addAllowedHeader("*");
+                config.setAllowCredentials(true);
+
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", config);
+                return source;
+        }
 }
