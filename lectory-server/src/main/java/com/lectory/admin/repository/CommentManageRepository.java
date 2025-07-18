@@ -19,4 +19,8 @@ public interface CommentManageRepository extends JpaRepository<Comment, Long> {
     ORDER BY c.createdAt DESC
     """)
     List<Comment> findAllComments();
+
+    Comment findCommentById(Long id);
+
+    Comment deleteCommentById(Long id);
 }
