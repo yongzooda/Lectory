@@ -14,7 +14,7 @@ export const PostDetail = () => {
   const token = localStorage.getItem("accessToken");
   const userId = localStorage.getItem("userId");
 
-  if (!token || !userId) {
+  if (!token) {
     alert("로그인 후 이용해주세요.");
     return;
   }
@@ -361,11 +361,6 @@ export const PostDetail = () => {
             </div>
           </div>
 
-          <div className="text-wrapper-23">
-            <button onClick={handleEdit}>수정</button> |{" "}
-            <button onClick={handleDelete}>삭제</button>
-          </div>
-
           <div className="div-wrapper-2">
             <p className="text-wrapper-24">
               {post.content}
@@ -383,7 +378,10 @@ export const PostDetail = () => {
           </div>
         </div>
 
-        <div className="text-wrapper-26">수정 | 삭제</div>
+        <div className="text-wrapper-26">
+          <button onClick={handleEdit}>수정</button> |{" "}
+          <button onClick={handleDelete}>삭제</button>
+        </div>
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ public interface CommentService {
     CommentResponseDto addReply(Long postId, Long parentId, CommentRequestDto req, CustomUserDetail userDetail);
     CommentResponseDto updateComment(Long commentId, CommentRequestDto req, CustomUserDetail userDetail);
     void deleteComment(Long postId, Long commentId, CustomUserDetail userDetail);
-    List<CommentResponseDto> getComments(Long postId);
+    List<CommentResponseDto> getComments(Long postId, CustomUserDetail userDetail);
 
     CommentResponseDto acceptComment(Long postId, Long commentId, CustomUserDetail userDetail);
 
