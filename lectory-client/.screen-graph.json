@@ -135,25 +135,62 @@
   ],
   "edges": [
     {
+<<<<<<< HEAD
       "id": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx:96:6-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "source": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+=======
+      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:85:6-to-src/pages/contentlibrary/student/LibraryHome.jsx",
+      "source": "src/pages/contentlibrary/student/LibraryHome.jsx",
+      "target": "src/pages/contentlibrary/student/LibraryHome.jsx",
+>>>>>>> ce4e391965f82890e0d45c2d8f6d6e51fc3673e5
       "data": {
         "viaRoute": "/library/expert",
         "trigger": {
+<<<<<<< HEAD
           "element": "<SearchBar\n        memberId={expertId}\n        initial={search}\n        tags={tags}\n        sort={sort}\n        basePath=\"/library/expert\"\n      />",
           "line": 96,
           "endLine": 102,
           "column": 6,
           "endColumn": 8,
           "sourceFile": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx"
+=======
+          "element": "<SearchBar\n        memberId={memberId}\n        initial={search}\n        tags={tags}\n        sort={sort}\n        basePath=\"/library\"\n      />",
+          "line": 85,
+          "endLine": 91,
+          "column": 6,
+          "endColumn": 8,
+          "sourceFile": "src/pages/contentlibrary/student/LibraryHome.jsx"
         }
       }
     },
     {
+      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:94:6-to-src/pages/contentlibrary/student/LibraryHome.jsx",
+      "source": "src/pages/contentlibrary/student/LibraryHome.jsx",
+      "target": "src/pages/contentlibrary/student/LibraryHome.jsx",
+      "data": {
+        "viaRoute": "/library",
+        "trigger": {
+          "element": "<TagFilterBar\n        idValue={memberId}\n        idKey=\"memberId\"\n        selected={tags}\n        allTags={allTags}\n        search={search}\n        sort={sort}\n        basePath=\"/library\"\n      />",
+          "line": 94,
+          "endLine": 102,
+          "column": 6,
+          "endColumn": 8,
+          "sourceFile": "src/pages/contentlibrary/student/LibraryHome.jsx"
+>>>>>>> ce4e391965f82890e0d45c2d8f6d6e51fc3673e5
+        }
+      }
+    },
+    {
+<<<<<<< HEAD
       "id": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx:104:6-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "source": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+=======
+      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:106:8-to-src/pages/contentlibrary/student/LibraryHome.jsx",
+      "source": "src/pages/contentlibrary/student/LibraryHome.jsx",
+      "target": "src/pages/contentlibrary/student/LibraryHome.jsx",
+>>>>>>> ce4e391965f82890e0d45c2d8f6d6e51fc3673e5
       "data": {
         "viaRoute": "/library/expert",
         "trigger": {
@@ -178,14 +215,24 @@
           "endLine": 121,
           "column": 8,
           "endColumn": 10,
+<<<<<<< HEAD
           "sourceFile": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx"
+=======
+          "sourceFile": "src/pages/contentlibrary/student/LibraryHome.jsx"
+>>>>>>> ce4e391965f82890e0d45c2d8f6d6e51fc3673e5
         }
       }
     },
     {
+<<<<<<< HEAD
       "id": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx:147:12-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "source": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+=======
+      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:140:12-to-src/pages/contentlibrary/student/LibraryHome.jsx",
+      "source": "src/pages/contentlibrary/student/LibraryHome.jsx",
+      "target": "src/pages/contentlibrary/student/LibraryHome.jsx",
+>>>>>>> ce4e391965f82890e0d45c2d8f6d6e51fc3673e5
       "data": {
         "viaRoute": "/library/expert",
         "trigger": {
@@ -194,7 +241,11 @@
           "endLine": 151,
           "column": 12,
           "endColumn": 14,
+<<<<<<< HEAD
           "sourceFile": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx"
+=======
+          "sourceFile": "src/pages/contentlibrary/student/LibraryHome.jsx"
+>>>>>>> ce4e391965f82890e0d45c2d8f6d6e51fc3673e5
         }
       }
     }

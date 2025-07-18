@@ -130,6 +130,7 @@ const StudentLibraryHome = () => {
                 expertName={r.expertName}
                 enrollmentCount={r.enrollmentCount}
                 isPaid={r.isPaid}
+                isEnrolled={r.isEnrolled}
                 tags={r.tags}
                 onClick={() => goDetail(r.lectureRoomId)}
               />

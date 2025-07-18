@@ -2,35 +2,28 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-// props: userRole ('free' | 'paid' | 'admin' | 'expert'), userId (current user id)
 export default function PostListPage({ userRole, userId }) {
   const [posts, setPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterBy, setFilterBy] = useState("title"); // 'title' | 'tags' | 'myPosts'
+  const [filterBy, setFilterBy] = useState("title");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchPosts() {
       try {
-        const res = await axios.get("/posts");
-        console.log("🔍 raw posts response:", res.data);
+        const res = await axios.get("/api/posts", { withCredentials: true });
+        console.log("raw posts response: ", res.data);
 
         const raw = res.data;
-        let data = [];
-        if (Array.isArray(raw)) {
-          data = raw;
-        } else if (Array.isArray(raw.content)) {
-          data = raw.content;
-        } else if (Array.isArray(raw.data)) {
-          data = raw.data;
-        } else {
-          console.warn("posts 배열을 찾을 수 없어 fallback: 빈 배열로 세팅");
-        }
+        let data = Array.isArray(raw)
+          ? raw
+          : Array.isArray(raw.content)
+          ? raw.content
+          : [];
 
-        // 전문가(expert)는 paid 글만
         if (userRole === "expert") {
-          data = data.filter((p) => p.isPaid);
+          data = data.filter((p) => p.subscriber_type === "PAID" || p.isPaid);
         }
 
         setPosts(data);
@@ -44,29 +37,25 @@ export default function PostListPage({ userRole, userId }) {
   }, [userRole]);
 
   // 검색 필터링
-  const handleSearch = () => {
-    return posts.filter((p) => {
-      const term = searchTerm.toLowerCase();
-      if (filterBy === "title") {
-        return p.title.toLowerCase().includes(term);
-      }
-      if (filterBy === "tags") {
-        return (
-          Array.isArray(p.tags) &&
-          p.tags.some((tag) => tag.toLowerCase().includes(term))
-        );
-      }
-      if (filterBy === "myPosts") {
-        return p.author.id === userId;
-      }
-      return true;
-    });
-  };
+  const filtered = posts.filter((p) => {
+    const term = searchTerm.toLowerCase();
+    if (filterBy === "title") {
+      return p.title.toLowerCase().includes(term);
+    }
+    if (filterBy === "tags") {
+      return (
+        Array.isArray(p.tags) &&
+        p.tags.some((t) => t.toLowerCase().includes(term))
+      );
+    }
+    if (filterBy === "myPosts") {
+      return p.userId === userId;
+    }
+    return true;
+  });
 
   if (loading) return <p className="p-4">로딩 중...</p>;
   if (error) return <p className="p-4 text-red-500">{error}</p>;
-
-  const filtered = handleSearch();
 
   return (
     <div className="p-6">
@@ -109,25 +98,27 @@ export default function PostListPage({ userRole, userId }) {
         <ul className="space-y-4">
           {filtered.map((post) => (
             <li
-              key={post.post_id || post.id}
+              key={post.postId}
               className={`p-4 border rounded ${
-                post.isPaid ? "bg-yellow-50" : ""
+                post.subscriber_type === "PAID" || post.isPaid
+                  ? "bg-yellow-50"
+                  : ""
               }`}
             >
               <div className="flex justify-between items-center mb-2">
                 <Link
-                  to={`/posts/${post.post_id || post.id}`}
+                  to={`/posts/${post.postId}`}
                   className="text-lg font-semibold hover:underline"
                 >
                   {post.title}
                 </Link>
                 <span className="text-sm">
-                  {post.is_resolved || post.isResolved ? "해결완료" : "미해결"}
+                  {post.isResolved || post.is_resolved ? "해결완료" : "미해결"}
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
-                작성자: {post.author?.username || post.nickname} |{" "}
-                {new Date(post.created_at || post.createdAt).toLocaleDateString(
+                작성자: {post.userNickname} |{" "}
+                {new Date(post.createdAt || post.created_at).toLocaleDateString(
                   "ko-KR"
                 )}
               </p>
