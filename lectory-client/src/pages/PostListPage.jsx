@@ -13,7 +13,7 @@ export default function PostListPage({ userRole, userId }) {
   useEffect(() => {
     async function fetchPosts() {
       try {
-        const res = await axios.get("/posts");
+        const res = await axios.get("/post");
         console.log("🔍 raw posts response:", res.data);
 
         const raw = res.data;
