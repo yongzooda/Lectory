@@ -67,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new CustomException(CustomErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getPost().getPostId().equals(postId)) {
-            throw new IllegalArgumentException("댓글이 해당 게시글에 속하지 않습니다.");
+            throw new CustomException(CustomErrorCode.COMMENT_POST_MISMATCH);
         }
 
         validateUser(comment, userDetail.getUser());
@@ -97,7 +97,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new CustomException(CustomErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getPost().getPostId().equals(postId)) {
-            throw new IllegalArgumentException("댓글이 해당 게시글에 속하지 않습니다.");
+            throw new CustomException(CustomErrorCode.COMMENT_POST_MISMATCH);
         }
 
         Long userId = comment.getPost().getUserId().getUserId();
@@ -129,7 +129,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new CustomException(CustomErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getPost().getPostId().equals(postId)) {
-            throw new IllegalArgumentException("댓글이 해당 게시글에 속하지 않습니다.");
+            throw new CustomException(CustomErrorCode.COMMENT_POST_MISMATCH);
         }
 
         Optional<Like>  exist = commentLikeRepository.findByTargetAndTargetIdAndUser_UserId(LikeTarget.COMMENT, commentId, userId);
@@ -162,7 +162,7 @@ public class CommentServiceImpl implements CommentService {
         Long userId = userDetail.getUser().getUserId();
 
         if (reportRepository.existsByTargetAndTargetIdAndUser_UserId(target, commentId, userId)) {
-            throw new RuntimeException("이미 신고한 대상입니다");
+            throw new CustomException(CustomErrorCode.REPORT_ALREADY_EXISTS);
         }
 
         Report report = Report.builder()
