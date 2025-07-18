@@ -10,8 +10,6 @@ import lombok.Setter;
 @Setter@NoArgsConstructor
 @AllArgsConstructor
 public class ExpertApprovalRequestDto {
-
     public Long expertId;
-
     private Expert.ApprovalStatus status; // "APPROVED" or "PENDING"
 }
