@@ -32,15 +32,14 @@
       "id": "src/pages/PostListPage.jsx",
       "label": "PostListPage",
       "routes": [
-        "/"
-      ],
-      "isRoot": true
+        "/posts"
+      ]
     },
     {
       "id": "src/pages/PostWritePage.jsx",
       "label": "PostWritePage",
       "routes": [
-        "/post"
+        "/posts/write"
       ],
       "dataModelId": "2823:13581"
     },
@@ -48,7 +47,7 @@
       "id": "src/pages/PostDetailPage.jsx",
       "label": "PostDetailPage",
       "routes": [
-        "/post/:postId"
+        "/posts/:postId"
       ],
       "dataModelId": "2810:13554"
     },
@@ -104,6 +103,20 @@
       ]
     },
     {
+      "id": "src/pages/admin/ExpertApprovalPage.jsx",
+      "label": "ExpertApprovalPage",
+      "routes": [
+        "/admin/expert-approval"
+      ]
+    },
+    {
+      "id": "src/pages/admin/ContentsManagementPage.jsx",
+      "label": "ContentsManagementPage",
+      "routes": [
+        "/admin/contents"
+      ]
+    },
+    {
       "id": "src/pages/pay/PayPage.jsx",
       "label": "PayPage",
       "routes": [
@@ -120,6 +133,22 @@
     }
   ],
   "edges": [
+    {
+      "id": "src\\pages\\sections\\PostDetail.jsx:122:6-to-src\\pages\\PostListPage.jsx",
+      "source": "src\\pages\\PostDetailPage.jsx",
+      "target": "src\\pages\\PostListPage.jsx",
+      "data": {
+        "viaRoute": "/posts",
+        "trigger": {
+          "element": "navigate(\"/posts\")",
+          "line": 122,
+          "endLine": 122,
+          "column": 6,
+          "endColumn": 24,
+          "sourceFile": "src\\pages\\sections\\PostDetail.jsx"
+        }
+      }
+    },
     {
       "id": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx:85:6-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
       "source": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
