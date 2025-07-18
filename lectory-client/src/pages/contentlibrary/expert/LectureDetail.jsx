@@ -1,4 +1,3 @@
-// src/pages/contentlibrary/expert/LectureDetail.jsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -26,6 +25,9 @@ const ExpertLectureDetail = () => {
   const [editMode,  setEditMode]  = useState(false);
   const [showDel,   setShowDel]   = useState(false);
 
+  /* ------------------------------------------------------------------
+   * 데이터 로딩
+   * ----------------------------------------------------------------*/
   const fetchDetail = useCallback(async () => {
     setLoading(true);
     try {
@@ -40,9 +42,13 @@ const ExpertLectureDetail = () => {
 
   useEffect(() => { fetchDetail(); }, [fetchDetail]);
 
+  /* ------------------------------------------------------------------
+   * 강의실 CRUD 핸들러
+   * ----------------------------------------------------------------*/
   const handleSaveLecture = async (payload) => {
     try {
-      await updateLecture(lectureRoomId, payload);
+      // ⬇️ 객체 파라미터 형태에 맞춰 수정
+      await updateLecture({ lectureRoomId, ...payload });
       setEditMode(false);
       await fetchDetail();
     } catch {
@@ -60,19 +66,28 @@ const ExpertLectureDetail = () => {
     }
   };
 
+  /* ------------------------------------------------------------------
+   * 챕터 CRUD 핸들러
+   * ----------------------------------------------------------------*/
   const handleCreateChapter = async (data) => {
     await createChapter({ lectureRoomId, ...data });
     await fetchDetail();
   };
+
   const handleUpdateChapter = async (chapterId, data) => {
-    await updateChapter(chapterId, data);
+    // ⬇️ 객체 파라미터 형태에 맞춰 수정
+    await updateChapter({ chapterId, ...data });
     await fetchDetail();
   };
+
   const handleDeleteChapter = async (chapterId) => {
     await deleteChapter(chapterId);
     await fetchDetail();
   };
 
+  /* ------------------------------------------------------------------
+   * 렌더링 분기
+   * ----------------------------------------------------------------*/
   if (loading) return <div className="p-8 text-center">Loading…</div>;
   if (!detail)  return <div className="p-8 text-center">강의실을 찾을 수 없습니다.</div>;
 
@@ -149,10 +164,10 @@ const ExpertLectureDetail = () => {
               chapters={detail.chapters}
               isEnrolled={true}
               onSelect={c => handleUpdateChapter(c.chapterId, {
-                chapterName: c.chapterName,
-                expectedTime: c.expectedTime,
-                orderNum: c.orderNum,
-                videoUrl: c.videoUrl,
+                chapterName:   c.chapterName,
+                expectedTime:  c.expectedTime,
+                orderNum:      c.orderNum,
+                videoUrl:      c.videoUrl,
               })}
             />
             <div className="border-t pt-4">
