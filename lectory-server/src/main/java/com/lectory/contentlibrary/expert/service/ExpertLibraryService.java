@@ -28,7 +28,7 @@ public class ExpertLibraryService {
     private final ExpertRepository         expertRepo;
 
     private static final DateTimeFormatter ISO_FMT =
-            DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+                        DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     /**
      * 1) 내 강의 목록 (최신순 / 수강자순 / 제목순)
@@ -105,45 +105,61 @@ public class ExpertLibraryService {
     }
 
 
-    /* ────────────────────────────────────────────────────────────────
-     * 3) 강의실 상세 (전문가)
-     * ---------------------------------------------------------------- */
+    // ────────────────────────────────────────────────────────────────
+// 3) 강의실 상세 (전문가)
+// ----------------------------------------------------------------
     public LectureDetailDto getLectureDetailForExpert(Long lectureRoomId, Long expertId) {
-
+        // 1) 권한 및 강의실 로딩
         LectureRoom room = fetchOwnedRoom(expertId, lectureRoomId);
 
-        /* 챕터 목록 → DTO */
+        // 2) 챕터 + 태그 매핑 (각 챕터별 tags 포함)
         List<ChapterDto> chapters = lectureRepo
                 .findByLectureRoom_LectureRoomIdOrderByOrderNumAsc(lectureRoomId)
                 .stream()
-                .map(l -> new ChapterDto(
-                        l.getLectureId(),
-                        l.getChapterName(),
-                        l.getExpectedTime(),
-                        l.getOrderNum(),
-                        l.getVideoUrl()
-                ))
+                .map(l -> {
+                    // 각 챕터별 태그 조회
+                    List<String> tagNames = lectureRepo.findTagNamesByLectureId(l.getLectureId());
+                    return new ChapterDto(
+                            l.getLectureId(),
+                            l.getChapterName(),
+                            l.getExpectedTime(),
+                            l.getOrderNum(),
+                            l.getVideoUrl(),
+                            tagNames                          // ← 새로 추가된 tags 필드
+                    );
+                })
                 .toList();
 
-        /* 댓글 + 수강생 수 */
+        // 3) 전체 챕터 태그 집계 (중복 제거)
+        List<String> allTags = chapters.stream()
+                .flatMap(ch -> ch.tags().stream())
+                .distinct()
+                .toList();
+
+        // 4) 댓글 목록 + 수강생 수
         List<CommentDto> comments = listComments(lectureRoomId);
         int enrolledCnt = membershipRepo.findByLectureRoomId(lectureRoomId).size();
 
+        // 5) DTO 빌드 (fileUrl, 전체 tags, chapters 포함)
         return LectureDetailDto.builder()
                 .lectureRoomId(room.getLectureRoomId())
                 .title(room.getTitle())
                 .description(room.getDescription())
                 .coverImageUrl(room.getCoverImageUrl())
+                .fileUrl(room.getFileUrl())            // ← 전체 자료 URL
                 .isPaid(room.getIsPaid())
                 .expertName(room.getExpert().getUser().getNickname())
                 .createdAt(room.getCreatedAt().format(ISO_FMT))
                 .updatedAt(room.getUpdatedAt().format(ISO_FMT))
                 .enrollmentCount(enrolledCnt)
-                .chapters(chapters)
+                .tags(allTags)                         // ← 전체 태그 집계
+                .chapters(chapters)                    // ← 태그 포함된 챕터 리스트
                 .lectureComments(comments)
-                .isEnrolled(true)       // 전문가 본인은 항상 수강 상태
+                .isEnrolled(true)                      // 전문가 본인은 항상 수강 상태
+                .canEnroll(false)
                 .build();
     }
+
 
     /* ────────────────────────────────────────────────────────────────
      * 4) 강의실 신규 생성

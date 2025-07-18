@@ -26,7 +26,7 @@ public class StudentLibraryService {
     private final UserRepository           userRepo;
 
     private static final DateTimeFormatter ISO_FMT =
-            DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     /**
      * 1) 전체 목록 (최신순 / 수강자순 / 제목순)
@@ -98,26 +98,45 @@ public class StudentLibraryService {
     }
 
     /**
-     * 3) 상세 조회
+     * 3) 상세 조회 (수강자)
      */
     public LectureDetailDto getLectureDetail(Long memberId, Long lectureRoomId) {
+        // 1) 강의실 로드 및 존재 체크
         LectureRoom room = lectureRoomRepo.findByLectureRoomId(lectureRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의실: " + lectureRoomId));
 
-        List<ChapterDto> chapters = lectureRepo
+        // 2) 수강 여부 판정
+        boolean enrolled = membershipRepo
+                .findByUserIdAndLectureRoomId(memberId, lectureRoomId)
+                .isPresent();
+
+        // 3) 챕터 + 태그 매핑 (수강 전에는 videoUrl 숨김)
+        List<ChapterDto> chapterDtos = lectureRepo
                 .findByLectureRoom_LectureRoomIdOrderByOrderNumAsc(lectureRoomId)
                 .stream()
-                .map(l -> new ChapterDto(
-                        l.getLectureId(),
-                        l.getChapterName(),
-                        l.getExpectedTime(),
-                        l.getOrderNum(),
-                        l.getVideoUrl()
-                ))
-                .collect(Collectors.toList());
+                .map(l -> {
+                    // 각 챕터별 태그 조회
+                    List<String> tagNames = lectureRepo.findTagNamesByLectureId(l.getLectureId());
+                    return new ChapterDto(
+                            l.getLectureId(),
+                            l.getChapterName(),
+                            l.getExpectedTime(),
+                            l.getOrderNum(),
+                            enrolled ? l.getVideoUrl() : null,  // 수강 전에는 null
+                            tagNames
+                    );
+                })
+                .toList();
 
-        List<CommentDto> comments = commentRepo.findAllByLectureRoomId(lectureRoomId)
-                .stream()
+        // 4) 전체 태그 집계 (중복 제거)
+        List<String> allTags = chapterDtos.stream()
+                .flatMap(ch -> ch.tags().stream())
+                .distinct()
+                .toList();
+
+        // 5) 댓글 매핑 (수강 전엔 빈 리스트, 수강 후에만 조회)
+        List<CommentDto> comments = enrolled
+                ? commentRepo.findAllByLectureRoomId(lectureRoomId).stream()
                 .map(c -> {
                     String nick = userRepo.findById(c.getUserId())
                             .map(User::getNickname)
@@ -129,30 +148,32 @@ public class StudentLibraryService {
                             c.getCreatedAt().format(ISO_FMT)
                     );
                 })
-                .collect(Collectors.toList());
+                .toList()
+                : List.of();
 
-        boolean enrolled = membershipRepo
-                .findByUserIdAndLectureRoomId(memberId, lectureRoomId)
-                .isPresent();
-
+        // 6) 현재 수강생 수
         int enrolledCnt = membershipRepo.findByLectureRoomId(lectureRoomId).size();
 
+        // 7) DTO 빌드
         return LectureDetailDto.builder()
                 .lectureRoomId(room.getLectureRoomId())
                 .title(room.getTitle())
-                .description(room.getDescription())
                 .coverImageUrl(room.getCoverImageUrl())
+                .fileUrl(room.getFileUrl())              // 전체 자료 URL
+                .description(room.getDescription())
                 .expertName(room.getExpert().getUser().getNickname())
                 .createdAt(room.getCreatedAt().format(ISO_FMT))
                 .updatedAt(room.getUpdatedAt().format(ISO_FMT))
                 .enrollmentCount(enrolledCnt)
-                .chapters(chapters)
+                .tags(allTags)                           // 전체 챕터 태그
+                .chapters(chapterDtos)
                 .lectureComments(comments)
                 .isEnrolled(enrolled)
                 .isPaid(room.getIsPaid())
                 .canEnroll(!enrolled)
                 .build();
     }
+
 
     /* 4) 수강신청 (무료·유료 통합) */
     public EnrollResponseDto enroll(Long memberId, Long lectureRoomId) {

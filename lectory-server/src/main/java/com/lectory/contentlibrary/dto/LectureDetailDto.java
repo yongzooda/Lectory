@@ -12,12 +12,14 @@ import java.util.List;
 public record LectureDetailDto(
         Long lectureRoomId,
         String title,
+        String fileUrl,         // 전체 강의 자료 ZIP URL
         String coverImageUrl,
         String description,
         String expertName,
         String createdAt,
         String updatedAt,
         Integer enrollmentCount,
+        List<String> tags,        // ← 전체 챕터 태그 중복 제거 후 담기
         List<ChapterDto> chapters,
         List<CommentDto> lectureComments,
         Boolean isEnrolled,
