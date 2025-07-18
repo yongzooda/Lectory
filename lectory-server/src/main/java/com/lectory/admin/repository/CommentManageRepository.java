@@ -1,5 +1,6 @@
 package com.lectory.admin.repository;
 
+import com.lectory.admin.dto.CommentManageResponseDto;
 import com.lectory.common.domain.comment.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,17 +11,16 @@ import java.util.List;
 @Repository
 public interface CommentManageRepository extends JpaRepository<Comment, Long> {
 
-    @Query(""" 
-    SELECT c.commentId, c.post.postId, c.user.userId,
-        c.content, p.isResolved, c.createdAt, c.isAccepted
-    FROM
-    Comment c, Post p
-    where c.post.postId = p.postId
+    @Query("""
+    SELECT new com.lectory.admin.dto.CommentManageResponseDto(
+        c.commentId, c.post.postId,
+        c.post.title, c.user.userId,
+        c.user.userType,c.content, p.isResolved,
+        c.likeCount, c.createdAt, c.isAccepted
+    )
+    FROM Comment c JOIN c.post p
     ORDER BY c.createdAt DESC
-    """)
-    List<Comment> findAllComments();
+""")
+    List<CommentManageResponseDto> findAllComments();
 
-    Comment findCommentById(Long id);
-
-    Comment deleteCommentById(Long id);
 }

@@ -23,38 +23,8 @@ public class CommentManageService {
 
     // Comment -> CommentManageResponseDto
     public List<CommentManageResponseDto> findAllComments() {
-        List<Comment> comments = commentManageRepository.findAllComments();
-        List<CommentManageResponseDto> dtos = new ArrayList<>();
-        for (Comment comment : comments) {
-            CommentManageResponseDto dto = new CommentManageResponseDto();
-
-            dto.setCommentId(comment.getCommentId());
-            dto.setPostId(comment.getPost().getPostId());
-            dto.setUserId(comment.getUser().getUserId());
-            dto.setUserType(comment.getUser().getUserType());
-            dto.setContent(comment.getContent());
-            dto.setResolved(comment.getPost().isResolved());
-            dto.setLikeCount(comment.getLikeCount());
-            dto.setCreatedAt(comment.getCreatedAt());
-            dto.setAccepted(dto.isAccepted());
-
-            dtos.add(dto);
-        }
-        return dtos;
+        return commentManageRepository.findAllComments();
     }
 
-    @Transactional
-    public void updateComment(Long commentId, CommentRequestDto dto) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(CustomErrorCode.COMMENT_NOT_FOUND));
-        comment.updateContent(dto.getContent());
-        commentRepository.save(comment);
-    }
 
-    @Transactional
-    public void deleteComment(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(CustomErrorCode.COMMENT_NOT_FOUND));
-        commentRepository.delete(comment);
-    }
 }

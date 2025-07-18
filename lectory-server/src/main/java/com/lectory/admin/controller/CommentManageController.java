@@ -22,16 +22,5 @@ public class CommentManageController {
     public List<CommentManageResponseDto> findAllComments() {
         return commentManageService.findAllComments();
     }
-    // 댓글 수정
-    @PutMapping("/{commentId}")
-    public ResponseEntity<Void> updateComment(@PathVariable Long commentId, @Valid @RequestBody CommentRequestDto req) {
-        commentManageService.updateComment(commentId, req);
-        return ResponseEntity.ok().build();
-    }
-    // 댓글 삭제
-    @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
-        commentManageService.deleteComment(commentId);
-        return ResponseEntity.ok().build();
-    }
+
 }
