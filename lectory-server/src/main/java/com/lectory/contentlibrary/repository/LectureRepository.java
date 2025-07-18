@@ -28,4 +28,13 @@ public interface LectureRepository extends JpaRepository<Lecture, Long> {
          WHERE l.lectureRoom.lectureRoomId = :roomId
     """)
     List<String> findDistinctTagNamesByRoomId(@Param("roomId") Long roomId);
+
+// 3) 챕터별 태그 조회 메서드
+    @Query("""
+  SELECT t.name
+  FROM Tag t
+  JOIN LectureTag lt ON lt.tagId = t.tagId
+  WHERE lt.lectureId = :lectureId
+""")
+    List<String> findTagNamesByLectureId(@Param("lectureId") Long lectureId);
 }
