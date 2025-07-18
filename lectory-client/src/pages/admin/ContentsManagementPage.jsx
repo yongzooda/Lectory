@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import PostList from './PostList';
-import CommentList from './CommentList';
+import PostList from './PosManageList';
+import CommentList from './CommentManageList';
 
 const ContentsManagementPage = () => {
   const [tab, setTab] = useState('POST'); // POST or COMMENT
