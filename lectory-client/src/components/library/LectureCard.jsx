@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
  * 강의실 카드 – 라이브러리 목록/grid 전용
  *
  * props
- *  • thumbnail        : string (nullable)     ― 썸네일 URL
+ *  • coverImageUrl    : string (nullable)     ― 커버 이미지 URL
  *  • title            : string                ― 강의실 제목
  *  • expertName       : string                ― 전문가 이름
  *  • enrollmentCount  : number                ― 수강생 수
@@ -16,7 +16,7 @@ import PropTypes from "prop-types";
  *  • onClick          : () => void            ― 클릭 핸들러 (필수)
  */
 const LectureCard = ({
-  thumbnail,
+  coverImageUrl,
   title,
   expertName,
   enrollmentCount = 0,
@@ -33,10 +33,10 @@ const LectureCard = ({
     className="cursor-pointer rounded-xl overflow-hidden bg-white shadow
                hover:shadow-lg hover:-translate-y-1 transition-transform duration-150"
   >
-    {/* 썸네일 */}
-    {thumbnail ? (
+    {/* 커버 이미지 */}
+    {coverImageUrl ? (
       <img
-        src={thumbnail}
+        src={coverImageUrl}
         alt={title}
         loading="lazy"
         className="w-full aspect-video object-cover"
@@ -86,14 +86,14 @@ const LectureCard = ({
 );
 
 LectureCard.propTypes = {
-  thumbnail: PropTypes.string,
-  title: PropTypes.string.isRequired,
-  expertName: PropTypes.string.isRequired,
-  enrollmentCount: PropTypes.number,
-  isPaid: PropTypes.bool,
-  isEnrolled: PropTypes.bool,
-  tags: PropTypes.arrayOf(PropTypes.string),
-  onClick: PropTypes.func.isRequired,
+  coverImageUrl:    PropTypes.string,
+  title:            PropTypes.string.isRequired,
+  expertName:       PropTypes.string.isRequired,
+  enrollmentCount:  PropTypes.number,
+  isPaid:           PropTypes.bool,
+  isEnrolled:       PropTypes.bool,
+  tags:             PropTypes.arrayOf(PropTypes.string),
+  onClick:          PropTypes.func.isRequired,
 };
 
 export default LectureCard;
