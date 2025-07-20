@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useHref, useNavigate } from 'react-router-dom';
 
 const CommentManageList = () => {
   const [comments, setComments] = useState([]);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch('/api/admin/manage-comments')
@@ -42,12 +44,15 @@ const CommentManageList = () => {
             </tr>
           ) : (
             comments.map((comment, index) => (
-              <tr key={comment.commentId} className="hover:bg-gray-50">
-                <td className="border px-3 py-2 text-center">{index}</td>
+              <tr key={comment.commentId} 
+              className="hover:bg-gray-50 cursor-pointer"
+              onClick={() => navigate(`/admin/posts/${comment.postId}`)}
+              >
+                <td className="border px-3 py-2 text-center">{comment.commentId}</td>
                 <td className="border px-3 py-2">{comment.content}</td>
-                <td className="border px-3 py-2">{comment.authorEmail}</td>
+                <td className="border px-3 py-2">{comment.email}</td>
                 <td className="border px-3 py-2">{formatDate(comment.createdAt)}</td>
-                <td className="border px-3 py-2 text-center">{comment.isReported ? 'O' : 'X'}</td>
+                <td className="border px-3 py-2 text-center">{comment.reported ? 'O' : 'X'}</td>
               </tr>
             ))
           )}
