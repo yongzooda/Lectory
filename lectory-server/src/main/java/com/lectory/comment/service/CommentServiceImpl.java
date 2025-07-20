@@ -120,6 +120,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public CommentResponseDto acceptComment(Long postId, Long commentId, CustomUserDetail userDetail) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(CustomErrorCode.POST_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(CustomErrorCode.COMMENT_NOT_FOUND));
 
@@ -139,6 +141,8 @@ public class CommentServiceImpl implements CommentService {
         }
 
         comment.accept();
+        post.accept();
+        postRepository.save(post);
         commentRepository.save(comment);
 
         return commentMapper.getCommentResponse(comment, userDetail);
