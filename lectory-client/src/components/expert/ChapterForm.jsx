@@ -1,40 +1,49 @@
-// lectory-client/src/components/expert/ChapterForm.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from "react";
+import Select from "react-select";
+import { fetchAllTags } from "../../api/expertApi";
 
 /**
  * 전문가용 챕터(강의) 등록·수정 폼
  *
  * props
- *  • initial     : { chapterName, expectedTime, orderNum, videoUrl }  (nullable → 신규)
- *  • onSave(data): Promise<void>   저장 버튼 클릭 시 호출
- *  • onCancel()  : () => void      취소 버튼 클릭 (선택)
+ *  • initial : {
+ *      chapterName, expectedTime, orderNum,
+ *      videoUrl, tags: string[]
+ *    }
+ *  • onSave(payload): Promise<void>
+ *  • onCancel():     void (선택)
  */
 const ChapterForm = ({ initial = {}, onSave, onCancel }) => {
-  const [chapterName, setChapterName] = useState('');
-  const [expectedTime, setExpectedTime] = useState('');
-  const [orderNum, setOrderNum] = useState(1);
-  const [videoUrl, setVideoUrl] = useState('');
-  const [saving, setSaving] = useState(false);
+  /* ── form state ── */
+  const [chapterName, setChapterName] = useState(() => initial.chapterName ?? "");
+  const [expectedTime, setExpectedTime] = useState(() => initial.expectedTime ?? "");
+  const [orderNum, setOrderNum] = useState(() => initial.orderNum ?? 1);
+  const [videoUrl, setVideoUrl] = useState(() => initial.videoUrl ?? "");
+  const [tags, setTags] = useState(() =>
+    (initial.tags ?? []).map((t) => ({ label: t, value: t })),
+  );
 
-  /* 👉 초기값 세팅 (수정 모드) */
+  const [allTags, setAllTags] = useState([]);
+  const [saving,  setSaving]  = useState(false);
+
+  /* ── 태그 풀 로딩 (최초 1회) ── */
   useEffect(() => {
-    if (initial) {
-      setChapterName(initial.chapterName ?? '');
-      setExpectedTime(initial.expectedTime ?? '');
-      setOrderNum(initial.orderNum ?? 1);
-      setVideoUrl(initial.videoUrl ?? '');
-    }
-  }, [initial]);
+    fetchAllTags().then(({ data }) =>
+      setAllTags(data.map((t) => ({ label: t, value: t }))),
+    );
+  }, []);
 
+  /* ── 제출 ── */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!onSave) return;
 
     const payload = {
-      chapterName: chapterName.trim(),
+      chapterName : chapterName.trim(),
       expectedTime: expectedTime.trim(),
-      orderNum: Number(orderNum),
-      videoUrl: videoUrl.trim(),
+      orderNum    : Number(orderNum),
+      videoUrl    : videoUrl.trim(),
+      tags        : tags.map((t) => t.value),
     };
 
     try {
@@ -45,11 +54,12 @@ const ChapterForm = ({ initial = {}, onSave, onCancel }) => {
     }
   };
 
+  /* ── UI ── */
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* ─── 이름 ─── */}
+      {/* 챕터명 */}
       <div>
-        <label className="block mb-1 font-semibold">챕터명</label>
+        <label className="block mb-1 font-semibold">챕터명 *</label>
         <input
           type="text"
           value={chapterName}
@@ -59,52 +69,66 @@ const ChapterForm = ({ initial = {}, onSave, onCancel }) => {
         />
       </div>
 
-      {/* ─── 예상 시간 ─── */}
+      {/* 예상 소요시간 */}
       <div>
         <label className="block mb-1 font-semibold">예상 소요시간</label>
         <input
           type="text"
           value={expectedTime}
           onChange={(e) => setExpectedTime(e.target.value)}
-          placeholder="예: 15분, 01:30:00"
+          placeholder="예: 15분, 01:30:00 (선택)"
           className="w-full border rounded p-2"
         />
       </div>
 
-      {/* ─── 순서 ─── */}
+      {/* 표시 순서 (중복 허용) */}
       <div>
-        <label className="block mb-1 font-semibold">표시 순서</label>
+        <label className="block mb-1 font-semibold">표시 순서 </label>
         <input
           type="number"
-          min={1}
           value={orderNum}
           onChange={(e) => setOrderNum(e.target.value)}
           className="w-32 border rounded p-2"
+          min={1}
+          step={1}
           required
         />
       </div>
 
-      {/* ─── 동영상 URL ─── */}
+      {/* 동영상 URL (선택) */}
       <div>
         <label className="block mb-1 font-semibold">동영상 URL</label>
         <input
-          type="url"
+          type="text"
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
+          placeholder="https://…  또는  /videos/intro.mp4 (선택)"
           className="w-full border rounded p-2"
         />
       </div>
 
-      {/* ─── 버튼 ─── */}
+      {/* 태그 멀티셀렉트 */}
+      <div>
+        <label className="block mb-1 font-semibold">태그</label>
+        <Select
+          isMulti
+          options={allTags}
+          value={tags}
+          onChange={setTags}
+          placeholder="태그 입력 또는 선택…"
+          className="react-select-container"
+        />
+      </div>
+
+      {/* 버튼 */}
       <div className="flex space-x-3">
         <button
           type="submit"
           disabled={saving}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded disabled:opacity-50"
         >
-          {saving ? '저장 중…' : '저장'}
+          {saving ? "저장 중…" : "저장"}
         </button>
-
         {onCancel && (
           <button
             type="button"

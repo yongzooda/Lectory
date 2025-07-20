@@ -89,13 +89,6 @@
       ]
     },
     {
-      "id": "src/pages/contentlibrary/expert/ManageChapters.jsx",
-      "label": "ManageChapters",
-      "routes": [
-        "/library/expert/:lectureRoomId/chapters"
-      ]
-    },
-    {
       "id": "src/pages/admin/MembershipManagementPage.jsx",
       "label": "MembershipManagementPage",
       "routes": [
@@ -134,15 +127,31 @@
   ],
   "edges": [
     {
-      "id": "src/pages/sections/PostDetail.jsx:122:6-to-src/pages/PostListPage.jsx",
+      "id": "src/pages/sections/PostDetail.jsx:20:6-to-src/pages/user/LoginForm.jsx",
+      "source": "src/pages/PostDetailPage.jsx",
+      "target": "src/pages/user/LoginForm.jsx",
+      "data": {
+        "viaRoute": "/login",
+        "trigger": {
+          "element": "navigate(\"/login\")",
+          "line": 20,
+          "endLine": 20,
+          "column": 6,
+          "endColumn": 24,
+          "sourceFile": "src/pages/sections/PostDetail.jsx"
+        }
+      }
+    },
+    {
+      "id": "src/pages/sections/PostDetail.jsx:133:6-to-src/pages/PostListPage.jsx",
       "source": "src/pages/PostDetailPage.jsx",
       "target": "src/pages/PostListPage.jsx",
       "data": {
         "viaRoute": "/posts",
         "trigger": {
           "element": "navigate(\"/posts\")",
-          "line": 122,
-          "endLine": 122,
+          "line": 133,
+          "endLine": 133,
           "column": 6,
           "endColumn": 24,
           "sourceFile": "src/pages/sections/PostDetail.jsx"

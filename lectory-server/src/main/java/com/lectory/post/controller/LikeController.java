@@ -1,32 +1,32 @@
 package com.lectory.post.controller;
 
-import org.springframework.http.ResponseEntity;
+import com.lectory.post.dto.LikeResponseDto;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import com.lectory.common.domain.LikeTarget;
+import com.lectory.post.dto.LikeRequestDto;
 import com.lectory.post.service.LikeService;
 import com.lectory.user.security.CustomUserDetail;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api/likes")
 @RequiredArgsConstructor
 public class LikeController {
-
     private final LikeService likeService;
 
-    @PostMapping("/{postId}/like")
-    public ResponseEntity<Void> likePost(
-            @PathVariable Long postId,
-            @AuthenticationPrincipal CustomUserDetail userDetail) {
-
+    @PostMapping
+    public LikeResponseDto toggleLike(
+            @AuthenticationPrincipal CustomUserDetail userDetail,
+            @RequestBody LikeRequestDto dto
+    ) {
         Long userId = userDetail.getUser().getUserId();
-        likeService.toggle(LikeTarget.POST, postId, userId);
-        return ResponseEntity.ok().build();
+        long cnt = likeService.toggle(dto, userId);
+        return new LikeResponseDto(cnt);
     }
+
 }

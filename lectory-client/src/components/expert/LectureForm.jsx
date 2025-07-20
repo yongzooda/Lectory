@@ -68,7 +68,7 @@ const LectureForm = ({ initial = {}, onSave, onCancel }) => {
       <div>
         <label className="block mb-1 font-semibold">썸네일 URL</label>
         <input
-          type="url"
+          type="text"
           value={thumbnail}
           onChange={(e) => setThumbnail(e.target.value)}
           className="w-full border rounded p-2"
@@ -103,7 +103,7 @@ const LectureForm = ({ initial = {}, onSave, onCancel }) => {
       <div>
         <label className="block mb-1 font-semibold">첨부파일 URL</label>
         <input
-          type="url"
+          type="text"
           value={fileUrl}
           onChange={(e) => setFileUrl(e.target.value)}
           className="w-full border rounded p-2"
