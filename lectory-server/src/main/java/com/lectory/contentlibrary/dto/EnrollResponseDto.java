@@ -20,4 +20,6 @@ public class EnrollResponseDto {
     private Long lectureRoomId;
     /** 수강신청 완료 후 수강 여부 */
     private Boolean isEnrolled;
+
+    private String paymentUrl;
 }
