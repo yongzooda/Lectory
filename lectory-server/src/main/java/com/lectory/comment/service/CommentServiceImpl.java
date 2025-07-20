@@ -186,6 +186,7 @@ public class CommentServiceImpl implements CommentService {
                 .targetId(commentId)
                 .user(userDetail.getUser())
                 .content(req.getContent())
+                .createdAt(LocalDateTime.now())
                 .status(ReportStatus.PENDING)
                 .build();
 

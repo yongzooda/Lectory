@@ -134,15 +134,15 @@
   ],
   "edges": [
     {
-      "id": "src\\pages\\sections\\PostDetail.jsx:22:6-to-src\\pages\\user\\LoginForm.jsx",
+      "id": "src\\pages\\sections\\PostDetail.jsx:21:6-to-src\\pages\\user\\LoginForm.jsx",
       "source": "src\\pages\\PostDetailPage.jsx",
       "target": "src\\pages\\user\\LoginForm.jsx",
       "data": {
         "viaRoute": "/login",
         "trigger": {
           "element": "navigate(\"/login\")",
-          "line": 22,
-          "endLine": 22,
+          "line": 21,
+          "endLine": 21,
           "column": 6,
           "endColumn": 24,
           "sourceFile": "src\\pages\\sections\\PostDetail.jsx"
@@ -150,15 +150,15 @@
       }
     },
     {
-      "id": "src\\pages\\sections\\PostDetail.jsx:125:6-to-src\\pages\\PostListPage.jsx",
+      "id": "src\\pages\\sections\\PostDetail.jsx:128:6-to-src\\pages\\PostListPage.jsx",
       "source": "src\\pages\\PostDetailPage.jsx",
       "target": "src\\pages\\PostListPage.jsx",
       "data": {
         "viaRoute": "/posts",
         "trigger": {
           "element": "navigate(\"/posts\")",
-          "line": 125,
-          "endLine": 125,
+          "line": 128,
+          "endLine": 128,
           "column": 6,
           "endColumn": 24,
           "sourceFile": "src\\pages\\sections\\PostDetail.jsx"

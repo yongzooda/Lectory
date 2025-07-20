@@ -4,7 +4,6 @@ import PostComment from "./PostComment";
 import "../../assets/css/postDetail.css";
 
 export const PostDetail = () => {
-
   const { postId } = useParams(); // URL 파라미터 가져오기
   const [post, setPost] = useState(null); // 게시글 데이터
   const [comments, setComments] = useState([]); // 댓글 데이터
@@ -13,7 +12,6 @@ export const PostDetail = () => {
 
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
-
 
   // 로그인 체크 및 리다이렉트
   useEffect(() => {
@@ -67,12 +65,16 @@ export const PostDetail = () => {
   };
 
   // 수정 요청 함수 (PUT)
-  const handleEdit = async () => {    
+  const handleEdit = async () => {
     // 수정할 데이터 임시 입력 받기
     const newTitle = prompt("수정할 제목을 입력하세요", post.title);
     const newContent = prompt("수정할 내용을 입력하세요", post.content);
 
-    if (!newTitle || !newContent) {
+    if (newTitle === null && newContent === null) {
+      return;
+    }
+
+    if (newTitle.trim() === "" || newContent.trim() === "") {
       alert("제목과 내용을 모두 입력해야 합니다.");
       return;
     }
@@ -236,33 +238,36 @@ export const PostDetail = () => {
               <p>댓글이 없습니다.</p>
             ) : (
               comments.map((comment) => (
-              <PostComment
-                key={comment.commentId}
-                postId={postId}
-                comment={comment}
-                onReply={handleReply}
-              />
-            ))
+                <PostComment
+                  key={comment.commentId}
+                  postId={postId}
+                  comment={comment}
+                  onReply={handleReply}
+                  onUpdate={fetchPostAndComments}
+                />
+              ))
             )}
-            </div>
-        </div>       
+          </div>
+        </div>
       </div>
-      
+
       {/* 입력 칸 */}
       <div className="div-2">
         <div className="frame">
-          <button className="text-wrapper-11" onClick={handleAddComment}>등록</button>
+          <button className="text-wrapper-11" onClick={handleAddComment}>
+            등록
+          </button>
         </div>
 
         <div className="frame-2">
           <textarea
-          className="comment-textarea"
-          placeholder="댓글을 입력하세요..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)} // 입력값 상태 저장
-        />
+            className="comment-textarea"
+            placeholder="댓글을 입력하세요..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)} // 입력값 상태 저장
+          />
         </div>
-      </div>      
+      </div>
     </div>
   );
 };
