@@ -40,8 +40,7 @@
       "label": "PostWritePage",
       "routes": [
         "/posts/write"
-      ],
-      "dataModelId": "2823:13581"
+      ]
     },
     {
       "id": "src/pages/PostDetailPage.jsx",
@@ -126,6 +125,38 @@
     }
   ],
   "edges": [
+    {
+      "id": "src\\pages\\PostWritePage.jsx:77:6-to-src\\pages\\PostListPage.jsx",
+      "source": "src\\pages\\PostWritePage.jsx",
+      "target": "src\\pages\\PostListPage.jsx",
+      "data": {
+        "viaRoute": "/posts",
+        "trigger": {
+          "element": "navigate(\"/posts\")",
+          "line": 77,
+          "endLine": 77,
+          "column": 6,
+          "endColumn": 24,
+          "sourceFile": "src\\pages\\PostWritePage.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\PostWritePage.jsx:84:29-to-src\\pages\\PostListPage.jsx",
+      "source": "src\\pages\\PostWritePage.jsx",
+      "target": "src\\pages\\PostListPage.jsx",
+      "data": {
+        "viaRoute": "/posts",
+        "trigger": {
+          "element": "navigate(\"/posts\")",
+          "line": 84,
+          "endLine": 84,
+          "column": 29,
+          "endColumn": 47,
+          "sourceFile": "src\\pages\\PostWritePage.jsx"
+        }
+      }
+    },
     {
       "id": "src\\pages\\sections\\PostDetail.jsx:20:6-to-src\\pages\\user\\LoginForm.jsx",
       "source": "src\\pages\\PostDetailPage.jsx",
