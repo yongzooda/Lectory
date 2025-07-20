@@ -1,3 +1,4 @@
+// src/pages/expert/ExpertLectureDetail.jsx
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getLectureDetail, deleteLecture } from "../../../api/expertApi";
@@ -46,16 +47,17 @@ const ExpertLectureDetail = () => {
     <div className="container mx-auto p-6 space-y-10">
       {/* 헤더 */}
       <LectureHeader
-        title            ={detail.title}
-        coverImageUrl    ={detail.coverImageUrl}
-        description      ={detail.description}
-        expertName       ={detail.expertName}
-        enrollmentCount  ={detail.enrollmentCount}
-        isPaid           ={detail.isPaid}
-        createdAt        ={detail.createdAt}
-        updatedAt        ={detail.updatedAt}
+        title           ={detail.title}
+        coverImageUrl   ={detail.coverImageUrl}
+        description     ={detail.description}
+        expertName      ={detail.expertName}
+        enrollmentCount ={detail.enrollmentCount}
+        isPaid          ={detail.isPaid}
+        createdAt       ={detail.createdAt}
+        updatedAt       ={detail.updatedAt}
       />
 
+      {/* 전문가 뷰용 “수강 중” 뱃지 */}
       <span className="inline-block bg-green-500 text-white px-3 py-1 rounded">
         수강 중
       </span>

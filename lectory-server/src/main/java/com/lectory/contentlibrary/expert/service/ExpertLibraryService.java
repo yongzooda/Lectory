@@ -160,7 +160,7 @@ public class ExpertLibraryService {
 
         LectureRoom room = LectureRoom.builder()
                 .expert(expert)
-                .coverImageUrl(req.getThumbnail())
+                .coverImageUrl(req.getCoverImageUrl())
                 .title(req.getTitle())
                 .description(req.getDescription())
                 .fileUrl(req.getFileUrl())
@@ -174,7 +174,7 @@ public class ExpertLibraryService {
     /* 5) 강의 수정 */
     public void updateLecture(Long expertId, Long roomId, LectureUpdateRequestDto req) {
         LectureRoom room = fetchOwnedRoom(expertId, roomId);
-        room.setCoverImageUrl(req.getThumbnail());
+        room.setCoverImageUrl(req.getCoverImageUrl());
         room.setTitle(req.getTitle());
         room.setDescription(req.getDescription());
         room.setFileUrl(req.getFileUrl());
@@ -337,7 +337,7 @@ public class ExpertLibraryService {
 
         return LectureRoomSummaryDto.builder()
                 .lectureRoomId(room.getLectureRoomId())
-                .thumbnail(room.getCoverImageUrl())
+                .coverImageUrl(room.getCoverImageUrl())
                 .title(room.getTitle())
                 .expertName(room.getExpert().getUser().getNickname())
                 .enrollmentCount(count)

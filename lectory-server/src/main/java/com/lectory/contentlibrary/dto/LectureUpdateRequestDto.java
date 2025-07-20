@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class LectureUpdateRequestDto {
-    private String thumbnail;
+    private String coverImageUrl;
     private String title;
     private String description;
     private String fileUrl;
