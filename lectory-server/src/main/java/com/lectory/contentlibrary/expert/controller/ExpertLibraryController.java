@@ -1,11 +1,12 @@
-// File: com/lectory/contentlibrary/expert/controller/ExpertLibraryController.java
 package com.lectory.contentlibrary.expert.controller;
 
 import com.lectory.contentlibrary.dto.*;
 import com.lectory.contentlibrary.expert.service.ExpertLibraryService;
+import com.lectory.user.security.CustomUserDetail;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,108 +19,116 @@ public class ExpertLibraryController {
 
     private final ExpertLibraryService svc;
 
-    /* ───────────────────────────────────────────────────────────────
-     * 1) 내 강의 목록 (페이지)
-     * ---------------------------------------------------------------- */
+    /** 1) 내 강의 목록 (페이지) */
     @GetMapping
     public ResponseEntity<PageDto<LectureRoomSummaryDto>> list(
-            @RequestParam Long expertId,
+            @AuthenticationPrincipal CustomUserDetail userDetail,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @Parameter(description = "createdAt 또는 popularity , 예: popularity,desc")
             @RequestParam(defaultValue = "createdAt,desc") String sort
     ) {
-        return ResponseEntity.ok(
-                svc.listMyLectures(expertId, page, size, sort)
-        );
+        Long expertId = userDetail.getUser().getExpert().getExpertId();
+        PageDto<LectureRoomSummaryDto> result = svc.listMyLectures(expertId, page, size, sort);
+        return ResponseEntity.ok(result);
     }
 
-    /* 2) 내 강의 검색 (제목·태그) */
+    /** 2) 내 강의 검색 (제목·태그) */
     @GetMapping("/search")
     public ResponseEntity<PageDto<LectureRoomSummaryDto>> search(
-            @RequestParam Long expertId,
+            @AuthenticationPrincipal CustomUserDetail userDetail,
             @RequestParam(required = false, defaultValue = "") String keyword,
             @RequestParam(required = false) List<String> tags,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt,desc") String sort
     ) {
-        return ResponseEntity.ok(
-                svc.searchMyLectures(expertId, keyword, tags, page, size, sort)
-        );
+        Long expertId = userDetail.getUser().getExpert().getExpertId();
+        PageDto<LectureRoomSummaryDto> result =
+                svc.searchMyLectures(expertId, keyword, tags, page, size, sort);
+        return ResponseEntity.ok(result);
     }
 
-    /* 3) 강의실 상세 조회 ― 프런트 getLectureDetail() 대응 */
+    /** 3) 강의실 상세 조회 */
     @GetMapping("/{lectureRoomId}")
     public ResponseEntity<LectureDetailDto> detail(
-            @PathVariable Long lectureRoomId,
-            @RequestParam Long expertId    // 작성자 확인용
+            @AuthenticationPrincipal CustomUserDetail userDetail,
+            @PathVariable Long lectureRoomId
     ) {
+        Long expertId = userDetail.getUser().getExpert().getExpertId();
         LectureDetailDto dto = svc.getLectureDetailForExpert(lectureRoomId, expertId);
         return ResponseEntity.ok(dto);
     }
 
-    /* 4) 강의실 신규 생성 ― 프런트 createLecture() 대응 */
+    /** 4) 강의실 신규 생성 */
     @PostMapping
     public ResponseEntity<Map<String, Long>> createLecture(
+            @AuthenticationPrincipal CustomUserDetail userDetail,
             @RequestBody LectureCreateRequestDto req
     ) {
-        Long id = svc.createLecture(req);
+        Long expertId = userDetail.getUser().getExpert().getExpertId();
+        Long id = svc.createLecture(expertId, req);
         return ResponseEntity.ok(Map.of("lectureRoomId", id));
     }
 
-    /* 5) 강의 수정 */
+    /** 5) 강의 수정 */
     @PutMapping("/{lectureRoomId}")
     public ResponseEntity<Map<String, String>> updateLecture(
+            @AuthenticationPrincipal CustomUserDetail userDetail,
             @PathVariable Long lectureRoomId,
-            @RequestParam Long expertId,
             @RequestBody LectureUpdateRequestDto req
     ) {
+        Long expertId = userDetail.getUser().getExpert().getExpertId();
         svc.updateLecture(expertId, lectureRoomId, req);
         return ResponseEntity.ok(Map.of("message", "강의실 수정 완료"));
     }
 
-    /* 6) 강의 삭제 */
+    /** 6) 강의 삭제 */
     @DeleteMapping("/{lectureRoomId}")
     public ResponseEntity<Map<String, String>> deleteLecture(
-            @PathVariable Long lectureRoomId,
-            @RequestParam Long expertId
+            @AuthenticationPrincipal CustomUserDetail userDetail,
+            @PathVariable Long lectureRoomId
     ) {
+        Long expertId = userDetail.getUser().getExpert().getExpertId();
         svc.deleteLecture(expertId, lectureRoomId);
         return ResponseEntity.ok(Map.of("message", "강의실 삭제 완료"));
     }
 
-    /* 7) 챕터 신규 생성 ― 프런트 createChapter() 대응 */
+    /** 7) 챕터 신규 생성 */
     @PostMapping("/chapters")
     public ResponseEntity<Map<String, Long>> createChapter(
+            @AuthenticationPrincipal CustomUserDetail userDetail,
             @RequestBody ChapterCreateRequestDto req
     ) {
-        Long id = svc.createChapter(req);
-        return ResponseEntity.ok(Map.of("chapterId", id));
+        Long expertId = userDetail.getUser().getExpert().getExpertId();
+        Long chapterId = svc.createChapter(expertId, req);
+        return ResponseEntity.ok(Map.of("chapterId", chapterId));
     }
 
-    /* 8) 챕터 수정 */
+    /** 8) 챕터 수정 */
     @PutMapping("/chapters/{chapterId}")
     public ResponseEntity<Map<String, String>> updateChapter(
+            @AuthenticationPrincipal CustomUserDetail userDetail,
             @PathVariable Long chapterId,
-            @RequestParam Long expertId,
             @RequestBody ChapterUpdateRequestDto req
     ) {
+        Long expertId = userDetail.getUser().getExpert().getExpertId();
         svc.updateChapter(expertId, chapterId, req);
         return ResponseEntity.ok(Map.of("message", "챕터 수정 완료"));
     }
 
-    /* 9) 챕터 삭제 */
+    /** 9) 챕터 삭제 */
     @DeleteMapping("/chapters/{chapterId}")
     public ResponseEntity<Map<String, String>> deleteChapter(
-            @PathVariable Long chapterId,
-            @RequestParam Long expertId
+            @AuthenticationPrincipal CustomUserDetail userDetail,
+            @PathVariable Long chapterId
     ) {
+        Long expertId = userDetail.getUser().getExpert().getExpertId();
         svc.deleteChapter(expertId, chapterId);
         return ResponseEntity.ok(Map.of("message", "챕터 삭제 완료"));
     }
 
-    /* 10) 댓글 목록 (전문가 뷰에서도 필요 시) */
+    /** 10) 댓글 목록 (전문가 뷰) */
     @GetMapping("/{lectureRoomId}/comments")
     public ResponseEntity<List<CommentDto>> comments(
             @PathVariable Long lectureRoomId

@@ -54,11 +54,16 @@ public class ExpertManageService {
     // 승인/보류 버튼 클릭 시 PATCH 요청 보내기
     @Transactional
     public void updateApprovalStatus(ExpertApprovalRequestDto dto) {
-        Expert expert = expertManageRepository.findById(dto.getExpertId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 전문가 ID"));
+        System.out.println(">>> Service 진입: userId=" + dto.getExpertId() + ", status=" + dto.getStatus());
 
-        expert.setApprovalStatus(Expert.ApprovalStatus.valueOf(dto.getStatus()));
-        // JPA dirty checking 으로 자동 반영됨
+        Expert expert = expertManageRepository.findByUser_UserId(dto.getExpertId())
+                .orElseThrow(() -> {
+                    System.out.println(">>> ❌ 존재하지 않는 전문가 userId: " + dto.getExpertId());
+                    return new IllegalArgumentException("존재하지 않는 전문가 userId: " + dto.getExpertId());
+                });
+
+        expert.setApprovalStatus(dto.getStatus());
+        System.out.println(">>> 전문가 승인 상태 업데이트 완료: " + dto.getStatus());
     }
 
 }

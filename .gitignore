@@ -6,6 +6,7 @@ target/
 *.iws
 *.iml
 *.ipr
+lectory-client/.screen-graph.json
 lectory-server/pom.xml
 lectory-server/src/main/resources/application.properties
 lectory-server/src/main/resources/application.yml
