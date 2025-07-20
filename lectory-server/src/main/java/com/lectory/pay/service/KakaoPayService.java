@@ -71,9 +71,9 @@ public class KakaoPayService {
         body.put("quantity", 1);
         body.put("total_amount", 1000000000);
         body.put("tax_free_amount", 0);
-        body.put("approval_url", "http://localhost:8888/api/pay/success");
-        body.put("cancel_url", "http://localhost:8888/api/pay/cancel");
-        body.put("fail_url", "http://localhost:8888/api/pay/fail");
+        body.put("approval_url", "http://localhost:8080/api/pay/success?userId=" + userId);
+        body.put("cancel_url", "http://localhost:8080/api/pay/cancel");
+        body.put("fail_url", "http://localhost:8080/api/pay/fail");
 
         HttpHeaders headers = getHeader();
         kakaoReadyResponse = restTemplate.postForObject(
@@ -102,16 +102,11 @@ public class KakaoPayService {
             LocalDateTime endDate = regularpay.getUser().getSubscriptionEndDate();
 
             if (endDate.isAfter(now.plusMinutes(1))) {
-                System.out.println("아직아님");
                 continue;
             } // 정식배포시 1달 뒤로 설정할 예정
             if (regularpay.isCanceled()) {
                 regularPayService.deleteByUser_UserId(regularpay.getUser().getUserId());
-                User user = regularpay.getUser();
-                UserType userType = user.getUserType();
-                userType.setTypeName("FREE");
-                user.setUserType(userType);
-                userRepository.save(user);
+                userService.cancelSubscription(regularpay.getUser().getUserId());
                 continue;
             }
 
@@ -122,9 +117,10 @@ public class KakaoPayService {
             body.put("quantity", 1);
             body.put("total_amount", 1000000000);
             body.put("tax_free_amount", 0);
-            body.put("approval_url", "http://localhost:8888/api/pay/success");
-            body.put("cancel_url", "http://localhost:8888/api/pay/cancel");
-            body.put("fail_url", "http://localhost:8888/api/pay/fail");
+            body.put("approval_url",
+                    "http://localhost:8080/api/pay/success?userId=" + regularpay.getUser().getUserId());
+            body.put("cancel_url", "http://localhost:8080/api/pay/cancel");
+            body.put("fail_url", "http://localhost:8080/api/pay/fail");
 
             HttpHeaders headers = getHeader();
 
@@ -230,6 +226,7 @@ public class KakaoPayService {
             regularPay.setAid(response.getAid());
             regularPay.setTid(response.getTid());
             regularPay.setSid(response.getSid());
+            regularPay.setCanceled(false);
             regularPayService.save(regularPay);
         }
         return response;
@@ -237,7 +234,6 @@ public class KakaoPayService {
 
     public void kakaopaySubscriptionCancel(Long userId) {
 
-        log.info("정기 결제 취소 요청" + LocalDateTime.now());
         RegularPay regularPay = regularPayService.findByUser_UserId(userId);
         regularPay.setCanceled(true);
         regularPayService.save(regularPay);

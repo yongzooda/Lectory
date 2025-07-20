@@ -1,9 +1,5 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+// src/pages/contentlibrary/student/LibraryHome.jsx
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import {
@@ -20,34 +16,33 @@ import Pagination   from "../../../components/library/Pagination";
 
 /**
  * 수강생용 콘텐츠 라이브러리 메인
- * URL: /library?memberId=#
+ * URL: /library
  */
 const StudentLibraryHome = () => {
-  /* ─── URL 파라미터 ─── */
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const navigate       = useNavigate();
 
-  const memberId = searchParams.get("memberId") || "";
-  const search   = searchParams.get("search")   || "";
-  const sort     = searchParams.get("sort")     || "createdAt,desc";
-  const page     = parseInt(searchParams.get("page") || "0",  10);
-  const size     = parseInt(searchParams.get("size") || "10", 10);
+  // URL 쿼리에서 페이징·정렬·검색어·태그 가져오기
+  const search = searchParams.get("search") || "";
+  const sort   = searchParams.get("sort")   || "createdAt,desc";
+  const page   = parseInt(searchParams.get("page") || "0",  10);
+  const size   = parseInt(searchParams.get("size") || "10", 10);
 
-  /* tags 는 다중 파라미터 */
+  // 다중 태그 파라미터
   const tags   = useMemo(() => searchParams.getAll("tags"), [searchParams]);
   const tagKey = tags.slice().sort().join(",");
 
-  /* ─── 상태 ─── */
+  // 컴포넌트 상태
   const [rooms,    setRooms]    = useState([]);
   const [pageInfo, setPageInfo] = useState(null);
   const [loading,  setLoading]  = useState(true);
   const [allTags,  setAllTags]  = useState([]);
 
-  /* ─── 리스트 데이터 로딩 ─── */
+  // 목록 / 검색 API 호출
   const fetchList = useCallback(async () => {
     setLoading(true);
     try {
-      const base = { memberId, page, size, sort };
+      const base = { page, size, sort };
       const res  = (search || tags.length)
         ? await searchLectureRooms({ ...base, search, tags })
         : await listLectureRooms(base);
@@ -60,30 +55,28 @@ const StudentLibraryHome = () => {
     } finally {
       setLoading(false);
     }
-  }, [memberId, page, size, sort, search, tagKey]);
+  }, [page, size, sort, search, tagKey]);
 
   useEffect(() => {
     fetchList();
   }, [fetchList]);
 
-  /* ─── 태그 풀 로딩 ─── */
+  // 태그 필터 바용 풀 조회
   useEffect(() => {
     fetchAllTags()
       .then((res) => setAllTags(res.data))
       .catch(console.error);
   }, []);
 
-  /* ─── 상세 이동 ─── */
-  const goDetail = (id) => {
-    navigate(`/library/${id}?memberId=${memberId}`);
+  // 상세 페이지로 이동
+  const goDetail = (lectureRoomId) => {
+    navigate(`/library/${lectureRoomId}`);
   };
 
-  /* ─── 렌더 ─── */
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8 space-y-10">
       {/* 검색창 */}
       <SearchBar
-        memberId={memberId}
         initial={search}
         tags={tags}
         sort={sort}
@@ -92,8 +85,6 @@ const StudentLibraryHome = () => {
 
       {/* 태그 필터 */}
       <TagFilterBar
-        idValue={memberId}
-        idKey="memberId"
         selected={tags}
         allTags={allTags}
         search={search}
@@ -104,7 +95,6 @@ const StudentLibraryHome = () => {
       {/* 정렬 드롭다운 */}
       <div className="flex justify-end">
         <SortDropdown
-          memberId={memberId}
           search={search}
           tags={tags}
           value={sort}
@@ -141,7 +131,7 @@ const StudentLibraryHome = () => {
             <Pagination
               pageInfo={pageInfo}
               basePath="/library"
-              query={{ memberId, search, tags, sort }}
+              query={{ search, tags, sort }}
             />
           )}
         </>
