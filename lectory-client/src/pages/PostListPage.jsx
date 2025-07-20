@@ -1,58 +1,61 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { fetchPosts } from "../api/postApi";
 
 export default function PostListPage({ userRole, userId }) {
   const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterBy, setFilterBy] = useState("title");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const pageSize = 10;
+
   useEffect(() => {
-    async function fetchPosts() {
+    async function loadPosts() {
+      setLoading(true);
+      setError(null);
       try {
-        const res = await axios.get("/api/posts", { withCredentials: true });
-        console.log("raw posts response: ", res.data);
-
-        const raw = res.data;
-        let data = Array.isArray(raw)
-          ? raw
-          : Array.isArray(raw.content)
-          ? raw.content
-          : [];
-
+        const res = await fetchPosts({
+          page,
+          size: pageSize,
+          sort: "createdAt,DESC",
+        });
+        const data = res.data;
+        let list = Array.isArray(data.content) ? data.content : [];
+        // expert 계정은 paid 구독자 게시글만
         if (userRole === "expert") {
-          data = data.filter((p) => p.subscriber_type === "PAID" || p.isPaid);
+          list = list.filter((p) => p.subscriber_type === "PAID" || p.isPaid);
         }
-
-        setPosts(data);
+        setPosts(list);
+        setTotalPages(data.totalPages ?? 1);
       } catch (e) {
+        console.error(e);
         setError("게시글을 불러오는 중 오류가 발생했습니다.");
       } finally {
         setLoading(false);
       }
     }
-    fetchPosts();
-  }, [userRole]);
+    loadPosts();
+  }, [userRole, page]);
 
-  // 검색 필터링
+  // 검색 필터링 (로컬)
   const filtered = posts.filter((p) => {
     const term = searchTerm.toLowerCase();
-    if (filterBy === "title") {
-      return p.title.toLowerCase().includes(term);
-    }
-    if (filterBy === "tags") {
+    if (filterBy === "title") return p.title.toLowerCase().includes(term);
+    if (filterBy === "tags")
       return (
         Array.isArray(p.tags) &&
         p.tags.some((t) => t.toLowerCase().includes(term))
       );
-    }
-    if (filterBy === "myPosts") {
-      return p.userId === userId;
-    }
+    if (filterBy === "myPosts") return p.userId === userId;
     return true;
   });
+
+  const prevPage = () => setPage((prev) => Math.max(prev - 1, 0));
+  const nextPage = () => setPage((prev) => Math.min(prev + 1, totalPages - 1));
 
   if (loading) return <p className="p-4">로딩 중...</p>;
   if (error) return <p className="p-4 text-red-500">{error}</p>;
@@ -93,18 +96,13 @@ export default function PostListPage({ userRole, userId }) {
 
       {/* 게시글 목록 */}
       {filtered.length === 0 ? (
-        <p className="text-center text-gray-500">검색 결과가 없습니다.</p>
+        <div className="text-center text-gray-500">
+          {searchTerm ? "검색 결과가 없습니다." : "등록된 게시글이 없습니다."}
+        </div>
       ) : (
         <ul className="space-y-4">
           {filtered.map((post) => (
-            <li
-              key={post.postId}
-              className={`p-4 border rounded ${
-                post.subscriber_type === "PAID" || post.isPaid
-                  ? "bg-yellow-50"
-                  : ""
-              }`}
-            >
+            <li key={post.postId} className="p-4 border rounded">
               <div className="flex justify-between items-center mb-2">
                 <Link
                   to={`/posts/${post.postId}`}
@@ -113,26 +111,42 @@ export default function PostListPage({ userRole, userId }) {
                   {post.title}
                 </Link>
                 <span className="text-sm">
-                  {post.isResolved || post.is_resolved ? "해결완료" : "미해결"}
+                  {post.isResolved ? "해결완료" : "미해결"}
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
                 작성자: {post.userNickname} |{" "}
-                {new Date(post.createdAt || post.created_at).toLocaleDateString(
-                  "ko-KR"
-                )}
+                {new Date(post.createdAt).toLocaleDateString("ko-KR")}
               </p>
               <p className="text-gray-700 mb-2 truncate">
-                {(post.content || post.body || "").slice(0, 100)}...
+                {post.content.slice(0, 100)}...
               </p>
-              {(post.subscriber_type === "PAID" || post.isPaid) && (
-                <span className="inline-block px-2 py-1 text-xs font-medium text-white bg-blue-500 rounded">
-                  Paid 글
-                </span>
-              )}
             </li>
           ))}
         </ul>
+      )}
+
+      {/* 페이징 */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-6 space-x-4">
+          <button
+            onClick={prevPage}
+            disabled={page === 0}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            이전
+          </button>
+          <span>
+            {page + 1} / {totalPages}
+          </span>
+          <button
+            onClick={nextPage}
+            disabled={page === totalPages - 1}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            다음
+          </button>
+        </div>
       )}
     </div>
   );

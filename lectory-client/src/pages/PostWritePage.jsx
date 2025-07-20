@@ -6,7 +6,7 @@ import "../assets/css/page.css";
 
 export const PostWritePage = () => {
   return (
-    <div className="page" data-model-id="2823:13581">  
+    <div className="page" data-model-id="2823:13581">
       <NavbarLightDefault />
       <Footer />
       <PostWrite />
