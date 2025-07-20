@@ -616,11 +616,12 @@
   font-family: "Poppins", Helvetica;
   font-size: 14px;
   font-weight: 300;
-  left: 58px;
+  left: 90px;
   letter-spacing: 0;
   line-height: normal;
   position: absolute;
   top: 4px;
+  white-space: nowrap;
 }
 
 .postDetail .stats-wrapper-3 {

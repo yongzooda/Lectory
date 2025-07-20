@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Star } from "../../assets/icons/Star";
 import PostComment from "./PostComment";
 import "../../assets/css/postDetail.css";
 
@@ -15,55 +14,57 @@ export const PostDetail = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
 
-  if (!token) {
-    alert("로그인 후 이용해주세요.");
-    return;
-  }
 
+  // 로그인 체크 및 리다이렉트
   useEffect(() => {
-    const fetchPostAndComments = async () => {
-      try {
-        // 게시글 요청
-        const postResponse = await fetch(`/api/posts/${postId}`, {
+    if (!token) {
+      alert("로그인 후 이용해주세요.");
+      navigate("/login");
+    }
+  }, [token, navigate]);
+
+  // 컴포넌트 첫 렌더링 시 데이터 가져오기
+  useEffect(() => {
+    if (token) {
+      fetchPostAndComments();
+    }
+  }, [postId, token]);
+
+  // 게시글 + 댓글 데이터 fetch 함수
+  const fetchPostAndComments = async () => {
+    setLoading(true);
+    try {
+      const postResponse = await fetch(`/api/posts/${postId}`, {
         headers: {
-          Authorization: `Bearer ${token}`, // 토큰 추가
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-
-        if (!postResponse.ok) {
-          const text = await postResponse.text(); // 응답 내용을 text로 확인
-          console.error("게시글 API 응답:", text);
-          throw new Error("게시글을 불러오는 데 실패했습니다.");
-        }
-        const postData = await postResponse.json();
-
-        // 댓글 요청
-        const commentsResponse = await fetch(`/api/posts/${postId}/comment`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // 토큰 추가
-          "Content-Type": "application/json",
-        },
-      });
-        if (!commentsResponse.ok) {
-          const text = await commentsResponse.text();
-          console.error("댓글 API 응답:", text);
-          throw new Error("댓글을 불러오는 데 실패했습니다.");
-        }
-        const commentsData = await commentsResponse.json();
-
-        // 상태에 데이터 저장
-        setPost(postData);
-        setComments(commentsData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+      if (!postResponse.ok) {
+        throw new Error("게시글을 불러오는 데 실패했습니다.");
       }
-    };
+      const postData = await postResponse.json();
 
-    fetchPostAndComments();
-  }, [postId]);
+      const commentsResponse = await fetch(`/api/posts/${postId}/comment`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!commentsResponse.ok) {
+        throw new Error("댓글을 불러오는 데 실패했습니다.");
+      }
+      const commentsData = await commentsResponse.json();
+
+      setPost(postData);
+      setComments(commentsData);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // 수정 요청 함수 (PUT)
   const handleEdit = async () => {    
@@ -77,21 +78,23 @@ export const PostDetail = () => {
     }
 
     try {
-      const response = await fetch(`/api/posts/${postId}?userId=${userId}`, {
+      const response = await fetch(`/api/posts/${postId}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          userId: post.userId,
           title: newTitle,
           content: newContent,
+          onlyExpert: post.onlyExpert,
+          tagIds: post.tags ? Array.from(post.tags) : [],
         }),
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "수정 실패");
+        throw new Error("수정 실패");
       }
       alert("수정 완료");
       // 수정 후 상세 페이지 다시 불러오기
@@ -107,7 +110,7 @@ export const PostDetail = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
-      const response = await fetch(`/api/posts/${postId}?userId=${userId}`, {
+      const response = await fetch(`/api/posts/${postId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -115,8 +118,7 @@ export const PostDetail = () => {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "삭제 실패");
+        throw new Error("삭제 실패");
       }
       alert("삭제 완료");
       // 삭제 후 게시글 목록 페이지로 이동
@@ -131,7 +133,7 @@ export const PostDetail = () => {
     console.log(`대댓글 달기 클릭: ${parentCommentId}`);
   };
 
-  // ✅ 댓글 작성 요청
+  // 댓글 작성 요청
   const handleAddComment = async () => {
     if (!newComment.trim()) {
       alert("댓글 내용을 입력하세요.");
@@ -151,13 +153,12 @@ export const PostDetail = () => {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "댓글 작성 실패");
+        throw new Error("댓글 작성 실패");
       }
 
       alert("댓글이 등록되었습니다.");
       setNewComment(""); // 입력창 초기화
-      window.location.reload(); // 등록 후 새로고침
+      fetchPostAndComments(); // 새 댓글 반영
     } catch (error) {
       console.error(error);
       alert("댓글 등록 중 오류 발생");
@@ -237,6 +238,7 @@ export const PostDetail = () => {
               comments.map((comment) => (
               <PostComment
                 key={comment.commentId}
+                postId={postId}
                 comment={comment}
                 onReply={handleReply}
               />
