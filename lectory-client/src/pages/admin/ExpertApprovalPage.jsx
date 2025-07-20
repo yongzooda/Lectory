@@ -31,7 +31,7 @@ const ExpertApprovalPage = () => {
     })
       .then((res) => {
         if (!res.ok) throw new Error('처리에 실패했습니다.');
-        if (res.ok)  alert("승인을 완료했습니다! ✅");
+        if (res.ok)  alert("요청을 완료했습니다! ✅");
         fetchExperts(); // 목록 다시 불러오기
       })
       .catch((err) => alert(err.message));
