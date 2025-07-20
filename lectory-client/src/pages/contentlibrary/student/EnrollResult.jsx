@@ -1,24 +1,22 @@
 // lectory-client/src/pages/contentlibrary/student/EnrollResult.jsx
 import React from 'react';
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 /**
  * 수강신청 완료 페이지
- * URL: /library/:lectureRoomId/enroll-result?memberId=#
+ * URL: /library/:lectureRoomId/enroll-result
  */
 const EnrollResult = () => {
-  const { lectureRoomId }   = useParams();
-  const [searchParams]      = useSearchParams();
-  const memberId            = searchParams.get('memberId');
-  const navigate            = useNavigate();
+  const { lectureRoomId } = useParams();
+  const navigate          = useNavigate();
 
   /* ─── 이동 핸들러 ─── */
   const goDetail = () => {
-    navigate(`/library/${lectureRoomId}?memberId=${memberId}`);
+    navigate(`/library/${lectureRoomId}`);
   };
 
   const goList = () => {
-    navigate(`/library?memberId=${memberId}`);
+    navigate('/library');
   };
 
   /* ─── 렌더 ─── */

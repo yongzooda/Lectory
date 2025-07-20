@@ -50,4 +50,8 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PostTag> postTags = new HashSet<>();
+
+    public void accept() {
+        this.isResolved = true;
+    }
 }
