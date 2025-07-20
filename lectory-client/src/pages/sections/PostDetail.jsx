@@ -52,8 +52,14 @@ export const PostDetail = () => {
       if (!commentsResponse.ok) {
         throw new Error("댓글을 불러오는 데 실패했습니다.");
       }
-      const commentsData = await commentsResponse.json();
+      let commentsData = await commentsResponse.json();
 
+      commentsData = commentsData.sort((a, b) => {
+        if (a.isAccepted && !b.isAccepted) return -1; // a가 채택된 댓글이면 앞으로
+        if (!a.isAccepted && b.isAccepted) return 1; // b가 채택된 댓글이면 뒤로
+        // 둘 다 채택된 댓글이 아니면 createdAt 오름차순
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      });
       setPost(postData);
       setComments(commentsData);
     } catch (error) {
