@@ -72,6 +72,7 @@ public class CommentMapper {
         boolean hidden = isFree && isPostPaid && isCommentExpert;
         String content = hidden ? "유료 사용자만 볼 수 있습니다." : comment.getContent();
         return CommentResponseDto.builder()
+                .commentId(comment.getCommentId())
                 .postId(comment.getPost().getPostId())
                 .userId(comment.getUser().getUserId())
                 .parentId(comment.getParent()!=null?comment.getParent().getCommentId():null)
@@ -81,6 +82,7 @@ public class CommentMapper {
                 .updatedAt(comment.getUpdatedAt())
                 .isAccepted(comment.getIsAccepted())
                 .isDeleted(comment.getIsDeleted())
+                .userNickname(comment.getUser().getNickname())
                 .build();
     }
 

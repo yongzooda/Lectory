@@ -19,7 +19,8 @@ public enum CustomErrorCode {
     COMMENT_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "C002", "댓글을 수정할 권한이 없습니다."),
     COMMENT_ALREADY_ACCEPTED(HttpStatus.CONFLICT, "C003", "이미 채택된 댓글이 있습니다."),
     COMMENT_POST_MISMATCH(HttpStatus.BAD_REQUEST, "C004", "댓글이 해당 게시글에 속하지 않습니다."),
-    REPORT_ALREADY_EXISTS(HttpStatus.CONFLICT, "C005", "이미 신고한 대상입니다");
+    REPORT_ALREADY_EXISTS(HttpStatus.CONFLICT, "C005", "이미 신고한 대상입니다"),
+    EXPERT_CAN_COMMENT_ON_PAID_ONLY(HttpStatus.FORBIDDEN, "C006", "전문가는 유료 사용자 게시글에만 댓글을 작성할 수 있습니다.");
 
     private final HttpStatus status;
     private final String errorCode;
