@@ -15,7 +15,11 @@ const PosManageList = () => {
         }
         return res.json();
       })
-      .then(setPosts)
+//       .then(setPosts)
+       .then((data) => {
+             console.log(">>> 수신된 post 리스트: ", data); // 여기에 isReported 확인
+             setPosts(data);
+       })
       .catch(err => setError(err.message));
   }, []);
 
@@ -53,7 +57,7 @@ const PosManageList = () => {
                 <td className="border px-3 py-2">{post.title}</td>
                 <td className="border px-3 py-2">{post.authorEmail}</td>
                 <td className="border px-3 py-2">{formatDate(post.createdAt)}</td>
-                <td className="border px-3 py-2 text-center">{post.isReported ? 'O' : 'X'}</td>
+                <td className="border px-3 py-2 text-center">{post.reported === true ? 'O' : 'X'}</td>
               </tr>
             ))
           )}

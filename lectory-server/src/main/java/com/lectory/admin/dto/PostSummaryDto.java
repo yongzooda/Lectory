@@ -12,5 +12,6 @@ public class PostSummaryDto {
     private String title;
     private String authorEmail;
     private String createdAt;
-    private boolean isReported;
+    // 계산 필드
+    private boolean reported;
 }
