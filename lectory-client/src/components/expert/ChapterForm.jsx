@@ -1,6 +1,5 @@
-// src/components/expert/ChapterForm.jsx
 import React, { useEffect, useState } from "react";
-import Select           from "react-select";
+import Select from "react-select";
 import { fetchAllTags } from "../../api/expertApi";
 
 /**
@@ -8,37 +7,33 @@ import { fetchAllTags } from "../../api/expertApi";
  *
  * props
  *  • initial : {
- *        chapterName, expectedTime, orderNum,
- *        videoUrl, tags: string[]
+ *      chapterName, expectedTime, orderNum,
+ *      videoUrl, tags: string[]
  *    }
- *  • onSave  : (payload) => Promise<void>
- *  • onCancel: () => void (선택)
+ *  • onSave(payload): Promise<void>
+ *  • onCancel():     void (선택)
  */
 const ChapterForm = ({ initial = {}, onSave, onCancel }) => {
-  /* ───────── state ───────── */
-  const [chapterName, setChapterName] = useState(
-    () => initial.chapterName ?? ""
-  );
-  const [expectedTime, setExpectedTime] = useState(
-    () => initial.expectedTime ?? ""
-  );
+  /* ── form state ── */
+  const [chapterName, setChapterName] = useState(() => initial.chapterName ?? "");
+  const [expectedTime, setExpectedTime] = useState(() => initial.expectedTime ?? "");
   const [orderNum, setOrderNum] = useState(() => initial.orderNum ?? 1);
   const [videoUrl, setVideoUrl] = useState(() => initial.videoUrl ?? "");
   const [tags, setTags] = useState(() =>
-    (initial.tags ?? []).map((t) => ({ label: t, value: t }))
+    (initial.tags ?? []).map((t) => ({ label: t, value: t })),
   );
 
   const [allTags, setAllTags] = useState([]);
   const [saving,  setSaving]  = useState(false);
 
-  /* ───────── 태그 풀 로딩 (1회) ───────── */
+  /* ── 태그 풀 로딩 (최초 1회) ── */
   useEffect(() => {
     fetchAllTags().then(({ data }) =>
-      setAllTags(data.map((t) => ({ label: t, value: t })))
+      setAllTags(data.map((t) => ({ label: t, value: t }))),
     );
   }, []);
 
-  /* ───────── 제출 ───────── */
+  /* ── 제출 ── */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!onSave) return;
@@ -59,12 +54,12 @@ const ChapterForm = ({ initial = {}, onSave, onCancel }) => {
     }
   };
 
-  /* ───────── UI ───────── */
+  /* ── UI ── */
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* 챕터명 */}
       <div>
-        <label className="block mb-1 font-semibold">챕터명</label>
+        <label className="block mb-1 font-semibold">챕터명 *</label>
         <input
           type="text"
           value={chapterName}
@@ -81,37 +76,38 @@ const ChapterForm = ({ initial = {}, onSave, onCancel }) => {
           type="text"
           value={expectedTime}
           onChange={(e) => setExpectedTime(e.target.value)}
-          placeholder="예: 15분, 01:30:00"
+          placeholder="예: 15분, 01:30:00 (선택)"
           className="w-full border rounded p-2"
         />
       </div>
 
-      {/* 표시 순서 */}
+      {/* 표시 순서 (중복 허용) */}
       <div>
-        <label className="block mb-1 font-semibold">표시 순서</label>
+        <label className="block mb-1 font-semibold">표시 순서 </label>
         <input
           type="number"
-          min={1}
           value={orderNum}
           onChange={(e) => setOrderNum(e.target.value)}
           className="w-32 border rounded p-2"
+          min={1}
+          step={1}
           required
         />
       </div>
 
-      {/* 동영상 URL */}
+      {/* 동영상 URL (선택) */}
       <div>
         <label className="block mb-1 font-semibold">동영상 URL</label>
         <input
           type="text"
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
-          placeholder="https://… 또는 /videos/intro.mp4"
+          placeholder="https://…  또는  /videos/intro.mp4 (선택)"
           className="w-full border rounded p-2"
         />
       </div>
 
-      {/* 태그 멀티-셀렉트 */}
+      {/* 태그 멀티셀렉트 */}
       <div>
         <label className="block mb-1 font-semibold">태그</label>
         <Select
@@ -133,7 +129,6 @@ const ChapterForm = ({ initial = {}, onSave, onCancel }) => {
         >
           {saving ? "저장 중…" : "저장"}
         </button>
-
         {onCancel && (
           <button
             type="button"

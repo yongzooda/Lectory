@@ -5,6 +5,7 @@ import com.lectory.common.domain.lecture.Lecture;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,4 +38,22 @@ public interface LectureRepository extends JpaRepository<Lecture, Long> {
   WHERE lt.lectureId = :lectureId
 """)
     List<String> findTagNamesByLectureId(@Param("lectureId") Long lectureId);
+
+
+    /** 4) 강의실에 속한 챕터 **ID 목록만** 조회 (bulk-delete 전용) */
+    @Query("""
+        SELECT l.lectureId
+          FROM Lecture l
+         WHERE l.lectureRoom.lectureRoomId = :roomId
+    """)
+    List<Long> findIdsByLectureRoom(@Param("roomId") Long roomId);
+
+    /** 5) 강의실에 속한 챕터를 한꺼번에 삭제 */
+    @Modifying
+    @Transactional          // bulk 쿼리라 트랜잭션 필수
+    @Query("""
+        DELETE FROM Lecture l
+         WHERE l.lectureRoom.lectureRoomId = :roomId
+    """)
+    void deleteByLectureRoom(@Param("roomId") Long roomId);
 }

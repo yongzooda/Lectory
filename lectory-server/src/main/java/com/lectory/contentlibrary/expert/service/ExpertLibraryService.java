@@ -182,10 +182,33 @@ public class ExpertLibraryService {
         lectureRoomRepo.save(room);
     }
 
-    /* 6) 강의 삭제 */
+    /* 6) 강의실 삭제 */
+    @Transactional
     public void deleteLecture(Long expertId, Long roomId) {
-        lectureRoomRepo.delete(fetchOwnedRoom(expertId, roomId));
+
+        // (0) 소유권 검증 + 강의실 엔티티 로드
+        LectureRoom room = fetchOwnedRoom(expertId, roomId);
+
+        /* (1) 댓글 → 수강신청 레코드 선삭제 (FK 해제) */
+        commentRepo.deleteByLectureRoomId(roomId);
+        membershipRepo.deleteByLectureRoomId(roomId);
+
+        /* (2) 하위 챕터 ID 조회 */
+        List<Long> lecIds = lectureRepo.findIdsByLectureRoom(roomId);
+
+        if (!lecIds.isEmpty()) {
+            /* (3) 태그 매핑 삭제 */
+            lectureTagRepo.deleteAllByLectureIds(lecIds);
+
+            /* (4) 챕터(lecture) 일괄 삭제 */
+            lectureRepo.deleteByLectureRoom(roomId);
+        }
+
+        /* (5) 마지막으로 강의실 삭제 */
+        lectureRoomRepo.delete(room);
     }
+
+
 
     /* ─────────────────────────────────────────────────────────────
      * 7) 챕터 신규 생성
@@ -224,9 +247,22 @@ public class ExpertLibraryService {
     }
 
     /* 9) 챕터 삭제 */
+    @Transactional
     public void deleteChapter(Long expertId, Long chapterId) {
-        lectureRepo.delete(fetchOwnedChapter(expertId, chapterId));
+
+        // (1) 소유권 확인 & 엔티티 로드
+        Lecture lecture = fetchOwnedChapter(expertId, chapterId);
+
+        // (2) 태그 매핑 먼저 제거
+        lectureTagRepo.deleteAllByLectureId(chapterId);
+
+        // 필요하면 댓글·진도 등 다른 자식 테이블도 여기서 선삭제
+        // commentRepo.deleteByLectureId(chapterId);
+
+        // (3) 본체 삭제
+        lectureRepo.delete(lecture);
     }
+
 
     /* 10) 댓글 목록 */
     public List<CommentDto> listComments(Long lectureRoomId) {
