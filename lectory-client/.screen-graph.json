@@ -41,8 +41,7 @@
       "label": "PostWritePage",
       "routes": [
         "/post-write"
-      ],
-      "dataModelId": "2823:13581"
+      ]
     },
     {
       "id": "src/pages/PostDetailPage.jsx",
