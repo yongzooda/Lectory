@@ -154,13 +154,16 @@ export const PostDetail = () => {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("댓글 작성 실패");
+      if (response.ok) {
+        alert("댓글이 등록되었습니다.");
+        setNewComment(""); // 입력창 초기화
+        fetchPostAndComments(); // 새 댓글 반영
+      } else if (response.status === 403) {
+        const errorData = await response.json();
+        alert(errorData.message);
+      } else {
+        alert("댓글 작성에 실패했습니다.");
       }
-
-      alert("댓글이 등록되었습니다.");
-      setNewComment(""); // 입력창 초기화
-      fetchPostAndComments(); // 새 댓글 반영
     } catch (error) {
       console.error(error);
       alert("댓글 등록 중 오류 발생");

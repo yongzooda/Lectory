@@ -42,8 +42,14 @@ public class CommentServiceImpl implements CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(CustomErrorCode.POST_NOT_FOUND));
 
-        if (post.isOnlyExpert() && "FREE".equals(userDetail.getUser().getUserType().getUserType())) {
+        String currentUserType = userDetail.getUser().getUserType().getUserType(); // 현재 로그인한 사용자 타입
+        String postAuthorUserType = post.getUserId().getUserType().getUserType(); // 게시글 작성자 사용자 타입
+
+        if (post.isOnlyExpert() && "FREE".equals(currentUserType)) {
             throw new CustomException(CustomErrorCode.POST_ONLY_EXPERT);
+        }
+        if ("EXPERT".equals(currentUserType) && !"PAID".equals(postAuthorUserType)) {
+            throw new CustomException(CustomErrorCode.EXPERT_CAN_COMMENT_ON_PAID_ONLY);
         }
         Comment comment = commentMapper.getComment(postId, req, userDetail);
         commentRepository.save(comment);
@@ -56,10 +62,15 @@ public class CommentServiceImpl implements CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(CustomErrorCode.POST_NOT_FOUND));
 
-        if (post.isOnlyExpert() && "FREE".equals(userDetail.getUser().getUserType().getUserType())) {
+        String currentUserType = userDetail.getUser().getUserType().getUserType(); // 현재 로그인한 사용자 타입
+        String postAuthorUserType = post.getUserId().getUserType().getUserType(); // 게시글 작성자 사용자 타입
+
+        if (post.isOnlyExpert() && "FREE".equals(currentUserType)) {
             throw new CustomException(CustomErrorCode.POST_ONLY_EXPERT);
         }
-
+        if ("EXPERT".equals(currentUserType) && !"PAID".equals(postAuthorUserType)) {
+            throw new CustomException(CustomErrorCode.EXPERT_CAN_COMMENT_ON_PAID_ONLY);
+        }
         Comment comment = commentMapper.getReply(postId, parentId, req, userDetail);
         commentRepository.save(comment);
         return commentMapper.getCommentResponse(comment, userDetail);
