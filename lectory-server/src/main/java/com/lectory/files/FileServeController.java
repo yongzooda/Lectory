@@ -13,7 +13,7 @@ public class FileServeController {
 
     private final FileStorageService storage;
 
-    @GetMapping("/files/{id}")
+    @GetMapping("api/files/{id}")
     public ResponseEntity<?> serve(@PathVariable String id,
                                    @RequestHeader(value = "Range", required = false) String range)
             throws Exception {
