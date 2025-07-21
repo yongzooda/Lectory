@@ -1,4 +1,5 @@
 // lectory-client/src/components/detail/CommentSection.jsx
+import styles from '../../assets/css/contentLibrary.module.css';
 import React, { useState } from 'react';
 
 /**

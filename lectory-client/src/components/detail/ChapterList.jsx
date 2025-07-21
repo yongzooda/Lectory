@@ -1,4 +1,5 @@
 // src/components/detail/ChapterList.jsx
+import styles from '../../assets/css/contentLibrary.module.css';
 import React from 'react';
 
 const ChapterList = ({ chapters = [], isEnrolled = false, onSelect }) => {

@@ -1,4 +1,6 @@
 // src/components/library/LectureCard.jsx
+import styles from '../../assets/css/contentLibrary.module.css';
+
 import React from "react";
 import PropTypes from "prop-types";
 

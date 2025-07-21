@@ -1,4 +1,6 @@
 // src/pages/contentlibrary/expert/ExpertLibraryHome.jsx
+import styles from '../../../assets/css/contentLibrary.module.css';
+
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
