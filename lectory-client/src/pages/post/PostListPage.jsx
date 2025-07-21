@@ -83,15 +83,25 @@ export default function PostListPage({ userRole, userId }) {
       </div>
 
       {/* 글쓰기 버튼: FREE/PAID 사용자만 */}
+      {/* 글쓰기 버튼 */}
       <div className="flex justify-end mb-4">
-        {["free", "paid"].includes(userRole) && (
-          <Link
-            to="/posts/new"
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            글 쓰기
-          </Link>
-        )}
+        <Link
+          to={["expert", "admin"].includes(userRole) ? "#" : "/posts/write"}
+          onClick={(e) => {
+            if (["expert", "admin"].includes(userRole)) {
+              e.preventDefault();
+              alert("전문가 및 관리자 계정은 글쓰기 권한이 없습니다.");
+            }
+          }}
+          className={`px-4 py-2 rounded text-white 
+                ${
+                  ["expert", "admin"].includes(userRole)
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
+        >
+          글 쓰기
+        </Link>
       </div>
 
       {/* 게시글 목록 */}
