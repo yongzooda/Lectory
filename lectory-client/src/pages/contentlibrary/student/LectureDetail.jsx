@@ -1,4 +1,5 @@
 // src/pages/contentlibrary/student/LectureDetail.jsx
+import styles from '../../../assets/css/contentLibrary.module.css';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 

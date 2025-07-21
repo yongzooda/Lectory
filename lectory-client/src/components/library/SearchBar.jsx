@@ -1,4 +1,6 @@
 // lectory-client/src/components/library/SearchBar.jsx
+import styles from '../../assets/css/contentLibrary.module.css';
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

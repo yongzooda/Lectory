@@ -1,4 +1,6 @@
 // src/pages/expert/ExpertLectureDetail.jsx
+import styles from '../../../assets/css/contentLibrary.module.css';
+
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getLectureDetail, deleteLecture } from "../../../api/expertApi";

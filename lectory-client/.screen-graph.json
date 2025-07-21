@@ -236,15 +236,15 @@
       }
     },
     {
-      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:79:6-to-src/pages/contentlibrary/student/LibraryHome.jsx",
+      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:80:6-to-src/pages/contentlibrary/student/LibraryHome.jsx",
       "source": "src/pages/contentlibrary/student/LibraryHome.jsx",
       "target": "src/pages/contentlibrary/student/LibraryHome.jsx",
       "data": {
         "viaRoute": "/library",
         "trigger": {
           "element": "<SearchBar\n        initial={search}\n        tags={tags}\n        sort={sort}\n        basePath=\"/library\"\n      />",
-          "line": 79,
-          "endLine": 84,
+          "line": 80,
+          "endLine": 85,
           "column": 6,
           "endColumn": 8,
           "sourceFile": "src/pages/contentlibrary/student/LibraryHome.jsx"
@@ -252,15 +252,15 @@
       }
     },
     {
-      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:87:6-to-src/pages/contentlibrary/student/LibraryHome.jsx",
+      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:88:6-to-src/pages/contentlibrary/student/LibraryHome.jsx",
       "source": "src/pages/contentlibrary/student/LibraryHome.jsx",
       "target": "src/pages/contentlibrary/student/LibraryHome.jsx",
       "data": {
         "viaRoute": "/library",
         "trigger": {
           "element": "<TagFilterBar\n        selected={tags}\n        allTags={allTags}\n        search={search}\n        sort={sort}\n        basePath=\"/library\"\n      />",
-          "line": 87,
-          "endLine": 93,
+          "line": 88,
+          "endLine": 94,
           "column": 6,
           "endColumn": 8,
           "sourceFile": "src/pages/contentlibrary/student/LibraryHome.jsx"
@@ -268,15 +268,15 @@
       }
     },
     {
-      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:97:8-to-src/pages/contentlibrary/student/LibraryHome.jsx",
+      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:98:8-to-src/pages/contentlibrary/student/LibraryHome.jsx",
       "source": "src/pages/contentlibrary/student/LibraryHome.jsx",
       "target": "src/pages/contentlibrary/student/LibraryHome.jsx",
       "data": {
         "viaRoute": "/library",
         "trigger": {
           "element": "<SortDropdown\n          search={search}\n          tags={tags}\n          value={sort}\n          basePath=\"/library\"\n        />",
-          "line": 97,
-          "endLine": 102,
+          "line": 98,
+          "endLine": 103,
           "column": 8,
           "endColumn": 10,
           "sourceFile": "src/pages/contentlibrary/student/LibraryHome.jsx"
@@ -284,15 +284,15 @@
       }
     },
     {
-      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:131:12-to-src/pages/contentlibrary/student/LibraryHome.jsx",
+      "id": "src/pages/contentlibrary/student/LibraryHome.jsx:132:12-to-src/pages/contentlibrary/student/LibraryHome.jsx",
       "source": "src/pages/contentlibrary/student/LibraryHome.jsx",
       "target": "src/pages/contentlibrary/student/LibraryHome.jsx",
       "data": {
         "viaRoute": "/library",
         "trigger": {
           "element": "<Pagination\n              pageInfo={pageInfo}\n              basePath=\"/library\"\n              query={{ search, tags, sort }}\n            />",
-          "line": 131,
-          "endLine": 135,
+          "line": 132,
+          "endLine": 136,
           "column": 12,
           "endColumn": 14,
           "sourceFile": "src/pages/contentlibrary/student/LibraryHome.jsx"

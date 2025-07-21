@@ -1,4 +1,6 @@
 // lectory-client/src/components/expert/DeleteConfirm.jsx
+import styles from '../../assets/css/contentLibrary.module.css';
+
 import React from 'react';
 
 /**

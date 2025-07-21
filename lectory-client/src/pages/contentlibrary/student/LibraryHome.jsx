@@ -1,4 +1,5 @@
 // src/pages/contentlibrary/student/LibraryHome.jsx
+import styles from '../../../assets/css/contentLibrary.module.css';
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
