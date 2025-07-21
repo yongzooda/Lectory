@@ -2,9 +2,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 /* ─── 게시글 ─── */
-import PostListPage   from './pages/PostListPage';
-import PostWritePage  from './pages/PostWritePage';
-import PostDetailPage from './pages/PostDetailPage';
+import PostListPage   from './pages/post/PostListPage.jsx';
+import PostWritePage  from './pages/post/PostWritePage';
+import PostDetailPage from './pages/post/PostDetailPage';
 
 /* ─── 로그인 및 회원가입 ─── */
 import LoginPage from './pages/user/LoginForm';

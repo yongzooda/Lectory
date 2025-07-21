@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 
-import { createPost } from "../api/postApi";
-import { fetchTags } from "../api/tagApi";
+import { createPost } from "../../api/postApi";
+import { fetchTags } from "../../api/tagApi";
 
 export default function PostWritePage() {
   const navigate = useNavigate();
