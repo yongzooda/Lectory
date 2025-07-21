@@ -220,6 +220,9 @@ public class CommentServiceImpl implements CommentService {
     // 작성자 본인인가
     private void validateUser(Comment comment, User user) {
         if (comment==null || !comment.getUser().getUserId().equals(user.getUserId())) {
+            if(user.getUserType().getUserType().equals("ADMIN")){
+                return;
+            }
             throw new CustomException(CustomErrorCode.COMMENT_UNAUTHORIZED);
         }
     }

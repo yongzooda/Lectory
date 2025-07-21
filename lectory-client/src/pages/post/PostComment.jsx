@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Star } from "../../assets/icons/Star";
+import {getUser} from "../../api/userApi.js"
 import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
 
@@ -12,8 +13,23 @@ const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
   const [editingReplyContent, setEditingReplyContent] = useState(""); // 대댓글 수정 내용
   const [replyingToId, setReplyingToId] = useState(null); // 대댓글 입력 중인 댓글 ID
   const [replyContent, setReplyContent] = useState(""); // 대댓글 내용
-
   const token = localStorage.getItem("accessToken");
+  const [userInfo, setCurrentUserInfo] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+useEffect(() => {
+  async function fetchUser() {
+    try {
+      const user = await getUser();
+      setCurrentUserInfo(user.userId);  // userId도 상태로 저장하는 거면 useState 필요!
+      setIsAdmin(user?.userType === "ADMIN");
+    } catch (err) {
+      console.error("유저 정보를 불러오지 못했습니다.", err);
+    }
+  }
+  fetchUser();
+}, []);
+
   // "유료 사용자만 볼 수 있습니다." 내용인지 체크
   const isHiddenContent = comment.content === "유료 사용자만 볼 수 있습니다.";
 
@@ -226,7 +242,7 @@ const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
           {parentMenuVisible && (
             <div className="menu">
               <div className="menu-section">
-                {decodedUserId === comment.userId ? (
+                {decodedUserId === comment.userId || isAdmin ? (
                   <>
                     {/* ✅ 내가 작성자일 때만 수정/삭제 버튼 */}
                     <div
@@ -359,7 +375,7 @@ const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
                 {replyMenuVisible === reply.commentId && (
                   <div className="menu">
                     <div className="menu-section">
-                      {decodedUserId === reply.userId ? (
+                      {decodedUserId === reply.userId || isAdmin ? (
                         <>
                           {/* 댓글 작성자 == 로그인 사용자일 때 수정/삭제 */}
                           <div
