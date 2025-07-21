@@ -189,7 +189,7 @@ const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
             <div className="frame-5">
               <div className="text-wrapper-12">{comment.userNickname}</div>
               <div className="text-wrapper-13">·</div>
-              <div className="text-wrapper-14">{comment.updatedAt}</div>
+              <div className="text-wrapper-14">{new Date(comment.updatedAt).toLocaleString("ko-KR")}</div>
             </div>
 
             {/* 메뉴 버튼 */}
@@ -319,7 +319,7 @@ const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
                   <div className="frame-5">
                     <div className="text-wrapper-12">{reply.userNickname}</div>
                     <div className="text-wrapper-13">·</div>
-                    <div className="text-wrapper-14">{reply.updatedAt}</div>
+                    <div className="text-wrapper-14">{new Date(reply.updatedAt).toLocaleString("ko-KR")}</div>
                   </div>
 
                   {/* 대댓글 수정 모드 */}

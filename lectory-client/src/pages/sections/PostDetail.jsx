@@ -162,7 +162,7 @@ export const PostDetail = () => {
   };
 
   // 신고
-  const handleReport = async (commentId) => {
+  const handleReport = async () => {
     const reportContent = window.prompt("신고 사유를 입력해주세요.");
     if (reportContent === null) {
       return;
@@ -173,15 +173,13 @@ export const PostDetail = () => {
       return;
     }
     try {
-      await api.post(`/posts/${postId}/comment/${commentId}/report`, {
-        target: "COMMENT",
-        targetId: commentId,
+      await api.post(`/posts/${postId}/report`, {
+        target: "POST",
+        targetId: postId,
         content: reportContent,
       });
 
       alert("신고가 접수되었습니다.");
-      setParentMenuVisible(false);
-      setReplyMenuVisible(null);
     } catch (error) {
       if (error.response?.status === 409) {
         alert("이미 신고한 댓글입니다.");
@@ -206,7 +204,7 @@ export const PostDetail = () => {
             <div className="group-2">
               <div className="text-wrapper-21">{post.userNickname}</div>
 
-              <div className="text-wrapper-22">{post.updatedAt}</div>
+              <div className="text-wrapper-22">{new Date(post.updatedAt).toLocaleString("ko-KR")}</div>
             </div>
 
             <div
@@ -253,9 +251,7 @@ export const PostDetail = () => {
               <button onClick={handleDelete}>삭제</button>
             </>
           ) : (
-            <button onClick={() => handleReport(comment.commentId)}>
-              신고
-            </button>
+            <button onClick={handleReport}>신고</button>
           )}
         </div>
       </div>
