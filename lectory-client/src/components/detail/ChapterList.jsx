@@ -1,39 +1,17 @@
 // src/components/detail/ChapterList.jsx
 import React from 'react';
 
-/**
- * 강의실 상세 페이지 – 챕터 목록
- *
- * props
- *  • chapters    : Array<{
- *        chapterId: number,
- *        chapterName: string,
- *        expectedTime: string,
- *        orderNum: number,
- *        videoUrl?: string | null,
- *        tags: string[]
- *    }>
- *  • isEnrolled  : boolean — 수강 여부 (true면 videoUrl 노출)
- *  • onSelect    : (chapter) => void (선택)
- */
 const ChapterList = ({ chapters = [], isEnrolled = false, onSelect }) => {
-  if (chapters.length === 0) {
+  if (!chapters.length) {
     return <p className="text-center text-gray-500">등록된 챕터가 없습니다.</p>;
   }
 
-  // YouTube인지 검사
-  const isYouTube = (url) => /(?:youtube\.com\/watch\?v=|youtu\.be\/)/.test(url);
-  // YouTube 임베드 URL로 바꿔줌
+  const isYouTube = (url) =>
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)/.test(url);
+
   const toYouTubeEmbed = (url) => {
     const idMatch = url.match(/(?:v=|\.be\/)([^&]+)/);
     return idMatch ? `https://www.youtube.com/embed/${idMatch[1]}` : url;
-  };
-  // MIME 타입 결정 (video 태그용)
-  const getMime = (url) => {
-    if (/\.mp4($|\?)/i.test(url)) return 'video/mp4';
-    if (/\.webm($|\?)/i.test(url)) return 'video/webm';
-    if (/\.ogg($|\?)/i.test(url)) return 'video/ogg';
-    return 'application/octet-stream';
   };
 
   return (
@@ -42,28 +20,21 @@ const ChapterList = ({ chapters = [], isEnrolled = false, onSelect }) => {
         .slice()
         .sort((a, b) => (a.orderNum ?? 0) - (b.orderNum ?? 0))
         .map((c, i) => {
-          const raw = c.videoUrl;  // "/files/…" or "https://…"
+          const raw = c.videoUrl;
           if (!raw) return null;
 
-          let isYT = false;
-          let src = null;
-
-          if (/^https?:\/\//.test(raw)) {
-            // 외부
-            if (isYouTube(raw)) {
-              isYT = true;
-              src = toYouTubeEmbed(raw);
-            } else {
-              // MP4/WebM 등의 직접 링크
-              src = raw;
-            }
-          } else if (raw.startsWith('/files/')) {
-            // 내부 업로드
-            src = `/api${raw}`;
+          // 1) 내부 파일: /files/xxx 또는 /api/files/xxx
+          // 2) 외부 URL: http(s)://…
+          let src;
+          if (raw.startsWith('/')) {
+            // `/files/...` 또는 `/api/files/...`
+            src = raw.startsWith('/api/') ? raw : `/api${raw}`;
           } else {
-            // id만 들어온 경우
-            src = `/api/files/${raw}`;
+            // 외부 링크
+            src = raw;
           }
+
+          const isYT = isYouTube(src);
 
           return (
             <li
@@ -74,26 +45,29 @@ const ChapterList = ({ chapters = [], isEnrolled = false, onSelect }) => {
               {/* 헤더 */}
               <div className="flex justify-between items-center mb-1">
                 <h3 className="font-semibold">
-                  {c.orderNum != null && `${c.orderNum}. `}{c.chapterName}
+                  {c.orderNum != null ? `${c.orderNum}. ` : ''}
+                  {c.chapterName}
                 </h3>
                 {c.expectedTime && (
                   <span className="text-sm text-gray-500">{c.expectedTime}</span>
                 )}
               </div>
+
               {/* 태그 */}
               <div className="flex flex-wrap gap-2 mb-2">
-                {c.tags.map(tag => (
+                {c.tags.map((tag) => (
                   <span key={tag} className="text-xs bg-gray-200 px-2 py-1 rounded">
                     {tag}
                   </span>
                 ))}
               </div>
+
               {/* 플레이어 */}
-              {isEnrolled && src && (
+              {isEnrolled && (
                 isYT ? (
                   <div className="aspect-video w-full rounded shadow-inner overflow-hidden mt-2">
                     <iframe
-                      src={src}
+                      src={toYouTubeEmbed(src)}
                       title={c.chapterName}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
@@ -106,7 +80,7 @@ const ChapterList = ({ chapters = [], isEnrolled = false, onSelect }) => {
                     preload="metadata"
                     className="w-full rounded shadow-inner mt-2"
                   >
-                    <source src={src} type={getMime(src)} />
+                    <source src={src} type="video/mp4" />
                     이 브라우저는 video 태그를 지원하지 않습니다.
                   </video>
                 )
