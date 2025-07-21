@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Star } from "../../assets/icons/Star";
 import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
 import heart from "../../assets/images/heart.png";
 import emptyHeart from "../../assets/images/emptyHeart.png";
+import {getUser} from "../../api/userApi.js"
 
 const PostComment = ({
   postId,
@@ -38,6 +39,23 @@ const PostComment = ({
   const token = localStorage.getItem("accessToken");
   // "유료 사용자만 볼 수 있습니다." 내용인지 체크
   const isHiddenContent = comment.content === "유료 사용자만 볼 수 있습니다.";
+
+  const [userInfo, setCurrentUserInfo] = useState(null); 
+  const [isAdmin, setIsAdmin] = useState(false);
+  // "접속 사용자 정보"
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const user = await getUser();
+        setCurrentUserInfo(user.userId);  // userId도 상태로 저장하는 거면 useState 필요!
+        setIsAdmin(user?.userType === "ADMIN");
+      } catch (err) {
+        console.error("유저 정보를 불러오지 못했습니다.", err);
+      }
+    }
+    fetchUser();
+  }, []);
+
 
   // 부모 댓글 메뉴 토글
   const toggleParentMenu = () => {
@@ -298,7 +316,7 @@ const PostComment = ({
 
               {/* 채택 버튼: 게시글 작성자 && 미해결 상태일 때만 노출 */}
               {!isResolved &&
-                decodedUserId === postOwnerId &&
+                decodedUserId === postOwnerId || isAdmin && 
                 !comment.isAccepted && (
                   <div className="button">
                     <Star className="star-instance" />
@@ -344,7 +362,7 @@ const PostComment = ({
             {parentMenuVisible && (
               <div className="menu">
                 <div className="menu-section">
-                  {decodedUserId === comment.userId ? (
+                  {decodedUserId === comment.userId || isAdmin ? (
                     <>
                       {/* 내가 작성자일 때만 수정/삭제 버튼 */}
                       <div
@@ -474,7 +492,7 @@ const PostComment = ({
                     {replyMenuVisible === reply.commentId && (
                       <div className="menu-1">
                         <div className="menu-section">
-                          {decodedUserId === reply.userId ? (
+                          {decodedUserId === reply.userId || isAdmin ? (
                             <>
                               {/* 댓글 작성자 == 로그인 사용자일 때 수정/삭제 */}
                               <div
