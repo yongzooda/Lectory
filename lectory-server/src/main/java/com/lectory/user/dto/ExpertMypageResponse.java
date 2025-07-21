@@ -10,5 +10,6 @@ public class ExpertMypageResponse {
     private String nickname;
     private String userType;
     private String portfolioFileUrl;
+    private String approval_status;
     private String profileImageUrl;
 }

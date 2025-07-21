@@ -72,6 +72,7 @@ public class ExpertService {
                 .nickname(user.getNickname())
                 .userType(user.getUserType().getUserType())
                 .portfolioFileUrl(expert.getPortfolioFileUrl())
+                .approval_status(expert.getApprovalStatus().name())
                 .profileImageUrl(expert.getProfileImageUrl())
                 .build();
     }

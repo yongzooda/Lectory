@@ -41,11 +41,11 @@ function ExpertMyPage() {
             }}>
                 <h2 style={{ textAlign: 'center', marginBottom: '10px' }}>전문가 마이페이지</h2>
 
-                <p>닉네임: {user.nickname}</p>
-                <p>이메일: {user.email}</p>
-                <p>회원 유형: {user.userType}</p>
-                <p>포트폴리오: {expert.portfolioUrl}</p>
-                <p>프로필사진: {expert.profileUrl}</p>
+                <p>닉네임: {expert.nickname}</p>
+                <p>이메일: {expert.email}</p>
+                <p>회원 유형: {expert.userType}</p>
+                <p>포트폴리오: {expert.portfolioFileUrl}</p>
+                <p>프로필사진: {expert.profileImageUrl}</p>
 
             </div>
         </div>
