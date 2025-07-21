@@ -1,5 +1,6 @@
 package com.lectory.post.service;
 
+import com.lectory.post.dto.LikeResponseDto;
 import org.springframework.stereotype.Service;
 
 import com.lectory.common.domain.Like;
@@ -21,27 +22,30 @@ public class LikeService {
     private final UserRepository userRepository;
 
     @Transactional
-    public long toggle(LikeTarget targetType, Long targetId, Long userId) {
-        Optional<Like> existingLike = likeRepository
-                .findByTargetAndTargetIdAndUser_UserId(targetType, targetId, userId);
+    public LikeResponseDto toggle(LikeRequestDto dto, Long userId) {
+        LikeTarget target = dto.getTarget();
+        Long targetId = dto.getTargetId();
 
+        Optional<Like> existingLike = likeRepository
+                .findByTargetAndTargetIdAndUser_UserId(target, targetId, userId);
+
+        boolean liked;
         if (existingLike.isPresent()) {
             likeRepository.delete(existingLike.get());
+            liked = false;
         } else {
             Like like = Like.builder()
-                    .target(targetType)
+                    .target(target)
                     .targetId(targetId)
                     .user(userRepository.getReferenceById(userId))
                     .build();
             likeRepository.save(like);
+            liked = true;
         }
 
-        return likeRepository.countByTargetAndTargetId(targetType, targetId);
-    }
+        long likeCount = likeRepository.countByTargetAndTargetId(target, targetId);
 
-    @Transactional
-    public long toggle(LikeRequestDto dto, Long userId) {
-        return toggle(dto.getTarget(), dto.getTargetId(), userId);
+        return new LikeResponseDto(likeCount, liked);
     }
 
 }
