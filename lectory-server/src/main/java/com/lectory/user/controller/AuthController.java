@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -42,7 +44,7 @@ public class AuthController {
             return ResponseEntity.ok(new JwtResponse(accessToken));
 
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(401).body("로그인 실패: " + e.getMessage());
+            return ResponseEntity.status(401).body(Map.of("message", e.getMessage()));
         }
     }
 
