@@ -47,7 +47,7 @@ const CommentManageList = () => {
             comments.map((comment, index) => (
               <tr key={comment.commentId} 
               className="hover:bg-gray-50 cursor-pointer"
-              onClick={() => navigate(`/admin/posts/${comment.postId}`)}
+              onClick={() => navigate(`/posts/${comment.postId}`)}
               >
                 <td className="border px-3 py-2 text-center">{comment.commentId}</td>
                 <td className="border px-3 py-2">{comment.content}</td>
