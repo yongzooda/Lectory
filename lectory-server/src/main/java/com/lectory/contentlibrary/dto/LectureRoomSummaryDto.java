@@ -15,7 +15,7 @@ import java.util.List;
 public class LectureRoomSummaryDto {
 
     private final Long lectureRoomId;
-    private final String thumbnail;       // coverImageUrl을 매핑
+    private final String coverImageUrl;
     private final String title;
     private final String expertName;
     private final Integer enrollmentCount;

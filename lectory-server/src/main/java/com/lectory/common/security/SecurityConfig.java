@@ -45,6 +45,7 @@ public class SecurityConfig {
                                                                 "/webjars/**", // Swagger UI 의존 웹자바
                                                                 "/api/library/**",
                                                                 "/api/tags/**",
+                                                                "/api/files/**",
                                                                 "/admin/**",
                                                                 "/api/pay/**")
                                                 .permitAll()

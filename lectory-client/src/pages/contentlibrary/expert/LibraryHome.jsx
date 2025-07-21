@@ -117,7 +117,7 @@ const ExpertLibraryHome = () => {
             {lectures.map((lec) => (
               <LectureCard
                 key={lec.lectureRoomId}
-                thumbnail={lec.thumbnail}
+                coverImageUrl={lec.coverImageUrl}
                 title={lec.title}
                 expertName={lec.expertName}
                 enrollmentCount={lec.enrollmentCount}
