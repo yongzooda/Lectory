@@ -4,7 +4,7 @@ import axios from "./axiosInstance";
 /**
  * 게시글 생성
  * POST /api/posts
- * @param {{ title: string, content: string, onlyExpert: boolean, tagIds: number[] }} postData
+ * @param {{ title: string, content: string, onlyExpert: boolean, tagNames: String[] }} postData
  */
 export const createPost = (postData) => axios.post("/posts", postData);
 
@@ -26,7 +26,7 @@ export const fetchPostById = (postId) => axios.get(`/posts/${postId}`);
  * 게시글 수정
  * PUT /api/posts/{postId}
  * @param {number} postId
- * @param {{ title: string, content: string, onlyExpert: boolean, tagIds: number[] }} postData
+ * @param {{ title: string, content: string, onlyExpert: boolean, tagNames: String[] }} postData
  */
 export const updatePost = (postId, postData) =>
   axios.put(`/posts/${postId}`, postData);

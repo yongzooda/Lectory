@@ -74,7 +74,7 @@ export default function PostWritePage() {
         title,
         content,
         onlyExpert: expertAllowed,
-        tagIds: selectedTags.map((t) => t.value),
+        tagNames: selectedTags.map((t) => t.value),
         userId: userId,
       });
 
@@ -83,8 +83,10 @@ export default function PostWritePage() {
       console.error("글쓰기 오류", err);
       alert("글 작성 중 오류가 발생했습니다.");
     }
+
   };
 
+  
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow">
       <h1 className="text-3xl font-semibold mb-6">게시글 작성</h1>

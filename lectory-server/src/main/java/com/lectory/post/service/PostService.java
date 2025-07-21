@@ -1,10 +1,10 @@
 package com.lectory.post.service;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.lectory.comment.repository.CommentRepository;
+import com.lectory.post.repository.PostTagRepository;
 import com.lectory.user.security.CustomUserDetail;
 import com.lectory.user.service.UserService;
 import org.springframework.data.domain.Page;
@@ -32,6 +32,7 @@ public class PostService {
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
+    private final PostTagRepository postTagRepository;
 
     // 글 등록
     @Transactional
@@ -55,9 +56,9 @@ public class PostService {
                 .build();
 
         Set<PostTag> postTags = new HashSet<>();
-        for (Long tagId : dto.getTagIds()) {
-            Tag tag = tagRepository.findById(tagId)
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태그입니다. id: " + tagId));
+        for (String tagName : dto.getTagNames()) {
+            Tag tag = tagRepository.findByName(tagName)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태그입니다. id: " + tagName));
 
             PostTag postTag = PostTag.builder()
                     .post(post)
@@ -81,7 +82,7 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
         User user = userService.getUser(userId);
 
-        if(!user.getUserType().getUserType().equals("ADMIN")) {
+        if (!user.getUserType().getUserType().equals("ADMIN")) {
             if (!post.getUserId().getUserId().equals(userId)) {
                 throw new SecurityException("본인만 글을 수정할 수 있습니다.");
             }
@@ -89,26 +90,46 @@ public class PostService {
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
 
-        post.getPostTags().clear();
+        Set<String> newTagNames = new HashSet<>(dto.getTagNames());
 
-        Set<PostTag> newPostTags = new HashSet<>();
-        for (Long tagId : dto.getTagIds()) {
-            Tag tag = tagRepository.findById(tagId)
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태그입니다. id: " + tagId));
+        // 현재 Post에 연결된 태그 이름 셋
+        Set<String> existingTagNames = post.getPostTags().stream()
+                .map(postTag -> postTag.getTag().getName())
+                .collect(Collectors.toSet());
 
-            PostTag postTag = PostTag.builder()
-                    .post(post)
-                    .tag(tag)
-                    .id(new PostTagId(post.getPostId(), tag.getTagId()))
-                    .build();
+        // 삭제할 태그: 기존에는 있는데 새로는 없는 것
+        Iterator<PostTag> iterator = post.getPostTags().iterator();
+        while (iterator.hasNext()) {
+            PostTag postTag = iterator.next();
+            String tagName = postTag.getTag().getName();
+            if (!newTagNames.contains(tagName)) {
+                iterator.remove();
+                postTag.setPost(null);
+            }
+        }
 
-            post.getPostTags().add(postTag);
+        // 추가할 태그: 새로 들어온 것 중 기존에 없는 것
+        for (String tagName : newTagNames) {
+            if (!existingTagNames.contains(tagName)) {
+                Tag tag = tagRepository.findByName(tagName)
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태그: " + tagName));
+
+                PostTag postTag = PostTag.builder()
+                        .post(post)
+                        .tag(tag)
+                        .id(new PostTagId(post.getPostId(), tag.getTagId()))
+                        .build();
+
+                post.getPostTags().add(postTag);
+            }
         }
 
         postRepository.save(post);
 
         return PostResponseDto.fromEntity(post);
     }
+
+
 
     // 글 상세 조회
     @Transactional(readOnly = true)
@@ -170,9 +191,9 @@ public class PostService {
         post.getPostTags().clear();
 
         Set<PostTag> newPostTags = new HashSet<>();
-        for (Long tagId : dto.getTagIds()) {
-            Tag tag = tagRepository.findById(tagId)
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태그입니다. id: " + tagId));
+        for (String tagName : dto.getTagNames()) {
+            Tag tag = tagRepository.findByName(tagName)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태그입니다. id: " + tagName));
 
             PostTag postTag = PostTag.builder()
                     .post(post)

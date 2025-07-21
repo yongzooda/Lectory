@@ -4,9 +4,6 @@ import JwtUtils from "../../api/jwtUtils";
 import PostComment from "./PostComment";
 import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
-import heart from "../../assets/images/heart.png";
-import emptyHeart from "../../assets/images/emptyHeart.png";
-import {getUser} from "../../api/userApi.js"
 
 export const PostDetail = () => {
   const { postId } = useParams(); // URL 파라미터 가져오기
@@ -16,11 +13,54 @@ export const PostDetail = () => {
   const [loading, setLoading] = useState(true);
   const [decodedUserId, setDecodedUserId] = useState(null); // 게시글 작성자 본인인가
 
-  const [likeCount, setLikeCount] = useState(0); // 초기값 0으로 수정
-  const [liked, setLiked] = useState(false);
-
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
+
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [allTags, setAllTags] = useState([]); // 전체 태그 목록 불러올 배열
+  const [selectedTags, setSelectedTags] = useState([]); // 선택한 태그들
+  const [editTitle, setEditTitle] = useState("");  // 제목 수정 저장용
+  const [editContent, setEditContent] = useState(""); 
+
+  const modalBackdropStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  };
+  
+  const modalStyle = {
+    background: 'white',
+    padding: 20,
+    borderRadius: 8,
+    maxWidth: 400,
+    width: '90%',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+  };
+  
+  useEffect(() => {
+    const fetchAllTags = async () => {
+      try {
+        const res = await api.get("/tags"); // 서버에서 전체 태그 가져오기
+        setAllTags(res.data); // 예: ["JavaScript", "Spring", "React", ...]
+      } catch (error) {
+        console.error("전체 태그 불러오기 실패", error);
+      }
+    };
+    fetchAllTags();
+  }, []);
+
+  useEffect(() => {
+    if (post) {
+      setSelectedTags(post.tags || []); // 그냥 문자열 배열이니까 그대로 세팅
+    }
+  }, [post]);
 
   // 로그인 체크 및 리다이렉트
   useEffect(() => {
@@ -37,22 +77,6 @@ export const PostDetail = () => {
     }
   }, [token, navigate]);
 
-  const [userInfo, setCurrentUserInfo] = useState(null); 
-  const [isAdmin, setIsAdmin] = useState(false);
-  // "접속 사용자 정보 조회"
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const user = await getUser();
-        setCurrentUserInfo(user.userId);  // userId도 상태로 저장하는 거면 useState 필요!
-        setIsAdmin(user?.userType === "ADMIN");
-      } catch (err) {
-        console.error("유저 정보를 불러오지 못했습니다.", err);
-      }
-    }
-    fetchUser();
-  }, []);
-
   // 컴포넌트 첫 렌더링 시 데이터 가져오기
   useEffect(() => {
     if (token) {
@@ -60,6 +84,33 @@ export const PostDetail = () => {
     }
   }, [postId, token]);
 
+
+  const toggleTag = (tagName) => {
+    setSelectedTags((prev) =>
+      prev.includes(tagName) ? prev.filter((t) => t !== tagName) : [...prev, tagName]
+    );
+  };
+
+  const handleTagModalConfirm = async () => {
+    console.log("userId" + post.userId);
+    console.log("선택된 태그"+selectedTags);
+    try {
+      await api.put(`/posts/${postId}`, {
+        userId: post.userId,
+        title: editTitle,
+        content: editContent,
+        onlyExpert: post.onlyExpert,
+        tagNames: selectedTags,  // 태그 배열: ["Java", "React"]
+      });
+      
+      alert("수정 완료");
+      setIsTagModalOpen(false);
+      fetchPostAndComments();
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || "수정 중 오류 발생");
+    }
+  };
   // 게시글 + 댓글 데이터 fetch 함수
   const fetchPostAndComments = async () => {
     setLoading(true);
@@ -78,8 +129,6 @@ export const PostDetail = () => {
       });
       setPost(postData);
       setComments(commentsData);
-      setLikeCount(postData.likeCount);
-      setLiked(postData.liked);
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || error.message);
@@ -93,32 +142,18 @@ export const PostDetail = () => {
     // 수정할 데이터 임시 입력 받기
     const newTitle = prompt("수정할 제목을 입력하세요", post.title);
     const newContent = prompt("수정할 내용을 입력하세요", post.content);
-
+    setIsTagModalOpen(true);
     if (newTitle === null && newContent === null) {
       return;
     }
-
+    
     if (newTitle.trim() === "" || newContent.trim() === "") {
       alert("제목과 내용을 모두 입력해야 합니다.");
       return;
     }
-
-    try {
-      await api.put(`/posts/${postId}`, {
-        userId: post.userId,
-        title: newTitle,
-        content: newContent,
-        onlyExpert: post.onlyExpert,
-        tagIds: post.tags ? Array.from(post.tags) : [],
-      });
-
-      alert("수정 완료");
-      // 수정 후 상세 페이지 다시 불러오기
-      fetchPostAndComments();
-    } catch (error) {
-      console.error(error);
-      alert(error.response?.data?.message || "수정 중 오류 발생");
-    }
+    setEditTitle(newTitle);
+    setEditContent(newContent);
+    setIsTagModalOpen(true);
   };
 
   // 삭제 요청 함수 (DELETE)
@@ -173,9 +208,12 @@ export const PostDetail = () => {
         targetId: postId,
       });
 
-      const { likeCount, liked } = response.data;
-      setLikeCount(likeCount);
-      setLiked(liked);
+      const data = response.data;
+      // 좋아요 개수 최신화
+      setPost((prev) => ({
+        ...prev,
+        likeCount: data.likeCount,
+      }));
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || "좋아요 처리에 실패했습니다.");
@@ -211,15 +249,16 @@ export const PostDetail = () => {
     }
   };
 
-  // 채택 후 호출될 함수 수정
-  const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
-    setPost((prev) => ({
-      ...prev,
-      isResolved: postIsResolvedFromResponse,
-    }));
+// 채택 후 호출될 함수 수정
+const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
+  console.log("handleUpdateAfterAccept 호출, isResolved:", postIsResolvedFromResponse);
+  setPost((prev) => ({
+    ...prev,
+    isResolved: postIsResolvedFromResponse,
+  }));
 
-    fetchPostAndComments();
-  };
+  fetchPostAndComments();
+};
 
   if (loading) return <div>로딩 중...</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
@@ -230,16 +269,15 @@ export const PostDetail = () => {
       <div className="overlap-2">
         <div className="div-7">
           <div className="text-wrapper-20">{post.title}</div>
-
+  
           <div className="div-8">
             <div className="group-2">
               <div className="text-wrapper-21">{post.userNickname}</div>
-
               <div className="text-wrapper-22">
                 {new Date(post.updatedAt).toLocaleString("ko-KR")}
               </div>
             </div>
-
+  
             <div
               className="stats-wrapper-3"
               onClick={handleLike}
@@ -250,22 +288,21 @@ export const PostDetail = () => {
                   <img
                     className="free-icon-like"
                     alt="Free icon like"
-                    src={liked ? heart : emptyHeart}
+                    src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
                   />
-
-                  <div className="element">&nbsp;&nbsp;{likeCount}</div>
+                  <div className="element">&nbsp;&nbsp;{post.likeCount}</div>
                 </div>
               </div>
             </div>
           </div>
-
+  
           <div className="div-wrapper-2">
             <p className="text-wrapper-24">
               {post.content}
               <br />
             </p>
           </div>
-
+  
           <div className="div-9">
             {post.tags &&
               Array.from(post.tags).map((tag, index) => (
@@ -275,10 +312,10 @@ export const PostDetail = () => {
               ))}
           </div>
         </div>
-
+  
         {/* 작성자와 로그인한 userId 비교하여 버튼 노출 */}
         <div className="text-wrapper-26">
-          {decodedUserId === post.userId || isAdmin ? (
+          {decodedUserId === post.userId ? (
             <>
               <button onClick={handleEdit}>수정</button> |{" "}
               <button onClick={handleDelete}>삭제</button>
@@ -288,14 +325,15 @@ export const PostDetail = () => {
           )}
         </div>
       </div>
-
+  
       {/* 구분선 */}
       <img
         className="line"
         alt="Line"
         src="https://c.animaapp.com/md2r5d9jD5c5WE/img/line-1.svg"
       />
-
+  
+  
       {/* 댓글 */}
       <div className="overlap">
         <div className="overlap-group">
@@ -317,27 +355,53 @@ export const PostDetail = () => {
                 />
               ))
             )}
-
-            {/* 입력 칸 */}
-            <div className="div-2">
-              <div className="frame">
-                <button className="text-wrapper-11" onClick={handleAddComment}>
-                  등록
-                </button>
-              </div>
-
-              <textarea
-                className="frame-2"
-                placeholder="댓글을 입력하세요"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)} // 입력값 상태 저장
-              />
-            </div>
           </div>
         </div>
       </div>
+  
+      {/* 입력 칸 */}
+      <div className="div-2">
+        <div className="frame">
+          <button className="text-wrapper-11" onClick={handleAddComment}>
+            등록
+          </button>
+        </div>
+  
+        <div className="frame-2">
+          <textarea
+            className="comment-textarea"
+            placeholder="댓글을 입력하세요..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          />
+        </div>
+      </div>
+      {isTagModalOpen && (
+            <div style={modalBackdropStyle}>
+              <div style={modalStyle}>
+                <h2>태그 선택</h2>
+                <div className="tag-list">
+                  {allTags.map((tag) => (
+                    <label key={tag}>
+                      <input
+                        type="checkbox"
+                        checked={selectedTags.includes(tag)}
+                        onChange={() => toggleTag(tag)}
+                      />
+                      {tag}
+                    </label>
+                  ))}
+                </div>
+                <div className="modal-actions">
+                  <button onClick={handleTagModalConfirm}>확인</button>
+                  <button onClick={() => setIsTagModalOpen(false)}>취소</button>
+                </div>
+              </div>
+            </div>
+          )}
     </div>
   );
+  
 };
 
 export default PostDetail;
