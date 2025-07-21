@@ -1,96 +1,165 @@
-// lectory-client/src/components/expert/LectureForm.jsx
+// src/components/expert/LectureForm.jsx
 import React, { useEffect, useState } from 'react';
+import api from '../../api/axiosInstance';
 
 /**
- * 전문가용 강의실( LectureRoom ) 생성·수정 폼
- *
- * props
- *  • initial     : {
- *        thumbnail, title, description,
- *        fileUrl, isPaid, tags:Array<string>
- *    }           (nullable → 신규)
- *  • onSave(data): Promise<void>    저장 콜백
- *  • onCancel()  : () => void       취소 (선택)
+ * props:
+ *  • initial: {
+ *        coverImageUrl, title, description,
+ *        fileUrl, isPaid, tags: string[]
+ *    }
+ *  • onSave(payload): Promise<void>
+ *  • onCancel(): void
  */
-const LectureForm = ({ initial = {}, onSave, onCancel }) => {
-  /* ─── 상태 ─── */
-  const [thumbnail,   setThumbnail]   = useState('');
-  const [title,       setTitle]       = useState('');
-  const [description, setDescription] = useState('');
-  const [fileUrl,     setFileUrl]     = useState('');
-  const [isPaid,      setIsPaid]      = useState(false);
-  const [tagsInput,   setTagsInput]   = useState('');
-  const [saving,      setSaving]      = useState(false);
+export default function LectureForm({ initial = {}, onSave, onCancel }) {
+  const [coverMode, setCoverMode]     = useState('file');  // 'url' | 'file'
+  const [coverUrlInput, setCoverUrl]  = useState('');
+  const [coverFile, setCoverFile]     = useState(null);
 
-  /* ─── 초기값 (수정 모드) ─── */
+  const [zipMode, setZipMode]         = useState('file');
+  const [zipUrlInput, setZipUrl]      = useState('');
+  const [zipFile, setZipFile]         = useState(null);
+
+  const [title, setTitle]             = useState('');
+  const [description, setDescription] = useState('');
+  const [isPaid, setIsPaid]           = useState(false);
+  const [tagsInput, setTagsInput]     = useState('');
+
+  const [saving, setSaving]           = useState(false);
+
+  // 초기값 동기화
   useEffect(() => {
-    if (initial) {
-      setThumbnail(initial.thumbnail   ?? '');
-      setTitle(initial.title           ?? '');
-      setDescription(initial.description ?? '');
-      setFileUrl(initial.fileUrl       ?? '');
-      setIsPaid(initial.isPaid         ?? false);
-      setTagsInput((initial.tags ?? []).join(', '));
+    setTitle(initial.title || '');
+    setDescription(initial.description || '');
+    setIsPaid(initial.isPaid || false);
+    setTagsInput((initial.tags || []).join(', '));
+
+    if (initial.coverImageUrl) {
+      setCoverMode('url');
+      setCoverUrl(initial.coverImageUrl);
+    } else {
+      setCoverMode('file');
+      setCoverUrl('');
     }
+
+    if (initial.fileUrl) {
+      setZipMode('url');
+      setZipUrl(initial.fileUrl);
+    } else {
+      setZipMode('file');
+      setZipUrl('');
+    }
+    // 파일 모드는 항상 빈 상태로 시작
+    setCoverFile(null);
+    setZipFile(null);
   }, [initial]);
 
-  /* ─── 제출 ─── */
+  // 서버에 파일 업로드
+  const upload = async (file) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const { data } = await api.post('/files/upload', fd);
+    return data.url;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!onSave) return;
-
-    const tags = tagsInput
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean);
-
-    const payload = {
-      thumbnail : thumbnail.trim(),
-      title     : title.trim(),
-      description: description.trim(),
-      fileUrl   : fileUrl.trim(),
-      isPaid,
-      tags,
-    };
+    setSaving(true);
 
     try {
-      setSaving(true);
+      // 공통 payload
+      const payload = {
+        title: title.trim(),
+        description: description.trim(),
+        isPaid,
+        tags: tagsInput
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean),
+      };
+
+      // coverImageUrl
+      if (coverMode === 'file' && coverFile) {
+        payload.coverImageUrl = await upload(coverFile);
+      } else if (coverMode === 'url' && coverUrlInput.trim()) {
+        payload.coverImageUrl = coverUrlInput.trim();
+      }
+
+      // fileUrl
+      if (zipMode === 'file' && zipFile) {
+        payload.fileUrl = await upload(zipFile);
+      } else if (zipMode === 'url' && zipUrlInput.trim()) {
+        payload.fileUrl = zipUrlInput.trim();
+      }
+
       await onSave(payload);
     } finally {
       setSaving(false);
     }
   };
 
-  /* ─── UI ─── */
+  const fileCls =
+    'block w-full text-sm text-gray-700 ' +
+    'file:mr-4 file:py-2 file:px-4 ' +
+    'file:rounded file:border-0 ' +
+    'file:text-sm file:bg-blue-50 file:text-blue-700 ' +
+    'hover:file:bg-blue-100';
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* 썸네일 URL */}
+    <form onSubmit={handleSubmit} className="space-y-8">
+      {/* 커버 이미지 */}
       <div>
-        <label className="block mb-1 font-semibold">썸네일 URL</label>
-        <input
-          type="url"
-          value={thumbnail}
-          onChange={(e) => setThumbnail(e.target.value)}
-          className="w-full border rounded p-2"
-          placeholder="https://…"
-        />
+        <label className="block font-semibold mb-1">커버 이미지</label>
+        <div className="flex items-center space-x-4 mb-2">
+          {['url', 'file'].map((m) => (
+            <label key={m} className="inline-flex items-center space-x-1 cursor-pointer">
+              <input
+                type="radio"
+                value={m}
+                checked={coverMode === m}
+                onChange={() => {
+                  setCoverMode(m);
+                  if (m === 'url') setCoverFile(null);
+                  else setCoverUrl('');
+                }}
+              />
+              <span>{m === 'url' ? 'URL 입력' : '파일 업로드'}</span>
+            </label>
+          ))}
+        </div>
+        {coverMode === 'url' ? (
+          <input
+            type="text"
+            value={coverUrlInput}
+            onChange={(e) => setCoverUrl(e.target.value)}
+            placeholder="https://…"
+            className="w-full border rounded p-2"
+          />
+        ) : (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setCoverFile(e.target.files[0])}
+            className={fileCls}
+          />
+        )}
       </div>
 
-      {/* 제목 */}
+      {/* 강의실 제목 */}
       <div>
-        <label className="block mb-1 font-semibold">강의실 제목 *</label>
+        <label className="block font-semibold mb-1">강의실 제목 *</label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full border rounded p-2"
           required
+          className="w-full border rounded p-2"
         />
       </div>
 
-      {/* 소개 */}
+      {/* 소개글 */}
       <div>
-        <label className="block mb-1 font-semibold">소개글</label>
+        <label className="block font-semibold mb-1">소개글</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -99,16 +168,42 @@ const LectureForm = ({ initial = {}, onSave, onCancel }) => {
         />
       </div>
 
-      {/* 첨부 파일 URL */}
+      {/* 자료 ZIP */}
       <div>
-        <label className="block mb-1 font-semibold">첨부파일 URL</label>
-        <input
-          type="url"
-          value={fileUrl}
-          onChange={(e) => setFileUrl(e.target.value)}
-          className="w-full border rounded p-2"
-          placeholder="https://…"
-        />
+        <label className="block font-semibold mb-1">자료 ZIP</label>
+        <div className="flex items-center space-x-4 mb-2">
+          {['url', 'file'].map((m) => (
+            <label key={m} className="inline-flex items-center space-x-1 cursor-pointer">
+              <input
+                type="radio"
+                value={m}
+                checked={zipMode === m}
+                onChange={() => {
+                  setZipMode(m);
+                  if (m === 'url') setZipFile(null);
+                  else setZipUrl('');
+                }}
+              />
+              <span>{m === 'url' ? 'URL 입력' : '파일 업로드'}</span>
+            </label>
+          ))}
+        </div>
+        {zipMode === 'url' ? (
+          <input
+            type="text"
+            value={zipUrlInput}
+            onChange={(e) => setZipUrl(e.target.value)}
+            placeholder="https://…"
+            className="w-full border rounded p-2"
+          />
+        ) : (
+          <input
+            type="file"
+            accept=".zip"
+            onChange={(e) => setZipFile(e.target.files[0])}
+            className={fileCls}
+          />
+        )}
       </div>
 
       {/* 유료 여부 */}
@@ -118,22 +213,18 @@ const LectureForm = ({ initial = {}, onSave, onCancel }) => {
           type="checkbox"
           checked={isPaid}
           onChange={(e) => setIsPaid(e.target.checked)}
-          className="w-4 h-4"
         />
-        <label htmlFor="isPaid" className="font-medium">
-          유료 강의실
-        </label>
+        <label htmlFor="isPaid" className="font-medium">유료 강의실</label>
       </div>
 
       {/* 태그 */}
       <div>
-        <label className="block mb-1 font-semibold">
-          태그 (쉼표로 구분)
-        </label>
+        <label className="block font-semibold mb-1">태그 (쉼표로 구분)</label>
         <input
           type="text"
           value={tagsInput}
           onChange={(e) => setTagsInput(e.target.value)}
+          placeholder="예: Java, Spring"
           className="w-full border rounded p-2"
         />
       </div>
@@ -160,6 +251,4 @@ const LectureForm = ({ initial = {}, onSave, onCancel }) => {
       </div>
     </form>
   );
-};
-
-export default LectureForm;
+}

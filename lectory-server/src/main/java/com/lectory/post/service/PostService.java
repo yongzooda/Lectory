@@ -3,6 +3,7 @@ package com.lectory.post.service;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.lectory.comment.repository.CommentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
+    private final CommentRepository commentRepository;
 
     // 글 등록
     @Transactional
@@ -94,9 +96,8 @@ public class PostService {
                     .id(new PostTagId(post.getPostId(), tag.getTagId()))
                     .build();
 
-            newPostTags.add(postTag);
+            post.getPostTags().add(postTag);
         }
-        post.setPostTags(newPostTags);
 
         postRepository.save(post);
 
@@ -139,6 +140,11 @@ public class PostService {
         if (!post.getUserId().getUserId().equals(userId)) {
             throw new SecurityException("본인만 글을 삭제할 수 있습니다.");
         }
+        // 자식 댓글(대댓글) 먼저 삭제
+        commentRepository.deleteAllChildCommentsByPostId(postId);
+
+        // 부모 댓글 삭제
+        commentRepository.deleteAllParentCommentsByPostId(postId);
 
         postRepository.delete(post);
     }

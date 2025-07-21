@@ -18,7 +18,7 @@ public class LectureCreateRequestDto {
     private Long expertId;          // ★ 추가 : Expert PK
 
     /* ─── 강의실 메타 ─── */
-    private String thumbnail;
+    private String coverImageUrl;
     private String title;
     private String description;
     private String fileUrl;

@@ -1,6 +1,7 @@
 // LectureRoomSummaryDto.java
 package com.lectory.contentlibrary.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,12 +15,16 @@ import java.util.List;
 public class LectureRoomSummaryDto {
 
     private final Long lectureRoomId;
-    private final String thumbnail;       // coverImageUrl을 매핑
+    private final String coverImageUrl;
     private final String title;
     private final String expertName;
     private final Integer enrollmentCount;
     private final Boolean isPaid;
-    private boolean isEnrolled;   // ← 새로 추가
+
+    /** JSON 키를 정확히 "isEnrolled" 로 내보내도록 강제 */
+    @JsonProperty("isEnrolled")
+    private final Boolean enrolled;
+
     private final Boolean canEnroll;
     private List<String> tags;
 

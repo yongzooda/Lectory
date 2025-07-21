@@ -64,25 +64,34 @@ public class CommentMapper {
     }
 
     // Comment -> DTO
-    public CommentResponseDto getCommentResponse(Comment comment) {
+    public CommentResponseDto getCommentResponse(Comment comment, CustomUserDetail userDetail) {
+        boolean isFree = "FREE".equals(userDetail.getUser().getUserType().getUserType());
+        boolean isPostPaid = "PAID".equals(comment.getPost().getUserId().getUserType().getUserType());
+        boolean isCommentExpert = "EXPERT".equals(comment.getUser().getUserType().getUserType());
+
+        boolean hidden = isFree && isPostPaid && isCommentExpert;
+        String content = hidden ? "유료 사용자만 볼 수 있습니다." : comment.getContent();
         return CommentResponseDto.builder()
+                .commentId(comment.getCommentId())
                 .postId(comment.getPost().getPostId())
                 .userId(comment.getUser().getUserId())
                 .parentId(comment.getParent()!=null?comment.getParent().getCommentId():null)
-                .content(comment.getContent())
+                .content(content)
                 .likeCount(comment.getLikeCount())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
                 .isAccepted(comment.getIsAccepted())
                 .isDeleted(comment.getIsDeleted())
+                .userNickname(comment.getUser().getNickname())
                 .build();
     }
 
     // 댓글&대댓글 -> DTO
-    public CommentResponseDto getCommentReplies(Comment comment) {
-        CommentResponseDto res = getCommentResponse(comment);
+    public CommentResponseDto getCommentReplies(Comment comment, CustomUserDetail userDetail) {
+        CommentResponseDto res = getCommentResponse(comment, userDetail);
         if (comment.getReplies()!=null & !comment.getReplies().isEmpty()) {
-            List<CommentResponseDto> replies = comment.getReplies().stream().map(this::getCommentReplies)
+            List<CommentResponseDto> replies = comment.getReplies().stream()
+                    .map(reply -> getCommentReplies(reply, userDetail))
                     .sorted(Comparator.comparing(CommentResponseDto::getCreatedAt))
                     .collect(Collectors.toList());
             res.setReplies(replies);

@@ -31,6 +31,7 @@ const ExpertApprovalPage = () => {
     })
       .then((res) => {
         if (!res.ok) throw new Error('처리에 실패했습니다.');
+        if (res.ok)  alert("요청을 완료했습니다! ✅");
         fetchExperts(); // 목록 다시 불러오기
       })
       .catch((err) => alert(err.message));
@@ -77,7 +78,7 @@ const ExpertApprovalPage = () => {
                     승인
                   </button>
                   <button
-                    onClick={() => handleApproval(expert.userId, 'REJECTED')}
+                    onClick={() => handleApproval(expert.userId, 'PENDING')}
                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                   >
                     보류

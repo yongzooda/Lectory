@@ -28,7 +28,6 @@ import ExpertLibraryHome    from './pages/contentlibrary/expert/LibraryHome';
 import ExpertLectureDetail  from './pages/contentlibrary/expert/LectureDetail';
 import NewLecturePage       from './pages/contentlibrary/expert/LectureNew';
 import EditLecturePage      from './pages/contentlibrary/expert/LectureEdit';
-import ManageChaptersPage   from './pages/contentlibrary/expert/ManageChapters';
 
 /* ─── 관리자 전용 페이지 (다른 개발자 추가) ─── */
 import MembershipManagementPage from './pages/admin/MembershipManagementPage';
@@ -50,9 +49,9 @@ export default function App() {
           <Route path="/experts/mypage"   element={<ExpertMyPage/>} />
 
           {/* ─── 게시글 영역 ─── */}
-          <Route path="/"                    element={<PostListPage />}   />
-          <Route path="/post-write"          element={<PostWritePage />}  />
-          <Route path="/post-detail/:postId" element={<PostDetailPage />} />
+          <Route path="/posts"                    element={<PostListPage />}   />
+          <Route path="/posts/write"          element={<PostWritePage />}  />
+          <Route path="/posts/:postId" element={<PostDetailPage />} />
 
           {/* ─── 콘텐츠 라이브러리 · 수강생 ─── */}
           <Route path="/library"                        element={<StudentLibraryHome />} />
@@ -68,8 +67,6 @@ export default function App() {
           <Route path="/library/expert/:lectureRoomId"  element={<ExpertLectureDetail />} />
           <Route path="/library/expert/:lectureRoomId/edit"
                  element={<EditLecturePage />} />
-          <Route path="/library/expert/:lectureRoomId/chapters"
-                 element={<ManageChaptersPage />} />
 
           {/* ─── 관리자 페이지 ─── */}
           <Route path="/admin/students"         element={<MembershipManagementPage />} />
