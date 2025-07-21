@@ -42,10 +42,11 @@ const ExpertLectureDetail = () => {
   /* ── 자료 다운로드 ── */
   const handleDownload = async () => {
     try {
-      // 파일 서버로 바로 요청 (프록시 설정이 /files → 백엔드로)
-      const fileUrl = detail.fileUrl.startsWith("/")
-        ? detail.fileUrl
-        : `/${detail.fileUrl}`;
+           const fileUrl = detail.fileUrl.startsWith("/api/")
+             ? detail.fileUrl
+             : detail.fileUrl.startsWith("/")
+               ? `/api${detail.fileUrl}`
+               : `/api/${detail.fileUrl}`;
       const res = await fetch(fileUrl, { credentials: "include" });
       if (!res.ok) throw new Error("다운로드 실패");
 
