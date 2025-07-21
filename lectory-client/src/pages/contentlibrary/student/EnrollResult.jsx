@@ -1,4 +1,5 @@
 // lectory-client/src/pages/contentlibrary/student/EnrollResult.jsx
+import styles from '../../../assets/css/contentLibrary.module.css';
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 

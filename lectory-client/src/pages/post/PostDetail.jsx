@@ -4,6 +4,8 @@ import JwtUtils from "../../api/jwtUtils";
 import PostComment from "./PostComment";
 import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
+import heart from "../../assets/images/heart.png";
+import emptyHeart from "../../assets/images/emptyHeart.png";
 import {getUser} from "../../api/userApi.js"
 
 export const PostDetail = () => {
@@ -13,6 +15,9 @@ export const PostDetail = () => {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
   const [decodedUserId, setDecodedUserId] = useState(null); // 게시글 작성자 본인인가
+
+  const [likeCount, setLikeCount] = useState(0); // 초기값 0으로 수정
+  const [liked, setLiked] = useState(false);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
@@ -73,6 +78,8 @@ export const PostDetail = () => {
       });
       setPost(postData);
       setComments(commentsData);
+      setLikeCount(postData.likeCount);
+      setLiked(postData.liked);
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || error.message);
@@ -166,12 +173,9 @@ export const PostDetail = () => {
         targetId: postId,
       });
 
-      const data = response.data;
-      // 좋아요 개수 최신화
-      setPost((prev) => ({
-        ...prev,
-        likeCount: data.likeCount,
-      }));
+      const { likeCount, liked } = response.data;
+      setLikeCount(likeCount);
+      setLiked(liked);
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || "좋아요 처리에 실패했습니다.");
@@ -207,16 +211,15 @@ export const PostDetail = () => {
     }
   };
 
-// 채택 후 호출될 함수 수정
-const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
-  console.log("handleUpdateAfterAccept 호출, isResolved:", postIsResolvedFromResponse);
-  setPost((prev) => ({
-    ...prev,
-    isResolved: postIsResolvedFromResponse,
-  }));
+  // 채택 후 호출될 함수 수정
+  const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
+    setPost((prev) => ({
+      ...prev,
+      isResolved: postIsResolvedFromResponse,
+    }));
 
-  fetchPostAndComments();
-};
+    fetchPostAndComments();
+  };
 
   if (loading) return <div>로딩 중...</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
@@ -232,7 +235,9 @@ const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
             <div className="group-2">
               <div className="text-wrapper-21">{post.userNickname}</div>
 
-              <div className="text-wrapper-22">{new Date(post.updatedAt).toLocaleString("ko-KR")}</div>
+              <div className="text-wrapper-22">
+                {new Date(post.updatedAt).toLocaleString("ko-KR")}
+              </div>
             </div>
 
             <div
@@ -245,10 +250,10 @@ const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
                   <img
                     className="free-icon-like"
                     alt="Free icon like"
-                    src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
+                    src={liked ? heart : emptyHeart}
                   />
 
-                  <div className="element">&nbsp;&nbsp;{post.likeCount}</div>
+                  <div className="element">&nbsp;&nbsp;{likeCount}</div>
                 </div>
               </div>
             </div>
@@ -305,32 +310,30 @@ const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
                   postId={postId}
                   comment={comment}
                   decodedUserId={decodedUserId}
-                  postOwnerId={post.userId} 
+                  postOwnerId={post.userId}
                   isResolved={post.resolved}
                   onReply={handleReply}
                   onUpdate={handleUpdateAfterAccept}
                 />
               ))
             )}
+
+            {/* 입력 칸 */}
+            <div className="div-2">
+              <div className="frame">
+                <button className="text-wrapper-11" onClick={handleAddComment}>
+                  등록
+                </button>
+              </div>
+
+              <textarea
+                className="frame-2"
+                placeholder="댓글을 입력하세요"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)} // 입력값 상태 저장
+              />
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* 입력 칸 */}
-      <div className="div-2">
-        <div className="frame">
-          <button className="text-wrapper-11" onClick={handleAddComment}>
-            등록
-          </button>
-        </div>
-
-        <div className="frame-2">
-          <textarea
-            className="comment-textarea"
-            placeholder="댓글을 입력하세요..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)} // 입력값 상태 저장
-          />
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 .postDetail {
-  height: 1174px;
+  height: auto;
   left: 142px;
-  position: absolute;
+  position: relative;
   top: 114px;
   width: 1154px;
 }
@@ -9,8 +9,9 @@
 .postDetail .div-2 {
   height: 88px;
   left: 189px;
-  position: absolute;
-  top: 1086px;
+  position: relative;
+  top: 50px;
+  left: 0px;
   width: 793px;
 }
 
@@ -51,7 +52,7 @@
 .postDetail .overlap {
   height: 311px;
   left: 85px;
-  position: absolute;
+  position: relative;
   top: 466px;
   width: 1069px;
 }
@@ -59,7 +60,7 @@
 .postDetail .overlap-group {
   height: 311px;
   left: 67px;
-  position: absolute;
+  position: relative;
   top: 0;
   width: 1002px;
 }
@@ -67,7 +68,7 @@
 .postDetail .div-3 {
   height: 311px;
   left: 35px;
-  position: absolute;
+  position: relative;
   top: 0;
   width: 967px;
 }
@@ -235,8 +236,7 @@
   gap: 16px;
   left: 65px;
   padding: 16px 0px;
-  position: absolute;
-  top: 123px;
+  position: relative;
   width: 730px;
 }
 
@@ -732,4 +732,14 @@
   text-align: right;
   top: 122px;
   width: 760px;
+}
+
+.postDetail .replies {
+  position: relative;
+  left: -110%;
+}
+
+.postDetail .frame-2::placeholder {
+  text-align: center; 
+  line-height: 80px;   
 }

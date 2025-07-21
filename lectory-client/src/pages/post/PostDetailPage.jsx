@@ -8,8 +8,8 @@ export const PostDetailPage = () => {
   return (
     <div className="page" data-model-id="2810:13554">
       <NavbarLightDefault />
-      <Footer />
       <PostDetail />
+      <Footer />
     </div>
   );
 };
