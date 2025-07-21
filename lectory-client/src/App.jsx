@@ -9,7 +9,7 @@ import PostEditPage from "./pages/post/PostEditPage";
 
 /* ─── 로그인 및 회원가입 ─── */
 import LoginPage from "./pages/user/LoginForm";
-import SignUpPage from "./pages/user/SignUpPage";
+import SignUpPage from "./pages/user/SignUpOverlay";
 
 /* ─── 마이페이지 ─── */
 import UserMyPage from "./pages/user/MyPage.jsx";
