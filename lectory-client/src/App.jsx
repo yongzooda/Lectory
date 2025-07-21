@@ -2,9 +2,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 /* ─── 게시글 ─── */
-import PostListPage   from './pages/PostListPage';
-import PostWritePage  from './pages/PostWritePage';
-import PostDetailPage from './pages/PostDetailPage';
+import PostListPage   from './pages/post/PostListPage.jsx';
+import PostWritePage  from './pages/post/PostWritePage';
+import PostDetailPage from './pages/post/PostDetailPage';
 
 /* ─── 로그인 및 회원가입 ─── */
 import LoginPage from './pages/user/LoginForm';
@@ -33,6 +33,7 @@ import EditLecturePage      from './pages/contentlibrary/expert/LectureEdit';
 import MembershipManagementPage from './pages/admin/MembershipManagementPage';
 import  ExpertApprovalPage from './pages/admin/ExpertApprovalPage';
 import ContentsManagementPage from './pages/admin/ContentsManagementPage';
+import Unauthorized from './pages/admin/Unauthorized';
 
 export default function App() {
   return (
@@ -72,6 +73,7 @@ export default function App() {
           <Route path="/admin/students"         element={<MembershipManagementPage />} />
           <Route path="/admin/expert-approval"  element={<ExpertApprovalPage />} />
           <Route path="/admin/contents"         element={<ContentsManagementPage />} />
+          <Route path="/unauthorized"           element={<Unauthorized />} />
 
           {/* ─── 결제 ─── */}
           <Route path="/pay"           element={<PayPage />}        />

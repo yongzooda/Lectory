@@ -36,7 +36,7 @@ const LectureCard = ({
     {/* 커버 이미지 */}
     {coverImageUrl ? (
       <img
-        src={coverImageUrl}
+        src={`/api${coverImageUrl}`}
         alt={title}
         loading="lazy"
         className="w-full aspect-video object-cover"

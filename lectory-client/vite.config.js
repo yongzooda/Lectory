@@ -30,4 +30,7 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
+  optimizeDeps: {
+    include: ["jwt-decode"],
+  },
 }));

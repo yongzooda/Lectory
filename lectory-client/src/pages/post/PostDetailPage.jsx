@@ -1,8 +1,8 @@
 import React from "react";
-import { Footer } from "./sections/Footer";
-import { NavbarLightDefault } from "./sections/NavbarLightDefault";
-import { PostDetail } from "./sections/PostDetail";
-import "../assets/css/page.css";
+import { Footer } from "../sections/Footer";
+import { NavbarLightDefault } from "../sections/NavbarLightDefault";
+import { PostDetail } from "./PostDetail";
+import "../../assets/css/page.css";
 
 export const PostDetailPage = () => {
   return (

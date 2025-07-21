@@ -15,13 +15,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/report")
+@RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class ReportController {
 
     private final ReportService reportService;
 
-    @PostMapping
+    @PostMapping("/{postId}/report")
     public ResponseEntity<Void> createReport(
             @RequestBody @Valid ReportRequestDto dto,
             @AuthenticationPrincipal CustomUserDetail userDetail) {
