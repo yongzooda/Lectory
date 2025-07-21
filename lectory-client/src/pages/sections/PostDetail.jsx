@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import jwt_decode from "jwt-decode";
+import JwtUtils from "../../api/jwtUtils";
 import PostComment from "./PostComment";
 import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
@@ -23,8 +23,8 @@ export const PostDetail = () => {
       navigate("/login");
     } else {
       try {
-        const decoded = jwt_decode(token);
-        setDecodedUserId(decoded.userId);
+        const id = JwtUtils.getId(token);
+        setDecodedUserId(id);
       } catch (error) {
         console.error("토큰 디코딩 실패:", error);
       }
@@ -144,7 +144,7 @@ export const PostDetail = () => {
   // 좋아요 요청 함수
   const handleLike = async () => {
     try {
-      const response = await api(`/posts/${postId}/like`, {
+      const response = await api.post(`/posts/${postId}/like`, {
         target: "POST",
         targetId: postId,
       });
@@ -271,7 +271,7 @@ export const PostDetail = () => {
       <div className="overlap">
         <div className="overlap-group">
           <div className="div-3">
-            <div className="text-wrapper-19">댓글</div>
+            {/* <div className="text-wrapper-19">댓글</div> */}
             {comments.length === 0 ? (
               <p>댓글이 없습니다.</p>
             ) : (
