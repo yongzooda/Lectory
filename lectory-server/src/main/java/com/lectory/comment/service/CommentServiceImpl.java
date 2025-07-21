@@ -131,15 +131,15 @@ public class CommentServiceImpl implements CommentService {
 
         Long userId = comment.getPost().getUserId().getUserId();
         Long currentId = userDetail.getUser().getUserId();
+        if(!userDetail.getUser().getUserType().getUserType().equals("ADMIN")) {
+            if (!userId.equals(currentId)) {
+                throw new CustomException(CustomErrorCode.COMMENT_UNAUTHORIZED);
+            }
 
-        if (!userId.equals(currentId)) {
-            throw new CustomException(CustomErrorCode.COMMENT_UNAUTHORIZED);
+            if (commentRepository.existsByPost_PostIdAndIsAcceptedTrue(postId)) {
+                throw new CustomException(CustomErrorCode.COMMENT_ALREADY_ACCEPTED);
+            }
         }
-
-        if (commentRepository.existsByPost_PostIdAndIsAcceptedTrue(postId)) {
-            throw new CustomException(CustomErrorCode.COMMENT_ALREADY_ACCEPTED);
-        }
-
         comment.accept();
         post.accept();
         postRepository.save(post);

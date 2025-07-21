@@ -3,6 +3,8 @@ import '../../assets/css/loginPage.css';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../api/loginApi.js';
 import logo from '../../assets/images/Lectorylogo.png';
+import SignUpOverlay from './SignUpOverlay';
+import { getMyPage } from '../../api/mypageApi';
 
 export default function LoginForm() {
     const navigate = useNavigate();
@@ -10,6 +12,7 @@ export default function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [showSignup, setShowSignup] = useState(false); // 상태 추가
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,8 +20,14 @@ export default function LoginForm() {
 
         try {
             await login({ email, password });
+            const userInfo = await getMyPage();
             alert('로그인 성공!');
-            navigate('/dashboard');
+
+            if(userInfo.userType === 'EXPERT'){
+                navigate('/library/expert')
+            } else {
+                navigate('/library');
+            }
         } catch (err) {
             setError(err.response?.data?.message || '로그인 실패');
         }
@@ -28,7 +37,6 @@ export default function LoginForm() {
         <div className="loginPage-body">
             <div className="loginPage-container">
                 <div className="loginPage-welcome">
-                    {/* 왼쪽 로그인 박스 */}
                     <div className="loginPage-left">
                         <div className="loginPage-pinkbox">
                             <h1 className="loginPage-title">sign in</h1>
@@ -57,14 +65,16 @@ export default function LoginForm() {
                         </div>
                     </div>
 
-                    {/* 오른쪽 회원가입 영역 */}
                     <div className="loginPage-right">
                         <img src={logo} alt="Lectory logo" className="signup-image" />
                         <p className="signup-account">don't have an account?</p>
-                        <button className="signup-button" onClick={() => navigate('/signup')}>
+                        <button className="signup-button" onClick={() => setShowSignup(true)}>
                             Sign Up
                         </button>
                     </div>
+
+                    {/* 회원가입 오버레이 */}
+                    {showSignup && <SignUpOverlay onClose={() => setShowSignup(false)} />}
                 </div>
             </div>
         </div>

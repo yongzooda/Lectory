@@ -116,7 +116,7 @@
   flex: 0 0 auto;
   justify-content: space-between;
   position: relative;
-  width: 695px;
+  width: 650px;
 }
 
 .postDetail .frame-5 {
@@ -178,6 +178,7 @@
   padding: 12px;
   position: relative;
   width: 99px;
+  left: 110px;
 }
 
 .postDetail .star-instance {
@@ -252,7 +253,7 @@
   flex-direction: column;
   gap: 6px;
   position: relative;
-  width: 630px;
+  width: 555px;
 }
 
 .postDetail .text-wrapper-15 {
@@ -355,6 +356,7 @@
   padding: 12px;
   position: relative;
   width: 99px;
+  left: 110px;
 }
 
 .postDetail .button-4 {
@@ -383,7 +385,23 @@
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  left: 795px;
+  right: -150px;
+  overflow: hidden;
+  padding: 8px;
+  position: absolute;
+  top: 33px;
+  width: 170px;
+}
+
+.postDetail .menu-1 {
+  align-items: flex-start;
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #d9d9d9;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  right: -190px;
   overflow: hidden;
   padding: 8px;
   position: absolute;
