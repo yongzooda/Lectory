@@ -1,0 +1,61 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    align-items: center;
+    background-color: #C6E1B9;
+    color: #fff;
+    height: 60px;
+}
+
+.loadingNav {
+    padding: 0.5rem 1rem;
+    background-color: #2d2d2d;
+    color: #fff;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.logoContainer {
+    font-weight: bold;
+    font-size: 1.5rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.logoLink {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.logoImage {
+    height: 150px;
+    margin-right: 10px;
+}
+
+.menu {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    height: 60px;
+}
+
+.menuLink {
+    color: black;
+    text-decoration: none;
+}
+
+.logoutBtn {
+    background-color: #e74c3c;
+    border: none;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
