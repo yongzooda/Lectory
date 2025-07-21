@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 
-import { createPost } from "../api/postApi";
-import { getCurrent } from "../api/userApi";
-import { fetchTags } from "../api/tagApi";
+import { createPost } from "../../api/postApi";
+import { fetchTags } from "../../api/tagApi";
 
 export default function PostWritePage() {
   const navigate = useNavigate();
@@ -17,11 +16,13 @@ export default function PostWritePage() {
   const [expertAllowed, setExpertAllowed] = useState(false);
   const [content, setContent] = useState("");
 
-  useEffect(() => {
-    getCurrent()
-      .then((res) => setSubscriptionType(res.data.subscriber_type || "free"))
-      .catch(() => setSubscriptionType("free"));
+  const userId = localStorage.getItem("userId");
+  const userRole = localStorage.getItem("userRole")?.toLowerCase();
 
+  useEffect(() => {
+    setSubscriptionType(userRole === "paid" ? "paid" : "free");
+
+    // 태그 불러오기
     fetchTags()
       .then((arr) => {
         console.log("▶︎ /api/tags 응답:", arr);
@@ -44,13 +45,21 @@ export default function PostWritePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!userId) {
+      alert("로그인 후 작성 가능합니다.");
+      return;
+    }
+
     try {
       await createPost({
         title,
         content,
         onlyExpert: expertAllowed,
         tagIds: selectedTags.map((t) => t.value),
+        userId: userId,
       });
+
       navigate("/posts");
     } catch (err) {
       console.error("글쓰기 오류", err);

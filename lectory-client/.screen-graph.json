@@ -109,6 +109,13 @@
       ]
     },
     {
+      "id": "src/pages/admin/Unauthorized.jsx",
+      "label": "Unauthorized",
+      "routes": [
+        "/unauthorized"
+      ]
+    },
+    {
       "id": "src/pages/pay/PayPage.jsx",
       "label": "PayPage",
       "routes": [
@@ -126,15 +133,32 @@
   ],
   "edges": [
     {
-      "id": "src/pages/PostWritePage.jsx:54:6-to-src/pages/PostListPage.jsx",
+      "id": "src/pages/user/LoginForm.jsx:64:73-to-src/pages/user/SignUpPage.jsx",
+      "source": "src/pages/user/LoginForm.jsx",
+      "target": "src/pages/user/SignUpPage.jsx",
+      "data": {
+        "viaRoute": "/signup",
+        "trigger": {
+          "element": "navigate('/signup')",
+          "line": 64,
+          "endLine": 64,
+          "column": 73,
+          "endColumn": 92,
+          "sourceFile": "src/pages/user/LoginForm.jsx"
+        }
+      }
+    },
+    {
+      "id": "src/pages/PostWritePage.jsx:63:6-to-src/pages/PostListPage.jsx",
       "source": "src/pages/PostWritePage.jsx",
       "target": "src/pages/PostListPage.jsx",
       "data": {
         "viaRoute": "/posts",
         "trigger": {
           "element": "navigate(\"/posts\")",
-          "line": 54,
-          "endLine": 54,
+
+          "line": 63,
+          "endLine": 63,
           "column": 6,
           "endColumn": 24,
           "sourceFile": "src/pages/PostWritePage.jsx"
@@ -142,15 +166,17 @@
       }
     },
     {
-      "id": "src/pages/PostWritePage.jsx:128:27-to-src/pages/PostListPage.jsx",
+
+      "id": "src/pages/PostWritePage.jsx:137:27-to-src/pages/PostListPage.jsx",
       "source": "src/pages/PostWritePage.jsx",
       "target": "src/pages/PostListPage.jsx",
       "data": {
         "viaRoute": "/posts",
         "trigger": {
           "element": "navigate(\"/posts\")",
-          "line": 128,
-          "endLine": 128,
+
+          "line": 137,
+          "endLine": 137,
           "column": 27,
           "endColumn": 45,
           "sourceFile": "src/pages/PostWritePage.jsx"
@@ -158,15 +184,16 @@
       }
     },
     {
-      "id": "src/pages/sections/PostDetail.jsx:20:6-to-src/pages/user/LoginForm.jsx",
+
+      "id": "src/pages/sections/PostDetail.jsx:23:6-to-src/pages/user/LoginForm.jsx",
       "source": "src/pages/PostDetailPage.jsx",
       "target": "src/pages/user/LoginForm.jsx",
       "data": {
         "viaRoute": "/login",
         "trigger": {
           "element": "navigate(\"/login\")",
-          "line": 20,
-          "endLine": 20,
+          "line": 23,
+          "endLine": 23,
           "column": 6,
           "endColumn": 24,
           "sourceFile": "src/pages/sections/PostDetail.jsx"
@@ -174,15 +201,16 @@
       }
     },
     {
-      "id": "src/pages/sections/PostDetail.jsx:133:6-to-src/pages/PostListPage.jsx",
+
+      "id": "src/pages/sections/PostDetail.jsx:108:6-to-src/pages/PostListPage.jsx",
       "source": "src/pages/PostDetailPage.jsx",
       "target": "src/pages/PostListPage.jsx",
       "data": {
         "viaRoute": "/posts",
         "trigger": {
           "element": "navigate(\"/posts\")",
-          "line": 133,
-          "endLine": 133,
+          "line": 108,
+          "endLine": 108,
           "column": 6,
           "endColumn": 24,
           "sourceFile": "src/pages/sections/PostDetail.jsx"
@@ -282,6 +310,38 @@
           "column": 24,
           "endColumn": 51,
           "sourceFile": "src/pages/contentlibrary/expert/LectureNew.jsx"
+        }
+      }
+    },
+    {
+      "id": "src/pages/admin/PosManageList.jsx:16:8-to-src/pages/admin/Unauthorized.jsx",
+      "source": "src/pages/admin/ContentsManagementPage.jsx",
+      "target": "src/pages/admin/Unauthorized.jsx",
+      "data": {
+        "viaRoute": "/unauthorized",
+        "trigger": {
+          "element": "navigate('/unauthorized')",
+          "line": 16,
+          "endLine": 16,
+          "column": 8,
+          "endColumn": 33,
+          "sourceFile": "src/pages/admin/PosManageList.jsx"
+        }
+      }
+    },
+    {
+      "id": "src/pages/admin/PosManageList.jsx:30:12-to-src/pages/admin/Unauthorized.jsx",
+      "source": "src/pages/admin/ContentsManagementPage.jsx",
+      "target": "src/pages/admin/Unauthorized.jsx",
+      "data": {
+        "viaRoute": "/unauthorized",
+        "trigger": {
+          "element": "navigate('/unauthorized')",
+          "line": 30,
+          "endLine": 30,
+          "column": 12,
+          "endColumn": 37,
+          "sourceFile": "src/pages/admin/PosManageList.jsx"
         }
       }
     }

@@ -53,6 +53,7 @@ const ExpertLectureDetail = () => {
         expertName      ={detail.expertName}
         enrollmentCount ={detail.enrollmentCount}
         isPaid          ={detail.isPaid}
+        chapters        ={detail.chapters}
         createdAt       ={detail.createdAt}
         updatedAt       ={detail.updatedAt}
       />

@@ -14,12 +14,12 @@ import com.lectory.user.security.CustomUserDetail;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/likes")
+@RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class LikeController {
     private final LikeService likeService;
 
-    @PostMapping
+    @PostMapping("/{postId}/like")
     public LikeResponseDto toggleLike(
             @AuthenticationPrincipal CustomUserDetail userDetail,
             @RequestBody LikeRequestDto dto
