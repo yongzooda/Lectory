@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../api/axiosInstance'; // ✅ axiosInstance 가져오기
 
 const PosManageList = () => {
   const [posts, setPosts] = useState([]);
@@ -7,21 +8,31 @@ const PosManageList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/admin/manage-posts')
-      .then(async (res) => {
-        if (res.status === 401 || res.status === 403) {
-          const msg = await res.text();
-          throw new Error(msg);
-        }
-        return res.json();
-      })
-//       .then(setPosts)
-       .then((data) => {
-             console.log(">>> 수신된 post 리스트: ", data); // 여기에 isReported 확인
-             setPosts(data);
-       })
-      .catch(err => setError(err.message));
-  }, []);
+      const token = localStorage.getItem('accessToken');
+      console.log('[요청 보낼 토큰]', token);
+
+      if (!token) {
+        alert('로그인 후 이용해주세요.');
+        navigate('/unauthorized');
+        return;
+      }
+
+      // ✅ axios를 이용한 요청
+      api.get('/admin/manage-posts')
+        .then((response) => {
+          console.log('>>> 수신된 post 리스트:', response.data);
+          setPosts(response.data);
+        })
+        .catch((err) => {
+          console.error('게시글 가져오기 실패:', err);
+          if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+            alert('권한이 없습니다.');
+            navigate('/unauthorized');
+          } else {
+            setError('게시글을 불러오는 데 실패했습니다.');
+          }
+        });
+    }, [navigate]);
 
   const formatDate = (iso) => {
     const d = new Date(iso);
@@ -51,7 +62,7 @@ const PosManageList = () => {
               <tr
                 key={post.postId}
                 className="hover:bg-gray-50 cursor-pointer"
-                onClick={() => navigate(`/admin/posts/${post.postId}`)}
+                onClick={() => navigate(`/posts/${post.postId}`)}
               >
                 <td className="border px-3 py-2 text-center">{index}</td>
                 <td className="border px-3 py-2">{post.title}</td>
