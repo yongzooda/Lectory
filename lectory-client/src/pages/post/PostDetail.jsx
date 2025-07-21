@@ -4,6 +4,8 @@ import JwtUtils from "../../api/jwtUtils";
 import PostComment from "./PostComment";
 import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
+import heart from "../../assets/images/heart.png";
+import emptyHeart from "../../assets/images/emptyHeart.png";
 
 export const PostDetail = () => {
   const { postId } = useParams(); // URL 파라미터 가져오기
@@ -12,6 +14,9 @@ export const PostDetail = () => {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
   const [decodedUserId, setDecodedUserId] = useState(null); // 게시글 작성자 본인인가
+
+  const [likeCount, setLikeCount] = useState(0); // 초기값 0으로 수정
+  const [liked, setLiked] = useState(false);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
@@ -56,6 +61,8 @@ export const PostDetail = () => {
       });
       setPost(postData);
       setComments(commentsData);
+      setLikeCount(postData.likeCount);
+      setLiked(postData.liked);
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || error.message);
@@ -149,12 +156,9 @@ export const PostDetail = () => {
         targetId: postId,
       });
 
-      const data = response.data;
-      // 좋아요 개수 최신화
-      setPost((prev) => ({
-        ...prev,
-        likeCount: data.likeCount,
-      }));
+      const { likeCount, liked } = response.data;
+      setLikeCount(likeCount);
+      setLiked(liked);
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || "좋아요 처리에 실패했습니다.");
@@ -229,10 +233,10 @@ export const PostDetail = () => {
                   <img
                     className="free-icon-like"
                     alt="Free icon like"
-                    src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
+                    src={liked ? heart : emptyHeart}
                   />
 
-                  <div className="element">&nbsp;&nbsp;{post.likeCount}</div>
+                  <div className="element">&nbsp;&nbsp;{likeCount}</div>
                 </div>
               </div>
             </div>

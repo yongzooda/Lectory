@@ -1,6 +1,7 @@
 package com.lectory.post.controller;
 
 import com.lectory.post.dto.LikeResponseDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,13 +21,13 @@ public class LikeController {
     private final LikeService likeService;
 
     @PostMapping("/{postId}/like")
-    public LikeResponseDto toggleLike(
+    public ResponseEntity<LikeResponseDto> toggleLike(
             @AuthenticationPrincipal CustomUserDetail userDetail,
             @RequestBody LikeRequestDto dto
     ) {
         Long userId = userDetail.getUser().getUserId();
-        long cnt = likeService.toggle(dto, userId);
-        return new LikeResponseDto(cnt);
+        LikeResponseDto res = likeService.toggle(dto, userId);
+        return ResponseEntity.ok(res);
     }
 
 }
