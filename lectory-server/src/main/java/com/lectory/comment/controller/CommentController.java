@@ -3,7 +3,7 @@ package com.lectory.comment.controller;
 import com.lectory.comment.dto.CommentRequestDto;
 import com.lectory.comment.dto.CommentResponseDto;
 import com.lectory.comment.dto.LikeResponseDto;
-import com.lectory.comment.service.CommentServiceImpl;
+import com.lectory.comment.service.CommentService;
 import com.lectory.post.dto.LikeRequestDto;
 import com.lectory.post.dto.ReportRequestDto;
 import com.lectory.user.security.CustomUserDetail;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/posts/{postId}/comment")
 public class CommentController {
 
-    private final CommentServiceImpl commentService;
+    private final CommentService commentService;
 
     // 댓글 작성
     @PostMapping

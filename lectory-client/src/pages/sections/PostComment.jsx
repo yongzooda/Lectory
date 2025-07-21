@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Star } from "../../assets/icons/Star";
 import "../../assets/css/postDetail.css";
+import api from "../../api/axiosInstance";
 
-const PostComment = ({ comment, onReply, postId, onUpdate }) => {
+const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
   const [parentMenuVisible, setParentMenuVisible] = useState(false); // 부모 댓글 메뉴 토글
   const [replyMenuVisible, setReplyMenuVisible] = useState(null); // 대댓글 메뉴 토글
   const [isEditing, setIsEditing] = useState(false); // 댓글 수정
@@ -27,79 +28,52 @@ const PostComment = ({ comment, onReply, postId, onUpdate }) => {
   // 댓글 수정 요청 (PUT)
   const handleEdit = async () => {
     try {
-      const response = await fetch(
-        `/api/posts/${postId}/comment/${comment.commentId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ content: editContent }),
-        }
-      );
-      if (response.ok) {
-        alert("댓글이 수정되었습니다.");
-        setIsEditing(false);
-        setParentMenuVisible(false);
-        if (onUpdate) onUpdate();
-      } else {
-        alert("댓글 수정에 실패했습니다.");
-      }
+      await api.put(`/posts/${postId}/comment/${comment.commentId}`, {
+        content: editContent,
+      });
+      alert("댓글이 수정되었습니다.");
+      setIsEditing(false);
+      setParentMenuVisible(false);
+      if (onUpdate) onUpdate();
     } catch (error) {
       console.error("댓글 수정 오류:", error);
-      alert("댓글 수정 중 오류가 발생했습니다.");
+      alert(
+        error.response?.data?.message || "댓글 수정 중 오류가 발생했습니다."
+      );
     }
   };
   // 댓글 삭제 요청 (DELETE)
   const handleDelete = async () => {
     if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
     try {
-      const response = await fetch(
-        `/api/posts/${postId}/comment/${comment.commentId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (response.ok) {
-        alert("댓글이 삭제되었습니다.");
-        setParentMenuVisible(false);
-        if (onUpdate) onUpdate();
-      } else {
-        alert("댓글 삭제에 실패했습니다.");
-      }
+      await api.delete(`/posts/${postId}/comment/${comment.commentId}`);
+      alert("댓글이 삭제되었습니다.");
+      setParentMenuVisible(false);
+      if (onUpdate) onUpdate();
     } catch (error) {
       console.error("댓글 삭제 오류:", error);
-      alert("댓글 삭제 중 오류가 발생했습니다.");
+      alert(
+        error.response?.data?.message || "댓글 삭제 중 오류가 발생했습니다."
+      );
     }
   };
 
   // 대댓글 수정 요청 (PUT)
   const handleReplyEdit = async (replyId) => {
     try {
-      const response = await fetch(`/api/posts/${postId}/comment/${replyId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content: editingReplyContent }),
+      await api.put(`/posts/${postId}/comment/${replyId}`, {
+        content: editingReplyContent,
       });
 
-      if (response.ok) {
-        alert("대댓글이 수정되었습니다.");
-        setEditingReplyId(null);
-        setReplyMenuVisible(null);
-        if (onUpdate) onUpdate();
-      } else {
-        alert("대댓글 수정에 실패했습니다.");
-      }
+      alert("대댓글이 수정되었습니다.");
+      setEditingReplyId(null);
+      setReplyMenuVisible(null);
+      if (onUpdate) onUpdate();
     } catch (error) {
       console.error("대댓글 수정 오류:", error);
-      alert("대댓글 수정 중 오류가 발생했습니다.");
+      alert(
+        error.response?.data?.message || "대댓글 수정 중 오류가 발생했습니다."
+      );
     }
   };
 
@@ -107,23 +81,16 @@ const PostComment = ({ comment, onReply, postId, onUpdate }) => {
   const handleReplyDelete = async (replyId) => {
     if (!window.confirm("대댓글을 삭제하시겠습니까?")) return;
     try {
-      const response = await fetch(`/api/posts/${postId}/comment/${replyId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.delete(`/posts/${postId}/comment/${replyId}`);
 
-      if (response.ok) {
-        alert("대댓글이 삭제되었습니다.");
-        setReplyMenuVisible(null);
-        if (onUpdate) onUpdate();
-      } else {
-        alert("대댓글 삭제에 실패했습니다.");
-      }
+      alert("대댓글이 삭제되었습니다.");
+      setReplyMenuVisible(null);
+      if (onUpdate) onUpdate();
     } catch (error) {
       console.error("대댓글 삭제 오류:", error);
-      alert("대댓글 삭제 중 오류가 발생했습니다.");
+      alert(
+        error.response?.data?.message || "대댓글 삭제 중 오류가 발생했습니다."
+      );
     }
   };
 
@@ -139,34 +106,22 @@ const PostComment = ({ comment, onReply, postId, onUpdate }) => {
       return;
     }
     try {
-      const response = await fetch(
-        `/api/posts/${postId}/comment/${commentId}/report`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            target: "COMMENT",
-            targetId: commentId,
-            content: reportContent,
-          }),
-        }
-      );
+      await api.post(`/posts/${postId}/comment/${commentId}/report`, {
+        target: "COMMENT",
+        targetId: commentId,
+        content: reportContent,
+      });
 
-      if (response.ok) {
-        alert("신고가 접수되었습니다.");
-        setParentMenuVisible(false);
-        setReplyMenuVisible(null);
-      } else if (response.status === 409) {
+      alert("신고가 접수되었습니다.");
+      setParentMenuVisible(false);
+      setReplyMenuVisible(null);
+    } catch (error) {
+      if (error.response?.status === 409) {
         alert("이미 신고한 댓글입니다.");
       } else {
-        alert("신고에 실패했습니다.");
+        alert(error.response?.data?.message || "신고에 실패했습니다.");
       }
-    } catch (error) {
       console.error("신고 요청 오류:", error);
-      alert("신고 중 오류가 발생했습니다.");
     }
   };
 
@@ -191,29 +146,19 @@ const PostComment = ({ comment, onReply, postId, onUpdate }) => {
     }
 
     try {
-      const response = await fetch(
-        `/api/posts/${postId}/comment/${parentCommentId}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ content: replyContent }),
-        }
-      );
+      await api.post(`/posts/${postId}/comment/${parentCommentId}`, {
+        content: replyContent,
+      });
 
-      if (response.ok) {
-        alert("대댓글이 등록되었습니다.");
-        setReplyContent("");
-        setReplyingToId(null);
-        if (onUpdate) onUpdate();
-      } else {
-        alert("대댓글 등록에 실패했습니다.");
-      }
+      alert("대댓글이 등록되었습니다.");
+      setReplyContent("");
+      setReplyingToId(null);
+      if (onUpdate) onUpdate();
     } catch (error) {
       console.error("대댓글 등록 오류:", error);
-      alert("대댓글 등록 중 오류가 발생했습니다.");
+      alert(
+        error.response?.data?.message || "대댓글 등록 중 오류가 발생했습니다."
+      );
     }
   };
 
@@ -223,19 +168,19 @@ const PostComment = ({ comment, onReply, postId, onUpdate }) => {
       <div className="div-4">
         {/* 좋아요 버튼은 숨김 처리 */}
         {!isHiddenContent && (
-        <div className="stats-wrapper-2">
-          <div className="stats">
-            <div className="frame-8">
-              <img
-                className="free-icon-like"
-                alt="Free icon like"
-                src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
-              />
+          <div className="stats-wrapper-2">
+            <div className="stats">
+              <div className="frame-8">
+                <img
+                  className="free-icon-like"
+                  alt="Free icon like"
+                  src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
+                />
 
-              <div className="element">{comment.likeCount}</div>
+                <div className="element">{comment.likeCount}</div>
+              </div>
             </div>
           </div>
-        </div>
         )}
         {/* 일반 사용자 프로필 사진 */}
         <div className="ellipse" />
@@ -244,18 +189,18 @@ const PostComment = ({ comment, onReply, postId, onUpdate }) => {
             <div className="frame-5">
               <div className="text-wrapper-12">{comment.userNickname}</div>
               <div className="text-wrapper-13">·</div>
-              <div className="text-wrapper-14">{comment.updatedAt}</div>
+              <div className="text-wrapper-14">{new Date(comment.updatedAt).toLocaleString("ko-KR")}</div>
             </div>
 
             {/* 메뉴 버튼 */}
             {!isHiddenContent && (
-            <img
-              className="free-icon-menu"
-              alt="Free icon menu"
-              src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-menu-3747742-1-2.png"
-              onClick={toggleParentMenu}
-              style={{ cursor: "pointer" }}
-            />
+              <img
+                className="free-icon-menu"
+                alt="Free icon menu"
+                src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-menu-3747742-1-2.png"
+                onClick={toggleParentMenu}
+                style={{ cursor: "pointer" }}
+              />
             )}
           </div>
 
@@ -280,33 +225,42 @@ const PostComment = ({ comment, onReply, postId, onUpdate }) => {
           {parentMenuVisible && (
             <div className="menu">
               <div className="menu-section">
-                <div
-                  className="menu-item"
-                  onClick={() => {
-                    setIsEditing(true);
-                    setParentMenuVisible(false);
-                  }}
-                >
-                  <div className="body">
-                    <div className="description">수정</div>
-                  </div>
-                </div>
+                {decodedUserId === comment.userId ? (
+                  <>
+                    {/* ✅ 내가 작성자일 때만 수정/삭제 버튼 */}
+                    <div
+                      className="menu-item"
+                      onClick={() => {
+                        setIsEditing(true);
+                        setParentMenuVisible(false);
+                      }}
+                    >
+                      <div className="body">
+                        <div className="description">수정</div>
+                      </div>
+                    </div>
 
-                <div className="menu-item-2" onClick={handleDelete}>
-                  <div className="body">
-                    <div className="description">삭제</div>
-                  </div>
-                </div>
+                    <div className="menu-item-2" onClick={handleDelete}>
+                      <div className="body">
+                        <div className="description">삭제</div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* ✅ 내가 작성자가 아닐 때 신고 버튼만 */}
+                    <div
+                      className="menu-item-2"
+                      onClick={() => handleReport(comment.commentId)}
+                    >
+                      <div className="body">
+                        <div className="description">신고</div>
+                      </div>
+                    </div>
+                  </>
+                )}
 
-                <div
-                  className="menu-item-2"
-                  onClick={() => handleReport(comment.commentId)}
-                >
-                  <div className="body">
-                    <div className="description">신고</div>
-                  </div>
-                </div>
-
+                {/* 답글 달기 버튼은 작성자 여부 관계없이 모두 노출 */}
                 <div
                   className="menu-item-2"
                   onClick={() => {
@@ -365,7 +319,7 @@ const PostComment = ({ comment, onReply, postId, onUpdate }) => {
                   <div className="frame-5">
                     <div className="text-wrapper-12">{reply.userNickname}</div>
                     <div className="text-wrapper-13">·</div>
-                    <div className="text-wrapper-14">{reply.updatedAt}</div>
+                    <div className="text-wrapper-14">{new Date(reply.updatedAt).toLocaleString("ko-KR")}</div>
                   </div>
 
                   {/* 대댓글 수정 모드 */}
@@ -403,36 +357,44 @@ const PostComment = ({ comment, onReply, postId, onUpdate }) => {
                 {replyMenuVisible === reply.commentId && (
                   <div className="menu">
                     <div className="menu-section">
-                      <div
-                        className="menu-item"
-                        onClick={() => {
-                          setEditingReplyId(reply.commentId);
-                          setEditingReplyContent(reply.content);
-                          setReplyMenuVisible(null);
-                        }}
-                      >
-                        <div className="body">
-                          <div className="description">수정</div>
-                        </div>
-                      </div>
+                      {decodedUserId === reply.userId ? (
+                        <>
+                          {/* 댓글 작성자 == 로그인 사용자일 때 수정/삭제 */}
+                          <div
+                            className="menu-item"
+                            onClick={() => {
+                              setEditingReplyId(reply.commentId);
+                              setEditingReplyContent(reply.content);
+                              setReplyMenuVisible(null);
+                            }}
+                          >
+                            <div className="body">
+                              <div className="description">수정</div>
+                            </div>
+                          </div>
 
-                      <div
-                        className="menu-item-2"
-                        onClick={() => handleReplyDelete(reply.commentId)}
-                      >
-                        <div className="body">
-                          <div className="description">삭제</div>
-                        </div>
-                      </div>
-
-                      <div
-                        className="menu-item-2"
-                        onClick={() => handleReport(reply.commentId)}
-                      >
-                        <div className="body">
-                          <div className="description">신고</div>
-                        </div>
-                      </div>
+                          <div
+                            className="menu-item-2"
+                            onClick={() => handleReplyDelete(reply.commentId)}
+                          >
+                            <div className="body">
+                              <div className="description">삭제</div>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* 댓글 작성자 != 로그인 사용자일 때 신고 */}
+                          <div
+                            className="menu-item-2"
+                            onClick={() => handleReport(reply.commentId)}
+                          >
+                            <div className="body">
+                              <div className="description">신고</div>
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
