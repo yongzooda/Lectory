@@ -82,6 +82,7 @@ export default function LectureEdit() {
     await updateChapter({ chapterId, ...payload });
     setEditingId(null);
     await fetchAll();
+    navigate(`/library/expert/${lectureRoomId}`);
   };
 
   const handleDeleteChap = async () => {
