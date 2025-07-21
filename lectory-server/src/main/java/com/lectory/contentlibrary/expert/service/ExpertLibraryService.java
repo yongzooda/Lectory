@@ -15,6 +15,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -172,6 +173,7 @@ public class ExpertLibraryService {
     }
 
     /* 5) 강의 수정 */
+    @Transactional
     public void updateLecture(Long expertId, Long roomId, LectureUpdateRequestDto req) {
         LectureRoom room = fetchOwnedRoom(expertId, roomId);
         room.setCoverImageUrl(req.getCoverImageUrl());
@@ -179,8 +181,13 @@ public class ExpertLibraryService {
         room.setDescription(req.getDescription());
         room.setFileUrl(req.getFileUrl());
         room.setIsPaid(req.getIsPaid());
+
+        // 수정 일시 수동 갱신
+        room.setUpdatedAt(LocalDateTime.now());
+
         lectureRoomRepo.save(room);
     }
+
 
     /* 6) 강의실 삭제 */
     @Transactional
