@@ -1,4 +1,4 @@
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 class JwtUtils {
   static getId(token) {
@@ -13,4 +13,4 @@ class JwtUtils {
   }
 }
 
-export default JwtUtils; 
+export default JwtUtils;
