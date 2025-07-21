@@ -2,6 +2,7 @@ package com.lectory.user.controller;
 
 import com.lectory.user.dto.JwtResponse;
 import com.lectory.user.dto.LoginRequest;
+import com.lectory.user.security.CustomUserDetail;
 import com.lectory.user.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +33,12 @@ public class AuthController {
                             loginRequest.getEmail(),
                             loginRequest.getPassword()));
 
-            String email = authentication.getName();
+            CustomUserDetail userDetail = (CustomUserDetail) authentication.getPrincipal();
 
-            String accessToken = jwtUtil.generateToken(email);
+            String email = userDetail.getUsername();
+            Long userId = userDetail.getUser().getUserId();
+
+            String accessToken = jwtUtil.generateToken(email, userId);
             return ResponseEntity.ok(new JwtResponse(accessToken));
 
         } catch (AuthenticationException e) {
