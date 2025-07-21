@@ -2,7 +2,6 @@ package com.lectory.admin.service;
 
 import com.lectory.admin.dto.CommentManageResponseDto;
 import com.lectory.admin.repository.CommentManageRepository;
-import com.lectory.common.domain.ReportTarget;
 import com.lectory.post.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,12 +21,12 @@ public class CommentManageService {
     public List<CommentManageResponseDto> findAllComments() {
         List<CommentManageResponseDto> dtos =  commentManageRepository.findAllComments();
         for(CommentManageResponseDto dto : dtos) {
-            dto.setReported(isReported(dto.getCommentId()));
+            dto.setReported(isReported(dto.getUserId(),dto.getUserId()));
         }
         return dtos;
     }
 
-    public boolean isReported(Long commentId) {
-        return reportRepository.existsReportAgainstUser(ReportTarget.COMMENT, commentId);
+    public boolean isReported(Long targetId, Long userId) {
+        return reportRepository.existsByTargetAndTargetIdAndUser_UserId(COMMENT, targetId, userId);
     }
 }

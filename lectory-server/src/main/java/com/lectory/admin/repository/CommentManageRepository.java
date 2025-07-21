@@ -14,7 +14,7 @@ public interface CommentManageRepository extends JpaRepository<Comment, Long> {
     @Query("""
     SELECT new com.lectory.admin.dto.CommentManageResponseDto(
         c.commentId, c.post.postId, c.post.title,
-        c.user.userId, c.user.nickname,c.user.userType,
+        c.user.userId, c.user.email,c.user.userType,
         c.content, p.isResolved, c.likeCount, c.createdAt,
         c.isAccepted, false
     )

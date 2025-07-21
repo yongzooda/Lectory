@@ -47,11 +47,11 @@ const CommentManageList = () => {
             comments.map((comment, index) => (
               <tr key={comment.commentId} 
               className="hover:bg-gray-50 cursor-pointer"
-              onClick={() => navigate(`/posts/${comment.postId}`)}
+              onClick={() => navigate(`/admin/posts/${comment.postId}`)}
               >
                 <td className="border px-3 py-2 text-center">{comment.commentId}</td>
                 <td className="border px-3 py-2">{comment.content}</td>
-                <td className="border px-3 py-2">{comment.nickname}</td>
+                <td className="border px-3 py-2">{comment.email}</td>
                 <td className="border px-3 py-2">{formatDate(comment.createdAt)}</td>
                 <td className="border px-3 py-2 text-center">{comment.reported ? 'O' : 'X'}</td>
               </tr>
