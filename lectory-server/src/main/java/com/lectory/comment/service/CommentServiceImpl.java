@@ -131,15 +131,15 @@ public class CommentServiceImpl implements CommentService {
 
         Long userId = comment.getPost().getUserId().getUserId();
         Long currentId = userDetail.getUser().getUserId();
+        if(!userDetail.getUser().getUserType().getUserType().equals("ADMIN")) {
+            if (!userId.equals(currentId)) {
+                throw new CustomException(CustomErrorCode.COMMENT_UNAUTHORIZED);
+            }
 
-        if (!userId.equals(currentId)) {
-            throw new CustomException(CustomErrorCode.COMMENT_UNAUTHORIZED);
+            if (commentRepository.existsByPost_PostIdAndIsAcceptedTrue(postId)) {
+                throw new CustomException(CustomErrorCode.COMMENT_ALREADY_ACCEPTED);
+            }
         }
-
-        if (commentRepository.existsByPost_PostIdAndIsAcceptedTrue(postId)) {
-            throw new CustomException(CustomErrorCode.COMMENT_ALREADY_ACCEPTED);
-        }
-
         comment.accept();
         post.accept();
         postRepository.save(post);
@@ -220,6 +220,9 @@ public class CommentServiceImpl implements CommentService {
     // 작성자 본인인가
     private void validateUser(Comment comment, User user) {
         if (comment==null || !comment.getUser().getUserId().equals(user.getUserId())) {
+            if(user.getUserType().getUserType().equals("ADMIN")){
+                return;
+            }
             throw new CustomException(CustomErrorCode.COMMENT_UNAUTHORIZED);
         }
     }
