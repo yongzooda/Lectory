@@ -21,6 +21,18 @@ const PostComment = ({
   const [replyingToId, setReplyingToId] = useState(null); // 대댓글 입력 중인 댓글 ID
   const [replyContent, setReplyContent] = useState(""); // 대댓글 내용
 
+  const [likeCount, setLikeCount] = useState(comment.likeCount); // 댓글 좋아요
+  const [liked, setLiked] = useState(comment.liked || false);
+
+  const initialReplyLikes = {}; // 대댓글 좋아요
+  (comment.replies || []).forEach((r) => {
+    initialReplyLikes[r.commentId] = {
+      likeCount: r.likeCount,
+      liked: r.liked || false,
+    };
+  });
+  const [replyLikes, setReplyLikes] = useState(initialReplyLikes);
+
   const token = localStorage.getItem("accessToken");
   // "유료 사용자만 볼 수 있습니다." 내용인지 체크
   const isHiddenContent = comment.content === "유료 사용자만 볼 수 있습니다.";
@@ -135,15 +147,8 @@ const PostComment = ({
 
   // 대댓글 입력창 열기/닫기
   const handleReplyToggle = (commentId) => {
-    if (replyingToId === commentId) {
-      // 이미 열려있으면 닫기
-      setReplyingToId(null);
-      setReplyContent("");
-    } else {
-      // 새로 열기
-      setReplyingToId(commentId);
-      setReplyContent("");
-    }
+    setReplyingToId(commentId);
+    setReplyContent("");
   };
 
   // 대댓글 작성 POST 요청
@@ -175,13 +180,57 @@ const PostComment = ({
     if (!window.confirm("이 댓글을 채택하시겠습니까?")) return;
 
     try {
-      const response = await api.post(`/posts/${postId}/comment/${commentId}/accept`);
+      const response = await api.post(
+        `/posts/${postId}/comment/${commentId}/accept`
+      );
       alert("댓글이 채택되었습니다.");
       if (onUpdate) onUpdate(response.data.postIsResolved);
     } catch (error) {
       console.error("채택 요청 오류:", error);
       alert(
         error.response?.data?.message || "댓글 채택 중 오류가 발생했습니다."
+      );
+    }
+  };
+
+  // 댓글 좋아요 요청
+  const handleLikeComment = async (commentId) => {
+    try {
+      const response = await api.post(`/posts/${postId}/comment/${commentId}/like`, {
+        target: "COMMENT",
+        targetId: commentId,
+      });
+
+      const { likeCount, liked } = response.data;
+
+      setLikeCount(likeCount);
+      setLiked(liked);
+    } catch (error) {
+      console.error("댓글 좋아요 오류:", error);
+      alert(
+        error.response?.data?.message || "댓글 좋아요 처리 중 오류가 발생했습니다."
+      );
+    }
+  };
+
+  // 대댓글 좋아요 요청
+  const handleLikeReply = async (replyId) => {
+    try {
+      const response = await api.post(`/posts/${postId}/comment/${replyId}/like`, {
+        target: "COMMENT",
+        targetId: replyId,
+      });
+
+      const { likeCount, liked } = response.data;
+
+      setReplyLikes((prev) => ({
+        ...prev,
+        [replyId]: { likeCount, liked },
+      }));
+    } catch (error) {
+      console.error("대댓글 좋아요 오류:", error);
+      alert(
+        error.response?.data?.message || "대댓글 좋아요 처리 중 오류가 발생했습니다."
       );
     }
   };
@@ -199,9 +248,11 @@ const PostComment = ({
                   className="free-icon-like"
                   alt="Free icon like"
                   src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
+                  onClick={() => handleLikeComment(comment.commentId)}
+                  style={{ cursor: "pointer" }}
                 />
 
-                <div className="element">{comment.likeCount}</div>
+                <div className="element">{likeCount}</div>
               </div>
             </div>
           </div>
@@ -226,8 +277,6 @@ const PostComment = ({
                   <button className="button-4">채택댓글</button>
                 </div>
               )}
-
-              {console.log("isResolved:", isResolved, "decodedUserId:", decodedUserId, "postOwnerId:", postOwnerId, "comment.isAccepted:", comment.isAccepted)}
               {/* 채택 버튼: 게시글 작성자 && 미해결 상태일 때만 노출 */}
               {!isResolved &&
                 decodedUserId === postOwnerId &&
@@ -362,9 +411,11 @@ const PostComment = ({
                           className="free-icon-like"
                           alt="Free icon like"
                           src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
+                          onClick={() => handleLikeReply(reply.commentId)}
+                          style={{ cursor: "pointer" }}
                         />
 
-                        <div className="element">{comment.likeCount}</div>
+                        <div className="element">{replyLikes[reply.commentId]?.likeCount || 0}</div>
                       </div>
                     </div>
                   </div>
