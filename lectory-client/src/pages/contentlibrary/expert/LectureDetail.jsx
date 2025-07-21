@@ -39,6 +39,36 @@ const ExpertLectureDetail = () => {
     navigate("/library/expert");
   };
 
+  /* ── 자료 다운로드 ── */
+  const handleDownload = async () => {
+    try {
+      // 파일 서버로 바로 요청 (프록시 설정이 /files → 백엔드로)
+      const fileUrl = detail.fileUrl.startsWith("/")
+        ? detail.fileUrl
+        : `/${detail.fileUrl}`;
+      const res = await fetch(fileUrl, { credentials: "include" });
+      if (!res.ok) throw new Error("다운로드 실패");
+
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+
+      // ID 뒤에 .zip 붙여서 강제 ZIP 확장자 지정
+      const id       = fileUrl.split("/").pop() || "materials";
+      const filename = `${id}.zip`;
+
+      const a = document.createElement("a");
+      a.href     = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("파일 다운로드 중 오류가 발생했습니다.");
+    }
+  };
+
   /* ── 렌더 ── */
   if (loading) return <div className="p-8 text-center">Loading…</div>;
   if (!detail)  return <div className="p-8 text-center">강의실을 찾을 수 없습니다.</div>;
@@ -58,7 +88,7 @@ const ExpertLectureDetail = () => {
         updatedAt       ={detail.updatedAt}
       />
 
-      {/* 전문가 뷰용 “수강 중” 뱃지 */}
+      {/* “수강 중” 뱃지 */}
       <span className="inline-block bg-green-500 text-white px-3 py-1 rounded">
         수강 중
       </span>
@@ -66,7 +96,7 @@ const ExpertLectureDetail = () => {
       {/* 태그 */}
       {detail.tags?.length > 0 && (
         <div className="flex flex-wrap gap-2 my-4">
-          {detail.tags.map((t) => (
+          {detail.tags.map(t => (
             <span key={t} className="text-xs bg-gray-200 px-2 py-1 rounded">
               {t}
             </span>
@@ -90,22 +120,20 @@ const ExpertLectureDetail = () => {
         </button>
       </div>
 
-      {/* 자료 ZIP */}
+      {/* 자료 ZIP 다운로드 */}
       {detail.fileUrl && (
         <section className="mt-6">
           <h2 className="text-xl font-bold mb-2">강의 자료</h2>
-          <a
-            href={detail.fileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={handleDownload}
             className="text-blue-600 hover:underline"
           >
             전체 강의 자료 다운로드
-          </a>
+          </button>
         </section>
       )}
 
-      {/* 챕터 목록 (읽기 전용) */}
+      {/* 챕터 목록 */}
       <section className="space-y-6 mt-6">
         <h2 className="text-xl font-bold">챕터 목록</h2>
         <ChapterList chapters={detail.chapters} isEnrolled={true} />
