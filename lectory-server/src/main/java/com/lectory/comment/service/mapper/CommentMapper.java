@@ -5,6 +5,7 @@ import com.lectory.comment.dto.CommentResponseDto;
 import com.lectory.comment.repository.CommentRepository;
 import com.lectory.common.domain.comment.Comment;
 import com.lectory.common.domain.post.Post;
+import com.lectory.common.domain.user.User;
 import com.lectory.post.repository.PostRepository;
 import com.lectory.user.security.CustomUserDetail;
 import jakarta.persistence.EntityNotFoundException;
@@ -71,6 +72,15 @@ public class CommentMapper {
 
         boolean hidden = isFree && isPostPaid && isCommentExpert;
         String content = hidden ? "유료 사용자만 볼 수 있습니다." : comment.getContent();
+
+        User commentUser = comment.getUser();
+
+        // 전문가 프로필 이미지 URL (전문가인 경우만 가져오기)
+        String expertProfileImage = null;
+        if ("EXPERT".equals(commentUser.getUserType().getUserType()) && commentUser.getExpert() != null) {
+            expertProfileImage = commentUser.getExpert().getProfileImageUrl();
+        }
+
         return CommentResponseDto.builder()
                 .commentId(comment.getCommentId())
                 .postId(comment.getPost().getPostId())
@@ -84,6 +94,8 @@ public class CommentMapper {
                 .isDeleted(comment.getIsDeleted())
                 .userNickname(comment.getUser().getNickname())
                 .postIsResolved(comment.getPost().isResolved())
+                .userType(commentUser.getUserType().getUserType())
+                .expertProfileImage(expertProfileImage)
                 .build();
     }
 
