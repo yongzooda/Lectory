@@ -25,4 +25,6 @@ public class CommentResponseDto {
     private boolean isHidden;
     private String userNickname;
     private Boolean postIsResolved;
+    private String userType;
+    private String expertProfileImage;
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Star } from "../../assets/icons/Star";
 import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
@@ -23,16 +23,22 @@ const PostComment = ({
   const [replyingToId, setReplyingToId] = useState(null); // 대댓글 입력 중인 댓글 ID
   const [replyContent, setReplyContent] = useState(""); // 대댓글 내용
 
-  const [likeCount, setLikeCount] = useState(comment.likeCount); // 댓글 좋아요
-  const [liked, setLiked] = useState(comment.liked || false);
+  const [likeCount, setLikeCount] = useState(comment.likeCount ?? 0); // 댓글 좋아요
+  const [liked, setLiked] = useState(comment.liked ?? false);
 
   const initialReplyLikes = {}; // 대댓글 좋아요
   (comment.replies || []).forEach((r) => {
     initialReplyLikes[r.commentId] = {
-      likeCount: r.likeCount,
-      liked: r.liked || false,
+      likeCount: r.likeCount ?? 0,
+      liked: r.liked ?? false,
     };
   });
+
+  useEffect(() => {
+  setLikeCount(comment.likeCount ?? 0);
+  setLiked(comment.liked ?? false);
+}, [comment]);
+
   const [replyLikes, setReplyLikes] = useState(initialReplyLikes);
 
   const token = localStorage.getItem("accessToken");
@@ -206,7 +212,6 @@ const PostComment = ({
           targetId: commentId,
         }
       );
-
       const { likeCount, liked } = response.data;
 
       setLikeCount(likeCount);
