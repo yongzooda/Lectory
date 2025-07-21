@@ -23,7 +23,6 @@ const StudentLectureDetail = () => {
   const fetchDetail = useCallback(async () => {
     setLoading(true);
     try {
-
       const res = await getLectureDetail(lectureRoomId);
       setDetail(res.data);
     } catch (err) {
@@ -40,7 +39,6 @@ const StudentLectureDetail = () => {
 
   const handleEnroll = async () => {
     try {
-
       await enroll(lectureRoomId);
       await fetchDetail();
     } catch (err) {
@@ -56,7 +54,6 @@ const StudentLectureDetail = () => {
 
   const handleAddComment = async (content) => {
     try {
-
       await postComment({ lectureRoomId, content });
       await fetchDetail();
     } catch (err) {
@@ -71,14 +68,15 @@ const StudentLectureDetail = () => {
   return (
     <div className="container mx-auto p-6 space-y-10">
       <LectureHeader
-        title={detail.title}
-        coverImageUrl={detail.coverImageUrl}
-        description={detail.description}
-        expertName={detail.expertName}
-        enrollmentCount={detail.enrollmentCount}
-        isPaid={detail.isPaid}
-        createdAt={detail.createdAt}
-        updatedAt={detail.updatedAt}
+        title           ={detail.title}
+        coverImageUrl   ={detail.coverImageUrl}
+        description     ={detail.description}
+        expertName      ={detail.expertName}
+        enrollmentCount ={detail.enrollmentCount}
+        isPaid          ={detail.isPaid}
+        chapters        ={detail.chapters}
+        createdAt       ={detail.createdAt}
+        updatedAt       ={detail.updatedAt}
       />
 
       {detail.isEnrolled && (

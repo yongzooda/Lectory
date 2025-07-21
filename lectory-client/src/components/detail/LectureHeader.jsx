@@ -11,6 +11,11 @@ import React from 'react';
  *  • expertName       : String
  *  • enrollmentCount  : Number
  *  • isPaid           : Boolean
+ *  • chapters         : Array<{
+ *        chapterId?: number,
+ *        orderNum?: number,
+ *        chapterName: string
+ *    }>
  *  • createdAt        : String (ISO)   ─ 선택
  *  • updatedAt        : String (ISO)   ─ 선택
  */
@@ -21,6 +26,7 @@ const LectureHeader = ({
   expertName,
   enrollmentCount = 0,
   isPaid = false,
+  chapters = [],
   createdAt,
   updatedAt,
 }) => {
@@ -59,6 +65,24 @@ const LectureHeader = ({
         </p>
       )}
 
+      {/* ── 목차 제목만 미리보기 ── */}
+      {chapters.length > 0 && (
+        <section className="mt-6">
+          <h2 className="text-xl font-bold mb-2">강의 목차</h2>
+          <ul className="list-disc list-inside text-gray-700">
+            {chapters
+              .slice()
+              .sort((a, b) => (a.orderNum ?? 0) - (b.orderNum ?? 0))
+              .map((c) => (
+                <li key={c.chapterId ?? c.orderNum}>
+                  {c.orderNum != null ? `${c.orderNum}. ` : ''}
+                  {c.chapterName}
+                </li>
+              ))}
+          </ul>
+        </section>
+      )}
+
       {/* ── 생성·수정 일시 (선택) ── */}
       {(createdAt || updatedAt) && (
         <div className="text-xs text-gray-500">
@@ -69,7 +93,7 @@ const LectureHeader = ({
           )}
           {updatedAt && (
             <span>
-              마지막 수정: {new Date(updatedAt).toLocaleDateString()}
+              마지막 수정: {new Date(updatedAt).toLocaleString()}
             </span>
           )}
         </div>
