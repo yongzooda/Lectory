@@ -1,5 +1,6 @@
+// src/pages/expert/LectureEdit.jsx
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useNavigate }            from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import {
   getLectureDetail,
@@ -60,8 +61,9 @@ export default function LectureEdit() {
     setSavingMeta(true);
     try {
       await updateLecture({ lectureRoomId, ...payload });
-      await fetchAll();
       alert('강의실 정보가 저장되었습니다.');
+      // 저장 후 상세 페이지로 이동 → 상세 페이지에서 최신 데이터를 다시 로드
+      navigate(`/library/expert/${lectureRoomId}`);
     } catch (err) {
       console.error(err);
       alert('저장 중 오류가 발생했습니다.');
@@ -80,6 +82,7 @@ export default function LectureEdit() {
     await updateChapter({ chapterId, ...payload });
     setEditingId(null);
     await fetchAll();
+    navigate(`/library/expert/${lectureRoomId}`);
   };
 
   const handleDeleteChap = async () => {

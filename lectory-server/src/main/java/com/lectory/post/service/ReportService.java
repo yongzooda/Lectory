@@ -1,5 +1,7 @@
 package com.lectory.post.service;
 
+import com.lectory.exception.CustomErrorCode;
+import com.lectory.exception.CustomException;
 import org.springframework.stereotype.Service;
 
 import com.lectory.common.domain.Report;
@@ -22,7 +24,7 @@ public class ReportService {
     @Transactional
     public void create(ReportTarget target, Long targetId, Long userId, String content) {
         if (reportRepository.existsByTargetAndTargetIdAndUser_UserId(target, targetId, userId)) {
-            throw new RuntimeException("이미 신고한 대상입니다.");
+            throw new CustomException(CustomErrorCode.REPORT_ALREADY_EXISTS);
         }
 
         User user = userRepository.findById(userId)

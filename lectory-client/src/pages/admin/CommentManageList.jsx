@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHref, useNavigate } from 'react-router-dom';
+import { Footer } from "../sections/Footer";
+import { getAllCommnets } from "../../api/adminApi.js"; // ✅ 이 함수 사용
 
 const CommentManageList = () => {
   const [comments, setComments] = useState([]);
@@ -7,16 +9,16 @@ const CommentManageList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/admin/manage-comments')
-      .then(async (res) => {
-        if (res.status === 401 || res.status === 403) {
-          const msg = await res.text();
-          throw new Error(msg);
-        }
-        return res.json();
+    getAllCommnets()
+      .then((data) => {
+        setComments(data);
+        setError(null);
       })
-      .then(setComments)
-      .catch((err) => setError(err.message));
+      .catch((err) => {
+        console.error("댓글 가져오기 실패", err);
+        setError("댓글 정보를 불러오는 데 실패했습니다.");
+        return;
+      });
   }, []);
 
   const formatDate = (iso) => {
@@ -25,7 +27,7 @@ const CommentManageList = () => {
   };
 
   return (
-    <div className="bg-white shadow rounded-xl p-4">
+    <div className="bg-white shadow rounded-xl p-4">™
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <table className="min-w-full border border-gray-300 text-sm">
         <thead className="bg-gray-100">
@@ -46,11 +48,11 @@ const CommentManageList = () => {
             comments.map((comment, index) => (
               <tr key={comment.commentId} 
               className="hover:bg-gray-50 cursor-pointer"
-              onClick={() => navigate(`/admin/posts/${comment.postId}`)}
+              onClick={() => navigate(`/posts/${comment.postId}`)}
               >
                 <td className="border px-3 py-2 text-center">{comment.commentId}</td>
                 <td className="border px-3 py-2">{comment.content}</td>
-                <td className="border px-3 py-2">{comment.email}</td>
+                <td className="border px-3 py-2">{comment.nickname}</td>
                 <td className="border px-3 py-2">{formatDate(comment.createdAt)}</td>
                 <td className="border px-3 py-2 text-center">{comment.reported ? 'O' : 'X'}</td>
               </tr>
@@ -58,6 +60,7 @@ const CommentManageList = () => {
           )}
         </tbody>
       </table>
+      <Footer/>
     </div>
   );
 };

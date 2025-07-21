@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import JwtUtils from "../../api/jwtUtils";
 import PostComment from "./PostComment";
 import "../../assets/css/postDetail.css";
+import api from "../../api/axiosInstance";
+import {getUser} from "../../api/userApi.js"
 
 export const PostDetail = () => {
   const { postId } = useParams(); // URL 파라미터 가져오기
@@ -9,6 +12,7 @@ export const PostDetail = () => {
   const [comments, setComments] = useState([]); // 댓글 데이터
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
+  const [decodedUserId, setDecodedUserId] = useState(null); // 게시글 작성자 본인인가
 
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
@@ -18,8 +22,31 @@ export const PostDetail = () => {
     if (!token) {
       alert("로그인 후 이용해주세요.");
       navigate("/login");
+    } else {
+      try {
+        const id = JwtUtils.getId(token);
+        setDecodedUserId(id);
+      } catch (error) {
+        console.error("토큰 디코딩 실패:", error);
+      }
     }
   }, [token, navigate]);
+
+  const [userInfo, setCurrentUserInfo] = useState(null); 
+  const [isAdmin, setIsAdmin] = useState(false);
+  // "접속 사용자 정보 조회"
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const user = await getUser();
+        setCurrentUserInfo(user.userId);  // userId도 상태로 저장하는 거면 useState 필요!
+        setIsAdmin(user?.userType === "ADMIN");
+      } catch (err) {
+        console.error("유저 정보를 불러오지 못했습니다.", err);
+      }
+    }
+    fetchUser();
+  }, []);
 
   // 컴포넌트 첫 렌더링 시 데이터 가져오기
   useEffect(() => {
@@ -32,27 +59,11 @@ export const PostDetail = () => {
   const fetchPostAndComments = async () => {
     setLoading(true);
     try {
-      const postResponse = await fetch(`/api/posts/${postId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      if (!postResponse.ok) {
-        throw new Error("게시글을 불러오는 데 실패했습니다.");
-      }
-      const postData = await postResponse.json();
+      const postResponse = await api.get(`/posts/${postId}`);
+      const postData = postResponse.data;
 
-      const commentsResponse = await fetch(`/api/posts/${postId}/comment`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      if (!commentsResponse.ok) {
-        throw new Error("댓글을 불러오는 데 실패했습니다.");
-      }
-      let commentsData = await commentsResponse.json();
+      const commentsResponse = await api.get(`/posts/${postId}/comment`);
+      let commentsData = commentsResponse.data;
 
       commentsData = commentsData.sort((a, b) => {
         if (a.isAccepted && !b.isAccepted) return -1; // a가 채택된 댓글이면 앞으로
@@ -64,7 +75,7 @@ export const PostDetail = () => {
       setComments(commentsData);
     } catch (error) {
       console.error(error);
-      alert(error.message);
+      alert(error.response?.data?.message || error.message);
     } finally {
       setLoading(false);
     }
@@ -86,30 +97,20 @@ export const PostDetail = () => {
     }
 
     try {
-      const response = await fetch(`/api/posts/${postId}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: post.userId,
-          title: newTitle,
-          content: newContent,
-          onlyExpert: post.onlyExpert,
-          tagIds: post.tags ? Array.from(post.tags) : [],
-        }),
+      await api.put(`/posts/${postId}`, {
+        userId: post.userId,
+        title: newTitle,
+        content: newContent,
+        onlyExpert: post.onlyExpert,
+        tagIds: post.tags ? Array.from(post.tags) : [],
       });
 
-      if (!response.ok) {
-        throw new Error("수정 실패");
-      }
       alert("수정 완료");
       // 수정 후 상세 페이지 다시 불러오기
-      window.location.reload();
+      fetchPostAndComments();
     } catch (error) {
       console.error(error);
-      alert("수정 중 오류 발생");
+      alert(error.response?.data?.message || "수정 중 오류 발생");
     }
   };
 
@@ -118,22 +119,13 @@ export const PostDetail = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
-      const response = await fetch(`/api/posts/${postId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("삭제 실패");
-      }
+      await api.delete(`/posts/${postId}`);
       alert("삭제 완료");
       // 삭제 후 게시글 목록 페이지로 이동
       navigate("/posts");
     } catch (error) {
       console.error(error);
-      alert("삭제 중 오류 발생");
+      alert(error.response?.data?.message || "삭제 중 오류 발생");
     }
   };
 
@@ -149,32 +141,82 @@ export const PostDetail = () => {
     }
 
     try {
-      const response = await fetch(`/api/posts/${postId}/comment`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content: newComment, // 입력한 댓글 내용
-        }),
+      await api.post(`/posts/${postId}/comment`, {
+        content: newComment, // 입력한 댓글 내용
       });
 
-      if (response.ok) {
-        alert("댓글이 등록되었습니다.");
-        setNewComment(""); // 입력창 초기화
-        fetchPostAndComments(); // 새 댓글 반영
-      } else if (response.status === 403) {
-        const errorData = await response.json();
-        alert(errorData.message);
+      alert("댓글이 등록되었습니다.");
+      setNewComment(""); // 입력창 초기화
+      fetchPostAndComments(); // 새 댓글 반영
+    } catch (error) {
+      if (error.response?.status === 403) {
+        alert(error.response.data.message);
       } else {
         alert("댓글 작성에 실패했습니다.");
       }
-    } catch (error) {
       console.error(error);
-      alert("댓글 등록 중 오류 발생");
     }
   };
+
+  // 좋아요 요청 함수
+  const handleLike = async () => {
+    try {
+      const response = await api.post(`/posts/${postId}/like`, {
+        target: "POST",
+        targetId: postId,
+      });
+
+      const data = response.data;
+      // 좋아요 개수 최신화
+      setPost((prev) => ({
+        ...prev,
+        likeCount: data.likeCount,
+      }));
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || "좋아요 처리에 실패했습니다.");
+    }
+  };
+
+  // 신고
+  const handleReport = async () => {
+    const reportContent = window.prompt("신고 사유를 입력해주세요.");
+    if (reportContent === null) {
+      return;
+    }
+
+    if (reportContent.trim() === "") {
+      alert("신고 사유가 필요합니다.");
+      return;
+    }
+    try {
+      await api.post(`/posts/${postId}/report`, {
+        target: "POST",
+        targetId: postId,
+        content: reportContent,
+      });
+
+      alert("신고가 접수되었습니다.");
+    } catch (error) {
+      if (error.response?.status === 409) {
+        alert("이미 신고한 댓글입니다.");
+      } else {
+        alert(error.response?.data?.message || "신고에 실패했습니다.");
+      }
+      console.error("신고 요청 오류:", error);
+    }
+  };
+
+// 채택 후 호출될 함수 수정
+const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
+  console.log("handleUpdateAfterAccept 호출, isResolved:", postIsResolvedFromResponse);
+  setPost((prev) => ({
+    ...prev,
+    isResolved: postIsResolvedFromResponse,
+  }));
+
+  fetchPostAndComments();
+};
 
   if (loading) return <div>로딩 중...</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
@@ -190,10 +232,14 @@ export const PostDetail = () => {
             <div className="group-2">
               <div className="text-wrapper-21">{post.userNickname}</div>
 
-              <div className="text-wrapper-22">{post.updatedAt}</div>
+              <div className="text-wrapper-22">{new Date(post.updatedAt).toLocaleString("ko-KR")}</div>
             </div>
 
-            <div className="stats-wrapper-3">
+            <div
+              className="stats-wrapper-3"
+              onClick={handleLike}
+              style={{ cursor: "pointer" }}
+            >
               <div className="stats">
                 <div className="frame-8">
                   <img
@@ -225,9 +271,16 @@ export const PostDetail = () => {
           </div>
         </div>
 
+        {/* 작성자와 로그인한 userId 비교하여 버튼 노출 */}
         <div className="text-wrapper-26">
-          <button onClick={handleEdit}>수정</button> |{" "}
-          <button onClick={handleDelete}>삭제</button>
+          {decodedUserId === post.userId || isAdmin ? (
+            <>
+              <button onClick={handleEdit}>수정</button> |{" "}
+              <button onClick={handleDelete}>삭제</button>
+            </>
+          ) : (
+            <button onClick={handleReport}>신고</button>
+          )}
         </div>
       </div>
 
@@ -242,7 +295,7 @@ export const PostDetail = () => {
       <div className="overlap">
         <div className="overlap-group">
           <div className="div-3">
-            <div className="text-wrapper-19">댓글</div>
+            {/* <div className="text-wrapper-19">댓글</div> */}
             {comments.length === 0 ? (
               <p>댓글이 없습니다.</p>
             ) : (
@@ -251,8 +304,11 @@ export const PostDetail = () => {
                   key={comment.commentId}
                   postId={postId}
                   comment={comment}
+                  decodedUserId={decodedUserId}
+                  postOwnerId={post.userId} 
+                  isResolved={post.resolved}
                   onReply={handleReply}
-                  onUpdate={fetchPostAndComments}
+                  onUpdate={handleUpdateAfterAccept}
                 />
               ))
             )}

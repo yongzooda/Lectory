@@ -1,46 +1,82 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import '../../assets/css/loginPage.css';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../../api/loginApi.js';
+import logo from '../../assets/images/Lectorylogo.png';
+import SignUpOverlay from './SignUpOverlay';
+import { getMyPage } from '../../api/mypageApi';
 
-function LoginForm() {
+export default function LoginForm() {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [showSignup, setShowSignup] = useState(false); // 상태 추가
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/login', {
-                email,
-                password,
-            }, {
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            const token = response.data.accessToken;
-            localStorage.setItem('accessToken', token);
+            await login({ email, password });
+            const userInfo = await getMyPage();
             alert('로그인 성공!');
 
-            // 로그인 후 리다이렉트 등 처리
-
+            if(userInfo.userType === 'EXPERT'){
+                navigate('/library/expert')
+            } else {
+                navigate('/library');
+            }
         } catch (err) {
-            setError('로그인 실패: ' + (err.response?.data || err.message));
+            setError(err.response?.data?.message || '로그인 실패');
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="email" placeholder="이메일"
-                value={email} onChange={e => setEmail(e.target.value)} required />
-            <input
-                type="password" placeholder="비밀번호"
-                value={password} onChange={e => setPassword(e.target.value)} required />
-            <button type="submit">로그인</button>
-            {error && <p style={{color:'red'}}>{error}</p>}
-        </form>
+        <div className="loginPage-body">
+            <div className="loginPage-container">
+                <div className="loginPage-welcome">
+                    <div className="loginPage-left">
+                        <div className="loginPage-pinkbox">
+                            <h1 className="loginPage-title">sign in</h1>
+                            <form onSubmit={handleSubmit} autoComplete="off" className="loginPage-form">
+                                <input
+                                    type="email"
+                                    placeholder="이메일"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="loginPage-input"
+                                    required
+                                />
+                                <input
+                                    type="password"
+                                    placeholder="비밀번호"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="loginPage-input"
+                                    required
+                                />
+                                <button type="submit" className="loginPage-button">
+                                    Login
+                                </button>
+                                {error && <p className="loginPage-error">{error}</p>}
+                            </form>
+                        </div>
+                    </div>
+
+                    <div className="loginPage-right">
+                        <img src={logo} alt="Lectory logo" className="signup-image" />
+                        <p className="signup-account">don't have an account?</p>
+                        <button className="signup-button" onClick={() => setShowSignup(true)}>
+                            Sign Up
+                        </button>
+                    </div>
+
+                    {/* 회원가입 오버레이 */}
+                    {showSignup && <SignUpOverlay onClose={() => setShowSignup(false)} />}
+                </div>
+            </div>
+        </div>
     );
 }
-
-export default LoginForm;

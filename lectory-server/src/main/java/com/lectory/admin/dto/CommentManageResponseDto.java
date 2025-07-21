@@ -14,7 +14,7 @@ public class CommentManageResponseDto {
     private Long postId;
     private String postTitle;
     private Long userId;
-    private String email;
+    private String nickname;
     private UserType userType;
     private String content;
     private boolean isResolved;

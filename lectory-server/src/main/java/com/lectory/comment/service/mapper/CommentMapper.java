@@ -83,6 +83,7 @@ public class CommentMapper {
                 .isAccepted(comment.getIsAccepted())
                 .isDeleted(comment.getIsDeleted())
                 .userNickname(comment.getUser().getNickname())
+                .postIsResolved(comment.getPost().isResolved())
                 .build();
     }
 

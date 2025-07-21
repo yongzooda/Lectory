@@ -73,7 +73,7 @@
 }
 
 .postDetail .div-4 {
-  align-items: flex-start;
+  align-items: center; 
   border-bottom-style: solid;
   border-bottom-width: 1px;
   border-color: #dedbd7;
@@ -82,16 +82,23 @@
   left: 0;
   padding: 16px 0px;
   position: relative;
-  top: 50px;
   width: 795px;
 }
 
 .postDetail .ellipse {
   background-color: #d9d9d9;
-  border-radius: 24px;
+  border-radius: 50%;
   height: 48px;
   position: relative;
   width: 48px;
+  flex-shrink: 0;
+  flex-grow: 0; 
+}
+
+.postDetail .right-group {
+  display: flex;
+  margin-left: 80px;
+  gap: 10px;
 }
 
 .postDetail .frame-3 {
@@ -109,7 +116,7 @@
   flex: 0 0 auto;
   justify-content: space-between;
   position: relative;
-  width: 695px;
+  width: 650px;
 }
 
 .postDetail .frame-5 {
@@ -171,6 +178,7 @@
   padding: 12px;
   position: relative;
   width: 99px;
+  left: 110px;
 }
 
 .postDetail .star-instance {
@@ -245,7 +253,7 @@
   flex-direction: column;
   gap: 6px;
   position: relative;
-  width: 630px;
+  width: 555px;
 }
 
 .postDetail .text-wrapper-15 {
@@ -348,6 +356,7 @@
   padding: 12px;
   position: relative;
   width: 99px;
+  left: 110px;
 }
 
 .postDetail .button-4 {
@@ -376,7 +385,23 @@
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  left: 795px;
+  right: -150px;
+  overflow: hidden;
+  padding: 8px;
+  position: absolute;
+  top: 33px;
+  width: 170px;
+}
+
+.postDetail .menu-1 {
+  align-items: flex-start;
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #d9d9d9;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  right: -190px;
   overflow: hidden;
   padding: 8px;
   position: absolute;
@@ -538,7 +563,6 @@
   height: 44px;
   left: 0;
   position: absolute;
-  top: 42px;
   width: 82px;
 }
 

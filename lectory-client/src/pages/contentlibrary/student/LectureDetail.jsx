@@ -23,7 +23,6 @@ const StudentLectureDetail = () => {
   const fetchDetail = useCallback(async () => {
     setLoading(true);
     try {
-
       const res = await getLectureDetail(lectureRoomId);
       setDetail(res.data);
     } catch (err) {
@@ -40,7 +39,6 @@ const StudentLectureDetail = () => {
 
   const handleEnroll = async () => {
     try {
-
       await enroll(lectureRoomId);
       await fetchDetail();
     } catch (err) {
@@ -56,12 +54,22 @@ const StudentLectureDetail = () => {
 
   const handleAddComment = async (content) => {
     try {
-
       await postComment({ lectureRoomId, content });
       await fetchDetail();
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || '댓글 등록 실패');
+    }
+  };
+
+  // 다운로드 URL 생성 (프록시 경로 `/api` 추가)
+  const makeDownloadUrl = (fileUrl) => {
+    if (fileUrl.startsWith('/api/')) {
+      return fileUrl;
+    } else if (fileUrl.startsWith('/')) {
+      return `/api${fileUrl}`;
+    } else {
+      return `/api/${fileUrl}`;
     }
   };
 
@@ -71,14 +79,15 @@ const StudentLectureDetail = () => {
   return (
     <div className="container mx-auto p-6 space-y-10">
       <LectureHeader
-        title={detail.title}
-        coverImageUrl={detail.coverImageUrl}
-        description={detail.description}
-        expertName={detail.expertName}
-        enrollmentCount={detail.enrollmentCount}
-        isPaid={detail.isPaid}
-        createdAt={detail.createdAt}
-        updatedAt={detail.updatedAt}
+        title           ={detail.title}
+        coverImageUrl   ={detail.coverImageUrl}
+        description     ={detail.description}
+        expertName      ={detail.expertName}
+        enrollmentCount ={detail.enrollmentCount}
+        isPaid          ={detail.isPaid}
+        chapters        ={detail.chapters}
+        createdAt       ={detail.createdAt}
+        updatedAt       ={detail.updatedAt}
       />
 
       {detail.isEnrolled && (
@@ -107,7 +116,7 @@ const StudentLectureDetail = () => {
             <section className="mt-6">
               <h2 className="text-xl font-bold mb-2">강의 자료</h2>
               <a
-                href={detail.fileUrl}
+                href={makeDownloadUrl(detail.fileUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
