@@ -10,6 +10,14 @@ export const getMyPage = async () => {
     }
 };
 
+export const deleteUser = () => {
+    return api.delete('/users/mypage');
+};
+
+export const updateMyInfo = async (payload) => {
+    return api.put('/users/mypage', payload);
+};
+
 export const getExpertMyPage = async () => {
     try {
         const response = await api.get('/experts/mypage');
