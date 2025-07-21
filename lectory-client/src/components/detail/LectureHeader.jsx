@@ -29,7 +29,7 @@ const LectureHeader = ({
       {/* ── 커버 이미지 ── */}
       {coverImageUrl && (
         <img
-          src={coverImageUrl}
+          src={`/api${coverImageUrl}`}
           alt={title}
           className="w-full max-h-[320px] object-cover rounded-lg shadow"
         />
