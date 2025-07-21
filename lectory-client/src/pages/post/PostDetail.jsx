@@ -44,7 +44,6 @@ export const PostDetail = () => {
     try {
       const postResponse = await api.get(`/posts/${postId}`);
       const postData = postResponse.data;
-      console.log("게시글 응답:", postResponse.data);
 
       const commentsResponse = await api.get(`/posts/${postId}/comment`);
       let commentsData = commentsResponse.data;
