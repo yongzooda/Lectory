@@ -75,7 +75,7 @@ export default function PostWritePage() {
         title,
         content,
         onlyExpert: expertAllowed,
-        tagIds: selectedTags.map((t) => t.value),
+        tagNames: selectedTags.map((t) => t.value),
         userId: userInfo.userId, // 서버에서 받아온 userId
       });
       navigate("/posts");
