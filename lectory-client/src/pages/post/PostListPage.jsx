@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import { fetchPosts } from "../../api/postApi";
 
-export default function PostListPage({ userRole, userId }) {
+export default function PostListPage({ userRole }) {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -12,6 +13,17 @@ export default function PostListPage({ userRole, userId }) {
   const [error, setError] = useState(null);
 
   const pageSize = 10;
+
+  const token = localStorage.getItem("accessToken");
+  let numericUserId = null;
+  if (token) {
+    try {
+      const payload = jwtDecode(token);
+      numericUserId = payload.userId ?? payload.sub ?? payload.id ?? null;
+    } catch (e) {
+      console.error("JWT 디코딩 실패:", e);
+    }
+  }
 
   useEffect(() => {
     async function loadPosts() {
@@ -25,12 +37,18 @@ export default function PostListPage({ userRole, userId }) {
         });
         const data = res.data;
         let list = Array.isArray(data.content) ? data.content : [];
+
         // expert 계정은 paid 구독자 게시글만
         if (userRole === "expert") {
           list = list.filter((p) => p.subscriber_type === "PAID" || p.isPaid);
         }
+
         setPosts(list);
         setTotalPages(data.totalPages ?? 1);
+
+        // 디버깅
+        console.log("posts:", list);
+        console.log("decoded userId:", numericUserId);
       } catch (e) {
         console.error(e);
         setError("게시글을 불러오는 중 오류가 발생했습니다.");
@@ -39,18 +57,23 @@ export default function PostListPage({ userRole, userId }) {
       }
     }
     loadPosts();
-  }, [userRole, page]);
+  }, [userRole, page, numericUserId]);
 
-  // 검색 필터링 (로컬)
+  // 로컬 검색/필터링
   const filtered = posts.filter((p) => {
     const term = searchTerm.toLowerCase();
-    if (filterBy === "title") return p.title.toLowerCase().includes(term);
-    if (filterBy === "tags")
+    if (filterBy === "title") {
+      return p.title.toLowerCase().includes(term);
+    }
+    if (filterBy === "tags") {
       return (
         Array.isArray(p.tags) &&
         p.tags.some((t) => t.toLowerCase().includes(term))
       );
-    if (filterBy === "myPosts") return p.userId === userId;
+    }
+    if (filterBy === "myPosts") {
+      return p.userId === numericUserId;
+    }
     return true;
   });
 
@@ -92,12 +115,11 @@ export default function PostListPage({ userRole, userId }) {
               alert("전문가 및 관리자 계정은 글쓰기 권한이 없습니다.");
             }
           }}
-          className={`px-4 py-2 rounded text-white 
-            ${
-              ["expert", "admin"].includes(userRole)
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
+          className={`px-4 py-2 rounded text-white ${
+            ["expert", "admin"].includes(userRole)
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
         >
           글 쓰기
         </Link>
@@ -127,7 +149,7 @@ export default function PostListPage({ userRole, userId }) {
                   {post.title}
                 </Link>
                 <span className="text-sm">
-                  {post.isResolved === true ? "해결완료" : "미해결"}
+                  {post.isResolved ? "해결완료" : "미해결"}
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
