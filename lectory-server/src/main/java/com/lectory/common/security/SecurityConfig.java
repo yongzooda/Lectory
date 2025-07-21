@@ -44,7 +44,6 @@ public class SecurityConfig {
                                 "/api/library/**",
                                 "/api/tags/**",
                                 "/admin/**",
-                                "/api/**",
                                 "/pay/**"
                         ).permitAll()
                         /*.requestMatchers("/api/expert/**", "/api/library/expert/**").hasRole("EXPERT")
