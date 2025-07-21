@@ -24,4 +24,5 @@ public class CommentResponseDto {
     private List<CommentResponseDto> replies;
     private boolean isHidden;
     private String userNickname;
+    private Boolean postIsResolved;
 }

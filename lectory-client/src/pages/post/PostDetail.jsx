@@ -44,6 +44,7 @@ export const PostDetail = () => {
     try {
       const postResponse = await api.get(`/posts/${postId}`);
       const postData = postResponse.data;
+      console.log("게시글 응답:", postResponse.data);
 
       const commentsResponse = await api.get(`/posts/${postId}/comment`);
       let commentsData = commentsResponse.data;
@@ -190,6 +191,17 @@ export const PostDetail = () => {
     }
   };
 
+// 채택 후 호출될 함수 수정
+const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
+  console.log("handleUpdateAfterAccept 호출, isResolved:", postIsResolvedFromResponse);
+  setPost((prev) => ({
+    ...prev,
+    isResolved: postIsResolvedFromResponse,
+  }));
+
+  fetchPostAndComments();
+};
+
   if (loading) return <div>로딩 중...</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
 
@@ -277,8 +289,10 @@ export const PostDetail = () => {
                   postId={postId}
                   comment={comment}
                   decodedUserId={decodedUserId}
+                  postOwnerId={post.userId} 
+                  isResolved={post.resolved}
                   onReply={handleReply}
-                  onUpdate={fetchPostAndComments}
+                  onUpdate={handleUpdateAfterAccept}
                 />
               ))
             )}

@@ -3,7 +3,15 @@ import { Star } from "../../assets/icons/Star";
 import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
 
-const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
+const PostComment = ({
+  postId,
+  comment,
+  decodedUserId,
+  postOwnerId,
+  isResolved,
+  onReply,
+  onUpdate,
+}) => {
   const [parentMenuVisible, setParentMenuVisible] = useState(false); // 부모 댓글 메뉴 토글
   const [replyMenuVisible, setReplyMenuVisible] = useState(null); // 대댓글 메뉴 토글
   const [isEditing, setIsEditing] = useState(false); // 댓글 수정
@@ -162,6 +170,22 @@ const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
     }
   };
 
+  // 댓글 채택 요청
+  const handleAccept = async (commentId) => {
+    if (!window.confirm("이 댓글을 채택하시겠습니까?")) return;
+
+    try {
+      const response = await api.post(`/posts/${postId}/comment/${commentId}/accept`);
+      alert("댓글이 채택되었습니다.");
+      if (onUpdate) onUpdate(response.data.postIsResolved);
+    } catch (error) {
+      console.error("채택 요청 오류:", error);
+      alert(
+        error.response?.data?.message || "댓글 채택 중 오류가 발생했습니다."
+      );
+    }
+  };
+
   return (
     <div className="comment">
       {/* 댓글 내용 */}
@@ -184,227 +208,264 @@ const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
         )}
         <div className="right-group">
           {/* 일반 사용자 프로필 사진 */}
-        <div className="ellipse" />
-        <div className="frame-3">
-          <div className="frame-4">
-            <div className="frame-5">
-              <div className="text-wrapper-12">{comment.userNickname}</div>
-              <div className="text-wrapper-13">·</div>
-              <div className="text-wrapper-14">{new Date(comment.updatedAt).toLocaleString("ko-KR")}</div>
-            </div>
-
-            {/* 메뉴 버튼 */}
-            {!isHiddenContent && (
-              <img
-                className="free-icon-menu"
-                alt="Free icon menu"
-                src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-menu-3747742-1-2.png"
-                onClick={toggleParentMenu}
-                style={{ cursor: "pointer" }}
-              />
-            )}
-          </div>
-
-          {/* 수정 모드 */}
-          {isEditing ? (
-            <div className="edit-container">
-              <textarea
-                className="edit-textarea"
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-              />
-              <div className="edit-buttons">
-                <button onClick={handleEdit}>저장</button> |{" "}
-                <button onClick={() => setIsEditing(false)}>취소</button>
+          <div className="ellipse" />
+          <div className="frame-3">
+            <div className="frame-4">
+              <div className="frame-5">
+                <div className="text-wrapper-12">{comment.userNickname}</div>
+                <div className="text-wrapper-13">·</div>
+                <div className="text-wrapper-14">
+                  {new Date(comment.updatedAt).toLocaleString("ko-KR")}
+                </div>
               </div>
-            </div>
-          ) : (
-            <p className="p">{comment.content}</p>
-          )}
 
-          {/* 메뉴 보이기 여부에 따라 렌더링 */}
-          {parentMenuVisible && (
-            <div className="menu">
-              <div className="menu-section">
-                {decodedUserId === comment.userId ? (
-                  <>
-                    {/* ✅ 내가 작성자일 때만 수정/삭제 버튼 */}
-                    <div
-                      className="menu-item"
-                      onClick={() => {
-                        setIsEditing(true);
-                        setParentMenuVisible(false);
-                      }}
-                    >
-                      <div className="body">
-                        <div className="description">수정</div>
-                      </div>
-                    </div>
+              {/* 채택됨 표시 */}
+              {comment.isAccepted && (
+                <div className="button-3">
+                  <Star className="star-instance" />
+                  <button className="button-4">채택댓글</button>
+                </div>
+              )}
 
-                    <div className="menu-item-2" onClick={handleDelete}>
-                      <div className="body">
-                        <div className="description">삭제</div>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* 내가 작성자가 아닐 때 신고 버튼만 */}
-                    <div
-                      className="menu-item-2"
-                      onClick={() => handleReport(comment.commentId)}
+              {console.log("isResolved:", isResolved, "decodedUserId:", decodedUserId, "postOwnerId:", postOwnerId, "comment.isAccepted:", comment.isAccepted)}
+              {/* 채택 버튼: 게시글 작성자 && 미해결 상태일 때만 노출 */}
+              {!isResolved &&
+                decodedUserId === postOwnerId &&
+                !comment.isAccepted && (
+                  <div className="button">
+                    <Star className="star-instance" />
+                    <button
+                      className="button-2"
+                      onClick={() => handleAccept(comment.commentId)}
                     >
-                      <div className="body">
-                        <div className="description">신고</div>
-                      </div>
-                    </div>
-                  </>
+                      채택하기
+                    </button>
+                  </div>
                 )}
 
-                {/* 답글 달기 버튼은 작성자 여부 관계없이 모두 노출 */}
-                <div
-                  className="menu-item-2"
-                  onClick={() => {
-                    handleReplyToggle(comment.commentId); // 답글 달기
-                    setParentMenuVisible(false);
-                  }}
-                >
-                  <div className="body">
-                    <div className="description">답글 달기</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 답글 입력창 */}
-          {replyingToId === comment.commentId && (
-            <div className="reply-input-container" style={{ marginTop: "8px" }}>
-              <textarea
-                className="reply-textarea"
-                placeholder="답글을 입력하세요..."
-                value={replyContent}
-                onChange={(e) => setReplyContent(e.target.value)}
-                rows={3}
-              />
-              <div style={{ marginTop: "4px" }}>
-                <button onClick={() => handleReplySubmit(comment.commentId)}>
-                  등록
-                </button>{" "}
-                | <button onClick={() => setReplyingToId(null)}>취소</button>
-              </div>
-            </div>
-          )}
-        </div>
-        {/* 대댓글 렌더링 */}
-        {comment.replies && comment.replies.length > 0 && (
-          <div className="replies">
-            {comment.replies.map((reply) => (
-              <div key={reply.commentId} className="div-5">
-                {/*좋아요 버튼*/}
-                <div className="stats-wrapper-2">
-                  <div className="stats">
-                    <div className="frame-8">
-                      <img
-                        className="free-icon-like"
-                        alt="Free icon like"
-                        src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
-                      />
-
-                      <div className="element">{comment.likeCount}</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="right-group">
-                <div className="ellipse" />
-                <div className="frame-6">
-                  <div className="frame-5">
-                    <div className="text-wrapper-12">{reply.userNickname}</div>
-                    <div className="text-wrapper-13">·</div>
-                    <div className="text-wrapper-14">{new Date(reply.updatedAt).toLocaleString("ko-KR")}</div>
-                  </div>
-
-                  {/* 대댓글 수정 모드 */}
-                  {editingReplyId === reply.commentId ? (
-                    <div className="edit-container">
-                      <textarea
-                        className="edit-textarea"
-                        value={editingReplyContent}
-                        onChange={(e) => setEditingReplyContent(e.target.value)}
-                      />
-                      <div className="edit-buttons">
-                        <button
-                          onClick={() => handleReplyEdit(reply.commentId)}
-                        >
-                          저장
-                        </button>{" "}
-                        |{" "}
-                        <button onClick={() => setEditingReplyId(null)}>
-                          취소
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-wrapper-15">{reply.content}</p>
-                  )}
-                </div>
-                {/* 대댓글 메뉴 */}
+              {/* 메뉴 버튼 */}
+              {!isHiddenContent && (
                 <img
                   className="free-icon-menu"
                   alt="Free icon menu"
                   src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-menu-3747742-1-2.png"
-                  onClick={() => toggleReplyMenu(reply.commentId)}
+                  onClick={toggleParentMenu}
                   style={{ cursor: "pointer" }}
                 />
-                {replyMenuVisible === reply.commentId && (
-                  <div className="menu">
-                    <div className="menu-section">
-                      {decodedUserId === reply.userId ? (
-                        <>
-                          {/* 댓글 작성자 == 로그인 사용자일 때 수정/삭제 */}
-                          <div
-                            className="menu-item"
-                            onClick={() => {
-                              setEditingReplyId(reply.commentId);
-                              setEditingReplyContent(reply.content);
-                              setReplyMenuVisible(null);
-                            }}
-                          >
-                            <div className="body">
-                              <div className="description">수정</div>
-                            </div>
-                          </div>
+              )}
+            </div>
 
-                          <div
-                            className="menu-item-2"
-                            onClick={() => handleReplyDelete(reply.commentId)}
-                          >
-                            <div className="body">
-                              <div className="description">삭제</div>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          {/* 댓글 작성자 != 로그인 사용자일 때 신고 */}
-                          <div
-                            className="menu-item-2"
-                            onClick={() => handleReport(reply.commentId)}
-                          >
-                            <div className="body">
-                              <div className="description">신고</div>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                )}
+            {/* 수정 모드 */}
+            {isEditing ? (
+              <div className="edit-container">
+                <textarea
+                  className="edit-textarea"
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                />
+                <div className="edit-buttons">
+                  <button onClick={handleEdit}>저장</button> |{" "}
+                  <button onClick={() => setIsEditing(false)}>취소</button>
                 </div>
               </div>
-            ))}
+            ) : (
+              <p className="p">{comment.content}</p>
+            )}
+
+            {/* 메뉴 보이기 여부에 따라 렌더링 */}
+            {parentMenuVisible && (
+              <div className="menu">
+                <div className="menu-section">
+                  {decodedUserId === comment.userId ? (
+                    <>
+                      {/* 내가 작성자일 때만 수정/삭제 버튼 */}
+                      <div
+                        className="menu-item"
+                        onClick={() => {
+                          setIsEditing(true);
+                          setParentMenuVisible(false);
+                        }}
+                      >
+                        <div className="body">
+                          <div className="description">수정</div>
+                        </div>
+                      </div>
+
+                      <div className="menu-item-2" onClick={handleDelete}>
+                        <div className="body">
+                          <div className="description">삭제</div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* 내가 작성자가 아닐 때 신고 버튼만 */}
+                      <div
+                        className="menu-item-2"
+                        onClick={() => handleReport(comment.commentId)}
+                      >
+                        <div className="body">
+                          <div className="description">신고</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* 답글 달기 버튼은 작성자 여부 관계없이 모두 노출 */}
+                  <div
+                    className="menu-item-2"
+                    onClick={() => {
+                      handleReplyToggle(comment.commentId); // 답글 달기
+                      setParentMenuVisible(false);
+                    }}
+                  >
+                    <div className="body">
+                      <div className="description">답글 달기</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 답글 입력창 */}
+            {replyingToId === comment.commentId && (
+              <div
+                className="reply-input-container"
+                style={{ marginTop: "8px" }}
+              >
+                <textarea
+                  className="reply-textarea"
+                  placeholder="답글을 입력하세요..."
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                  rows={3}
+                />
+                <div style={{ marginTop: "4px" }}>
+                  <button onClick={() => handleReplySubmit(comment.commentId)}>
+                    등록
+                  </button>{" "}
+                  | <button onClick={() => setReplyingToId(null)}>취소</button>
+                </div>
+              </div>
+            )}
           </div>
-        )}
+          {/* 대댓글 렌더링 */}
+          {comment.replies && comment.replies.length > 0 && (
+            <div className="replies">
+              {comment.replies.map((reply) => (
+                <div key={reply.commentId} className="div-5">
+                  {/*좋아요 버튼*/}
+                  <div className="stats-wrapper-2">
+                    <div className="stats">
+                      <div className="frame-8">
+                        <img
+                          className="free-icon-like"
+                          alt="Free icon like"
+                          src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
+                        />
+
+                        <div className="element">{comment.likeCount}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="right-group">
+                    <div className="ellipse" />
+                    <div className="frame-6">
+                      <div className="frame-5">
+                        <div className="text-wrapper-12">
+                          {reply.userNickname}
+                        </div>
+                        <div className="text-wrapper-13">·</div>
+                        <div className="text-wrapper-14">
+                          {new Date(reply.updatedAt).toLocaleString("ko-KR")}
+                        </div>
+                      </div>
+
+                      {/* 대댓글 수정 모드 */}
+                      {editingReplyId === reply.commentId ? (
+                        <div className="edit-container">
+                          <textarea
+                            className="edit-textarea"
+                            value={editingReplyContent}
+                            onChange={(e) =>
+                              setEditingReplyContent(e.target.value)
+                            }
+                          />
+                          <div className="edit-buttons">
+                            <button
+                              onClick={() => handleReplyEdit(reply.commentId)}
+                            >
+                              저장
+                            </button>{" "}
+                            |{" "}
+                            <button onClick={() => setEditingReplyId(null)}>
+                              취소
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-wrapper-15">{reply.content}</p>
+                      )}
+                    </div>
+                    {/* 대댓글 메뉴 */}
+                    <img
+                      className="free-icon-menu"
+                      alt="Free icon menu"
+                      src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-menu-3747742-1-2.png"
+                      onClick={() => toggleReplyMenu(reply.commentId)}
+                      style={{ cursor: "pointer" }}
+                    />
+                    {replyMenuVisible === reply.commentId && (
+                      <div className="menu-1">
+                        <div className="menu-section">
+                          {decodedUserId === reply.userId ? (
+                            <>
+                              {/* 댓글 작성자 == 로그인 사용자일 때 수정/삭제 */}
+                              <div
+                                className="menu-item"
+                                onClick={() => {
+                                  setEditingReplyId(reply.commentId);
+                                  setEditingReplyContent(reply.content);
+                                  setReplyMenuVisible(null);
+                                }}
+                              >
+                                <div className="body">
+                                  <div className="description">수정</div>
+                                </div>
+                              </div>
+
+                              <div
+                                className="menu-item-2"
+                                onClick={() =>
+                                  handleReplyDelete(reply.commentId)
+                                }
+                              >
+                                <div className="body">
+                                  <div className="description">삭제</div>
+                                </div>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              {/* 댓글 작성자 != 로그인 사용자일 때 신고 */}
+                              <div
+                                className="menu-item-2"
+                                onClick={() => handleReport(reply.commentId)}
+                              >
+                                <div className="body">
+                                  <div className="description">신고</div>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
