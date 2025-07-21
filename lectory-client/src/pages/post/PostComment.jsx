@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Star } from "../../assets/icons/Star";
 import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
+import heart from "../../assets/images/heart.png";
+import emptyHeart from "../../assets/images/emptyHeart.png";
 
 const PostComment = ({
   postId,
@@ -195,11 +197,15 @@ const PostComment = ({
 
   // 댓글 좋아요 요청
   const handleLikeComment = async (commentId) => {
+    setLiked((prev) => !prev);
     try {
-      const response = await api.post(`/posts/${postId}/comment/${commentId}/like`, {
-        target: "COMMENT",
-        targetId: commentId,
-      });
+      const response = await api.post(
+        `/posts/${postId}/comment/${commentId}/like`,
+        {
+          target: "COMMENT",
+          targetId: commentId,
+        }
+      );
 
       const { likeCount, liked } = response.data;
 
@@ -208,18 +214,23 @@ const PostComment = ({
     } catch (error) {
       console.error("댓글 좋아요 오류:", error);
       alert(
-        error.response?.data?.message || "댓글 좋아요 처리 중 오류가 발생했습니다."
+        error.response?.data?.message ||
+          "댓글 좋아요 처리 중 오류가 발생했습니다."
       );
+      setLiked((prev) => !prev);
     }
   };
 
   // 대댓글 좋아요 요청
   const handleLikeReply = async (replyId) => {
     try {
-      const response = await api.post(`/posts/${postId}/comment/${replyId}/like`, {
-        target: "COMMENT",
-        targetId: replyId,
-      });
+      const response = await api.post(
+        `/posts/${postId}/comment/${replyId}/like`,
+        {
+          target: "COMMENT",
+          targetId: replyId,
+        }
+      );
 
       const { likeCount, liked } = response.data;
 
@@ -230,15 +241,22 @@ const PostComment = ({
     } catch (error) {
       console.error("대댓글 좋아요 오류:", error);
       alert(
-        error.response?.data?.message || "대댓글 좋아요 처리 중 오류가 발생했습니다."
+        error.response?.data?.message ||
+          "대댓글 좋아요 처리 중 오류가 발생했습니다."
       );
     }
   };
 
+  const replyCount = comment.replies?.length ?? 0;
+  const dynamicMarginBottom = replyCount * 80 + 16;
+
   return (
     <div className="comment">
       {/* 댓글 내용 */}
-      <div className="div-4">
+      <div
+        className="div-4"
+        style={{ marginBottom: `${dynamicMarginBottom}px` }}
+      >
         {/* 좋아요 버튼은 숨김 처리 */}
         {!isHiddenContent && (
           <div className="stats-wrapper-2">
@@ -247,7 +265,7 @@ const PostComment = ({
                 <img
                   className="free-icon-like"
                   alt="Free icon like"
-                  src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
+                  src={ liked ? heart : emptyHeart }
                   onClick={() => handleLikeComment(comment.commentId)}
                   style={{ cursor: "pointer" }}
                 />
@@ -277,6 +295,7 @@ const PostComment = ({
                   <button className="button-4">채택댓글</button>
                 </div>
               )}
+
               {/* 채택 버튼: 게시글 작성자 && 미해결 상태일 때만 노출 */}
               {!isResolved &&
                 decodedUserId === postOwnerId &&
@@ -360,40 +379,18 @@ const PostComment = ({
                     </>
                   )}
 
-                  {/* 답글 달기 버튼은 작성자 여부 관계없이 모두 노출 */}
+                  {/* 대댓글 달기 버튼은 작성자 여부 관계없이 모두 노출 */}
                   <div
                     className="menu-item-2"
                     onClick={() => {
-                      handleReplyToggle(comment.commentId); // 답글 달기
+                      handleReplyToggle(comment.commentId);
                       setParentMenuVisible(false);
                     }}
                   >
                     <div className="body">
-                      <div className="description">답글 달기</div>
+                      <div className="description">대댓글 달기</div>
                     </div>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* 답글 입력창 */}
-            {replyingToId === comment.commentId && (
-              <div
-                className="reply-input-container"
-                style={{ marginTop: "8px" }}
-              >
-                <textarea
-                  className="reply-textarea"
-                  placeholder="답글을 입력하세요..."
-                  value={replyContent}
-                  onChange={(e) => setReplyContent(e.target.value)}
-                  rows={3}
-                />
-                <div style={{ marginTop: "4px" }}>
-                  <button onClick={() => handleReplySubmit(comment.commentId)}>
-                    등록
-                  </button>{" "}
-                  | <button onClick={() => setReplyingToId(null)}>취소</button>
                 </div>
               </div>
             )}
@@ -401,8 +398,12 @@ const PostComment = ({
           {/* 대댓글 렌더링 */}
           {comment.replies && comment.replies.length > 0 && (
             <div className="replies">
-              {comment.replies.map((reply) => (
-                <div key={reply.commentId} className="div-5">
+              {comment.replies.map((reply, index) => (
+                <div
+                  key={reply.commentId}
+                  className="div-5"
+                  style={{ top: `${index * 90 + 70}px`, position: "absolute" }}
+                >
                   {/*좋아요 버튼*/}
                   <div className="stats-wrapper-2">
                     <div className="stats">
@@ -410,12 +411,16 @@ const PostComment = ({
                         <img
                           className="free-icon-like"
                           alt="Free icon like"
-                          src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
+                          src={
+                            replyLikes[reply.commentId]?.liked ? heart : emptyHeart
+                          }
                           onClick={() => handleLikeReply(reply.commentId)}
                           style={{ cursor: "pointer" }}
                         />
 
-                        <div className="element">{replyLikes[reply.commentId]?.likeCount || 0}</div>
+                        <div className="element">
+                          {replyLikes[reply.commentId]?.likeCount || 0}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -519,6 +524,24 @@ const PostComment = ({
           )}
         </div>
       </div>
+      {/* 대댓글 입력창 */}
+      {replyingToId === comment.commentId && (
+        <div className="reply-input-container" style={{ marginTop: "8px" }}>
+          <textarea
+            className="reply-textarea"
+            placeholder="대댓글을 입력하세요..."
+            value={replyContent}
+            onChange={(e) => setReplyContent(e.target.value)}
+            rows={3}
+          />
+          <div>
+            <button onClick={() => handleReplySubmit(comment.commentId)}>
+              등록
+            </button>{" "}
+            | <button onClick={() => setReplyingToId(null)}>취소</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

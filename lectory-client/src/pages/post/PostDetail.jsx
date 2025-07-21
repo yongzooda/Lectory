@@ -190,15 +190,15 @@ export const PostDetail = () => {
     }
   };
 
-// 채택 후 호출될 함수 수정
-const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
-  setPost((prev) => ({
-    ...prev,
-    isResolved: postIsResolvedFromResponse,
-  }));
+  // 채택 후 호출될 함수 수정
+  const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
+    setPost((prev) => ({
+      ...prev,
+      isResolved: postIsResolvedFromResponse,
+    }));
 
-  fetchPostAndComments();
-};
+    fetchPostAndComments();
+  };
 
   if (loading) return <div>로딩 중...</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
@@ -214,7 +214,9 @@ const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
             <div className="group-2">
               <div className="text-wrapper-21">{post.userNickname}</div>
 
-              <div className="text-wrapper-22">{new Date(post.updatedAt).toLocaleString("ko-KR")}</div>
+              <div className="text-wrapper-22">
+                {new Date(post.updatedAt).toLocaleString("ko-KR")}
+              </div>
             </div>
 
             <div
@@ -287,32 +289,30 @@ const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
                   postId={postId}
                   comment={comment}
                   decodedUserId={decodedUserId}
-                  postOwnerId={post.userId} 
+                  postOwnerId={post.userId}
                   isResolved={post.resolved}
                   onReply={handleReply}
                   onUpdate={handleUpdateAfterAccept}
                 />
               ))
             )}
+
+            {/* 입력 칸 */}
+            <div className="div-2">
+              <div className="frame">
+                <button className="text-wrapper-11" onClick={handleAddComment}>
+                  등록
+                </button>
+              </div>
+
+              <textarea
+                className="frame-2"
+                placeholder="댓글을 입력하세요"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)} // 입력값 상태 저장
+              />
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* 입력 칸 */}
-      <div className="div-2">
-        <div className="frame">
-          <button className="text-wrapper-11" onClick={handleAddComment}>
-            등록
-          </button>
-        </div>
-
-        <div className="frame-2">
-          <textarea
-            className="comment-textarea"
-            placeholder="댓글을 입력하세요..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)} // 입력값 상태 저장
-          />
         </div>
       </div>
     </div>
