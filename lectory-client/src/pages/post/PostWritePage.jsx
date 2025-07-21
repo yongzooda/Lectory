@@ -4,7 +4,7 @@ import Select from "react-select";
 
 import { createPost } from "../../api/postApi";
 import { fetchTags } from "../../api/tagApi";
-import {getUser} from "../../api/userApi.js"
+import { getUser } from "../../api/userApi.js";
 
 export default function PostWritePage() {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export default function PostWritePage() {
       });
   }, []);
 
-  const [userInfo, setCurrentUserInfo] = useState(null); 
+  const [userInfo, setCurrentUserInfo] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
   // "접속 사용자 정보"
@@ -44,7 +44,7 @@ export default function PostWritePage() {
     async function fetchUser() {
       try {
         const user = await getUser();
-        setCurrentUserInfo(user);  // userId만 저장하지 말고 user 전체를 저장
+        setCurrentUserInfo(user); // userId만 저장하지 말고 user 전체를 저장
         setIsAdmin(user?.userType === "ADMIN");
       } catch (err) {
         console.error("유저 정보를 불러오지 못했습니다.", err);
@@ -52,8 +52,6 @@ export default function PostWritePage() {
     }
     fetchUser();
   }, []);
-
-
 
   const handleExpertToggle = () => {
     if (subscriptionType !== "paid") {
