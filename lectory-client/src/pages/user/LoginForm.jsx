@@ -38,6 +38,9 @@ export default function LoginForm() {
                 } else {
                     setError('승인 거부된 계정입니다.');
                 }
+            } else if (userInfo.userType === 'ADMIN'){
+                alert('로그인 성공!');
+                navigate('/admin/students');
             } else {
                 // 일반 유저 로그인 성공 처리
                 alert('로그인 성공!');
