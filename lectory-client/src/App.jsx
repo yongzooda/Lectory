@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 
 /* ─── 게시글 ─── */
 import PostListPage from "./pages/post/PostListPage.jsx";
@@ -35,68 +35,70 @@ import ExpertApprovalPage from "./pages/admin/ExpertApprovalPage";
 import ContentsManagementPage from "./pages/admin/ContentsManagementPage";
 import Unauthorized from "./pages/admin/Unauthorized";
 
-import { useState } from "react";
-import { useEffect } from "react";
+/* ─── 메인 레이아웃 ─── */
+import MainLayout from "./components/MainLayout";
 
 function isLoggedIn() {
-  return !!localStorage.getItem('token');
+    return !!localStorage.getItem('token');
 }
 
 function RootRedirect() {
-  if (isLoggedIn()) {
-    return <Navigate to="/library" replace />;
-  } else {
-    return <Navigate to="/login" replace />;
-  }
+    if (isLoggedIn()) {
+        return <Navigate to="/library" replace/>;
+    } else {
+        return <Navigate to="/login" replace/>;
+    }
 }
 
 export default function App() {
-  return (
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Routes>
-          {/* 루트 경로 접속 시 로그인 여부에 따라 이동 */}
-          <Route path="/" element={<RootRedirect />} />
+    return (
+        <BrowserRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}}>
+            <Routes>
+                {/* 루트 경로 접속 시 로그인 여부에 따라 이동 */}
+                <Route path="/" element={<RootRedirect/>}/>
 
-          {/* ─── 로그인 및 회원가입 ─── */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
+                {/* ─── 로그인 및 회원가입 ─── */}
+                <Route path="/login" element={<LoginPage/>}/>
+                <Route path="/signup" element={<SignUpPage/>}/>
 
-          {/* ─── 마이페이지 ─── */}
-          <Route path="/users/mypage" element={<UserMyPage />} />
-          <Route path="/experts/mypage" element={<ExpertMyPage />} />
+                <Route element={<MainLayout/>}>
+                    {/* ─── 마이페이지 ─── */}
+                    <Route path="/users/mypage" element={<UserMyPage/>}/>
+                    <Route path="/experts/mypage" element={<ExpertMyPage/>}/>
 
-          {/* ─── 게시글 영역 ─── */}
-          <Route path="/posts" element={<PostListPage />} />
-          <Route path="/posts/write" element={<PostWritePage />} />
-          <Route path="/posts/:postId" element={<PostDetailPage />} />
-          <Route path="/posts/rewrite/:postId" element={<PostEditPage />} />
+                    {/* ─── 게시글 영역 ─── */}
+                    <Route path="/posts" element={<PostListPage/>}/>
+                    <Route path="/posts/write" element={<PostWritePage/>}/>
+                    <Route path="/posts/:postId" element={<PostDetailPage/>}/>
+                    <Route path="/posts/rewrite/:postId" element={<PostEditPage/>}/>
 
-          {/* ─── 콘텐츠 라이브러리 · 수강생 ─── */}
-          <Route path="/library" element={<StudentLibraryHome />} />
-          <Route path="/library/search" element={<Navigate to="/library" replace />} />
-          <Route path="/library/:lectureRoomId" element={<StudentLectureDetail />} />
-          <Route path="/library/:lectureRoomId/enroll-result" element={<EnrollResultPage />} />
+                    {/* ─── 콘텐츠 라이브러리 · 수강생 ─── */}
+                    <Route path="/library" element={<StudentLibraryHome/>}/>
+                    <Route path="/library/search" element={<Navigate to="/library" replace/>}/>
+                    <Route path="/library/:lectureRoomId" element={<StudentLectureDetail/>}/>
+                    <Route path="/library/:lectureRoomId/enroll-result" element={<EnrollResultPage/>}/>
 
-          {/* ─── 콘텐츠 라이브러리 · 전문가 ─── */}
-          <Route path="/library/expert" element={<ExpertLibraryHome />} />
-          <Route path="/library/expert/search" element={<Navigate to="/library/expert" replace />} />
-          <Route path="/library/expert/new" element={<NewLecturePage />} />
-          <Route path="/library/expert/:lectureRoomId" element={<ExpertLectureDetail />} />
-          <Route path="/library/expert/:lectureRoomId/edit" element={<EditLecturePage />} />
+                    {/* ─── 콘텐츠 라이브러리 · 전문가 ─── */}
+                    <Route path="/library/expert" element={<ExpertLibraryHome/>}/>
+                    <Route path="/library/expert/search" element={<Navigate to="/library/expert" replace/>}/>
+                    <Route path="/library/expert/new" element={<NewLecturePage/>}/>
+                    <Route path="/library/expert/:lectureRoomId" element={<ExpertLectureDetail/>}/>
+                    <Route path="/library/expert/:lectureRoomId/edit" element={<EditLecturePage/>}/>
 
-          {/* ─── 관리자 페이지 ─── */}
-          <Route path="/admin/students" element={<MembershipManagementPage />} />
-          <Route path="/admin/expert-approval" element={<ExpertApprovalPage />} />
-          <Route path="/admin/contents" element={<ContentsManagementPage />} />
-          <Route path="/unauthorized" element={<Unauthorized />} />
+                    {/* ─── 관리자 페이지 ─── */}
+                    <Route path="/admin/students" element={<MembershipManagementPage/>}/>
+                    <Route path="/admin/expert-approval" element={<ExpertApprovalPage/>}/>
+                    <Route path="/admin/contents" element={<ContentsManagementPage/>}/>
+                    <Route path="/unauthorized" element={<Unauthorized/>}/>
 
-          {/* ─── 결제 ─── */}
-          <Route path="/pay" element={<PayPage />} />
-          <Route path="/pay/success" element={<PaySuccessPage />} />
+                    {/* ─── 결제 ─── */}
+                    <Route path="/pay" element={<PayPage/>}/>
+                    <Route path="/pay/success" element={<PaySuccessPage/>}/>
+                </Route>
 
-          {/* ─── 그 외 모든 경로 → 루트 ─── */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-  );
+                {/* ─── 그 외 모든 경로 → 루트 ─── */}
+                <Route path="*" element={<Navigate to="/" replace/>}/>
+            </Routes>
+        </BrowserRouter>
+    );
 }
