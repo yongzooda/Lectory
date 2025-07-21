@@ -62,6 +62,17 @@ const StudentLectureDetail = () => {
     }
   };
 
+  // 다운로드 URL 생성 (프록시 경로 `/api` 추가)
+  const makeDownloadUrl = (fileUrl) => {
+    if (fileUrl.startsWith('/api/')) {
+      return fileUrl;
+    } else if (fileUrl.startsWith('/')) {
+      return `/api${fileUrl}`;
+    } else {
+      return `/api/${fileUrl}`;
+    }
+  };
+
   if (loading) return <div className="p-8 text-center">Loading…</div>;
   if (!detail)  return <div className="p-8 text-center">강의실을 찾을 수 없습니다.</div>;
 
@@ -105,7 +116,7 @@ const StudentLectureDetail = () => {
             <section className="mt-6">
               <h2 className="text-xl font-bold mb-2">강의 자료</h2>
               <a
-                href={detail.fileUrl}
+                href={makeDownloadUrl(detail.fileUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
