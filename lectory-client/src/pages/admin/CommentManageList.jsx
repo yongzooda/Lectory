@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHref, useNavigate } from 'react-router-dom';
+import { getAllCommnets } from "../../api/adminApi.js"; // ✅ 이 함수 사용
 
 const CommentManageList = () => {
   const [comments, setComments] = useState([]);
@@ -7,16 +8,16 @@ const CommentManageList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/admin/manage-comments')
-      .then(async (res) => {
-        if (res.status === 401 || res.status === 403) {
-          const msg = await res.text();
-          throw new Error(msg);
-        }
-        return res.json();
+    getAllCommnets()
+      .then((data) => {
+        setComments(data);
+        setError(null);
       })
-      .then(setComments)
-      .catch((err) => setError(err.message));
+      .catch((err) => {
+        console.error("댓글 가져오기 실패", err);
+        setError("댓글 정보를 불러오는 데 실패했습니다.");
+        return;
+      });
   }, []);
 
   const formatDate = (iso) => {
