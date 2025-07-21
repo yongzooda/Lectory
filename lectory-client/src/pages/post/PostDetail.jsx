@@ -192,7 +192,6 @@ export const PostDetail = () => {
 
 // 채택 후 호출될 함수 수정
 const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
-  console.log("handleUpdateAfterAccept 호출, isResolved:", postIsResolvedFromResponse);
   setPost((prev) => ({
     ...prev,
     isResolved: postIsResolvedFromResponse,
