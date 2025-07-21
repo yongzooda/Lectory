@@ -75,9 +75,16 @@ public class PostService {
     public PostResponseDto rewrite(Long postId, PostRequestDto dto, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+//        if (!post.getUserId().getUserId().equals(userId)) {
+//            throw new SecurityException("본인만 글을 수정할 수 있습니다.");
+//        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        if (!post.getUserId().getUserId().equals(userId)) {
-            throw new SecurityException("본인만 글을 수정할 수 있습니다.");
+        boolean isAdmin = user.getUserType().getUserType().equals("ROLE_ADMIN");
+
+        if (!isAdmin && !post.getUserId().getUserId().equals(userId)) {
+            throw new SecurityException("본인 또는 관리자만 글을 수정할 수 있습니다.");
         }
 
         post.setTitle(dto.getTitle());
@@ -136,9 +143,16 @@ public class PostService {
     public void delete(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+//        if (!post.getUserId().getUserId().equals(userId)) {
+//            throw new SecurityException("본인만 글을 삭제할 수 있습니다.");
+//        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        if (!post.getUserId().getUserId().equals(userId)) {
-            throw new SecurityException("본인만 글을 삭제할 수 있습니다.");
+        boolean isAdmin = user.getUserType().getUserType().equals("ROLE_ADMIN");
+
+        if (!isAdmin && !post.getUserId().getUserId().equals(userId)) {
+            throw new SecurityException("본인 또는 관리자만 글을 수정할 수 있습니다.");
         }
         // 자식 댓글(대댓글) 먼저 삭제
         commentRepository.deleteAllChildCommentsByPostId(postId);
