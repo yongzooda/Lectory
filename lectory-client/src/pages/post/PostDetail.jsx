@@ -6,6 +6,7 @@ import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
 import heart from "../../assets/images/heart.png";
 import emptyHeart from "../../assets/images/emptyHeart.png";
+import {getUser} from "../../api/userApi.js"
 
 export const PostDetail = () => {
   const { postId } = useParams(); // URL 파라미터 가져오기
@@ -35,6 +36,22 @@ export const PostDetail = () => {
       }
     }
   }, [token, navigate]);
+
+  const [userInfo, setCurrentUserInfo] = useState(null); 
+  const [isAdmin, setIsAdmin] = useState(false);
+  // "접속 사용자 정보 조회"
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const user = await getUser();
+        setCurrentUserInfo(user.userId);  // userId도 상태로 저장하는 거면 useState 필요!
+        setIsAdmin(user?.userType === "ADMIN");
+      } catch (err) {
+        console.error("유저 정보를 불러오지 못했습니다.", err);
+      }
+    }
+    fetchUser();
+  }, []);
 
   // 컴포넌트 첫 렌더링 시 데이터 가져오기
   useEffect(() => {
@@ -261,7 +278,7 @@ export const PostDetail = () => {
 
         {/* 작성자와 로그인한 userId 비교하여 버튼 노출 */}
         <div className="text-wrapper-26">
-          {decodedUserId === post.userId ? (
+          {decodedUserId === post.userId || isAdmin ? (
             <>
               <button onClick={handleEdit}>수정</button> |{" "}
               <button onClick={handleDelete}>삭제</button>

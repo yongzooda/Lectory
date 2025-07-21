@@ -26,6 +26,9 @@ export default function ChapterForm({ initial = {}, onSave, onCancel }) {
   const [videoUrl, setVideoUrl]   = useState('');
   const [videoFile, setVideoFile] = useState(null);
 
+  // 수정 모드 시 기존 URL 보관 (파일 선택 취소 시 이 URL 유지)
+  const [initialUrl] = useState(initial.videoUrl ?? '');
+
   const [tags, setTags]       = useState([]);
   const [allTags, setAllTags] = useState([]);
 
@@ -68,7 +71,11 @@ export default function ChapterForm({ initial = {}, onSave, onCancel }) {
   const uploadFile = async file => {
     const fd = new FormData();
     fd.append('file', file);
-    const { data } = await api.post('/files/upload', fd);
+    const { data } = await api.post(
+      '/files/upload',
+      fd,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
     return data.url;  // "/files/{id}"
   };
 
@@ -79,10 +86,19 @@ export default function ChapterForm({ initial = {}, onSave, onCancel }) {
 
     setSaving(true);
     try {
-      const finalVideoUrl =
-        videoMode === 'file' && videoFile
+      let finalVideoUrl;
+      if (videoMode === 'file') {
+        // 파일 모드: 파일이 있으면 업로드, 없으면 초기 URL 유지
+        finalVideoUrl = videoFile
           ? await uploadFile(videoFile)
-          : videoUrl.trim();
+          : initialUrl;
+      } else {
+        // URL 모드: 입력된 URL 사용
+        finalVideoUrl = videoUrl.trim();
+      }
+
+      console.log('📝 최종 videoUrl:', finalVideoUrl);
+      console.log('📝 videoFile 객체:', videoFile);
 
       await onSave({
         chapterName : chapterName.trim(),
@@ -91,6 +107,9 @@ export default function ChapterForm({ initial = {}, onSave, onCancel }) {
         videoUrl    : finalVideoUrl,
         tags        : tags.map(t => t.value),
       });
+    } catch (err) {
+      console.error(err);
+      alert('저장 중 오류가 발생했습니다.');
     } finally {
       setSaving(false);
     }
@@ -156,11 +175,8 @@ export default function ChapterForm({ initial = {}, onSave, onCancel }) {
                 checked={videoMode === m}
                 onChange={() => {
                   setVideoMode(m);
-                  if (m === 'url') {
-                    setVideoFile(null);
-                  } else {
-                    setVideoUrl('');
-                  }
+                  if (m === 'url') setVideoFile(null);
+                  else setVideoUrl('');
                 }}
               />
               <span>{m === 'url' ? 'URL 입력' : '파일 업로드'}</span>
@@ -173,7 +189,7 @@ export default function ChapterForm({ initial = {}, onSave, onCancel }) {
             type="text"
             value={videoUrl}
             onChange={e => setVideoUrl(e.target.value)}
-            placeholder="https://… 또는 /videos/intro.mp4"
+            placeholder="https://… 또는 /files/{id}"
             className="w-full border rounded p-2"
             required
           />
@@ -182,9 +198,10 @@ export default function ChapterForm({ initial = {}, onSave, onCancel }) {
             <input
               type="file"
               accept="video/*"
-              onChange={e => setVideoFile(e.target.files?.[0] ?? null)}
               className={fileInputCls}
-              required
+              onClick={() => setVideoMode('file')}             // 클릭만 해도 파일 모드로 전환
+              onChange={e => setVideoFile(e.target.files?.[0] ?? null)}
+              required={videoMode === 'file'}                   // file 모드일 때만 required
             />
             {videoFile && (
               <p className="mt-1 text-sm text-gray-600">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Star } from "../../assets/icons/Star";
 import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
@@ -35,9 +35,9 @@ const PostComment = ({
   });
 
   useEffect(() => {
-  setLikeCount(comment.likeCount ?? 0);
-  setLiked(comment.liked ?? false);
-}, [comment]);
+    setLikeCount(comment.likeCount ?? 0);
+    setLiked(comment.liked ?? false);
+  }, [comment]);
 
   const [replyLikes, setReplyLikes] = useState(initialReplyLikes);
 
@@ -270,7 +270,7 @@ const PostComment = ({
                 <img
                   className="free-icon-like"
                   alt="Free icon like"
-                  src={ liked ? heart : emptyHeart }
+                  src={liked ? heart : emptyHeart}
                   onClick={() => handleLikeComment(comment.commentId)}
                   style={{ cursor: "pointer" }}
                 />
@@ -281,8 +281,16 @@ const PostComment = ({
           </div>
         )}
         <div className="right-group">
-          {/* 일반 사용자 프로필 사진 */}
-          <div className="ellipse" />
+          {/* 사용자 프로필 사진 */}
+          {comment.userType === "EXPERT" && comment.expertProfileImage ? (
+            <img
+              className="expert-profile"
+              src={comment.expertProfileImage}
+              alt="Expert Profile"
+            />
+          ) : (
+            <div className="ellipse" />
+          )}
           <div className="frame-3">
             <div className="frame-4">
               <div className="frame-5">
@@ -417,7 +425,9 @@ const PostComment = ({
                           className="free-icon-like"
                           alt="Free icon like"
                           src={
-                            replyLikes[reply.commentId]?.liked ? heart : emptyHeart
+                            replyLikes[reply.commentId]?.liked
+                              ? heart
+                              : emptyHeart
                           }
                           onClick={() => handleLikeReply(reply.commentId)}
                           style={{ cursor: "pointer" }}
@@ -430,7 +440,15 @@ const PostComment = ({
                     </div>
                   </div>
                   <div className="right-group">
-                    <div className="ellipse" />
+                    {reply.userType === "EXPERT" && reply.expertProfileImage ? (
+                      <img
+                        className="expert-profile"
+                        src={reply.expertProfileImage}
+                        alt="Expert Profile"
+                      />
+                    ) : (
+                      <div className="ellipse" />
+                    )}
                     <div className="frame-6">
                       <div className="frame-5">
                         <div className="text-wrapper-12">

@@ -1,9 +1,12 @@
 package com.lectory.post.service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import com.lectory.comment.repository.CommentRepository;
+import com.lectory.user.security.CustomUserDetail;
+import com.lectory.user.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
+    private final UserService userService;
 
     // 글 등록
     @Transactional
@@ -75,11 +79,13 @@ public class PostService {
     public PostResponseDto rewrite(Long postId, PostRequestDto dto, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        User user = userService.getUser(userId);
 
-        if (!post.getUserId().getUserId().equals(userId)) {
-            throw new SecurityException("본인만 글을 수정할 수 있습니다.");
+        if(!user.getUserType().getUserType().equals("ADMIN")) {
+            if (!post.getUserId().getUserId().equals(userId)) {
+                throw new SecurityException("본인만 글을 수정할 수 있습니다.");
+            }
         }
-
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
 
@@ -137,8 +143,11 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
-        if (!post.getUserId().getUserId().equals(userId)) {
-            throw new SecurityException("본인만 글을 삭제할 수 있습니다.");
+        User user = userService.getUser(userId);
+        if(!user.getUserType().getUserType().equals("ADMIN")) {
+            if (!post.getUserId().getUserId().equals(userId)) {
+                throw new SecurityException("본인만 글을 삭제할 수 있습니다.");
+            }
         }
         // 자식 댓글(대댓글) 먼저 삭제
         commentRepository.deleteAllChildCommentsByPostId(postId);

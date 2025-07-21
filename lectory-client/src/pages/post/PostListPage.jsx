@@ -82,7 +82,6 @@ export default function PostListPage({ userRole, userId }) {
         </select>
       </div>
 
-      {/* 글쓰기 버튼: FREE/PAID 사용자만 */}
       {/* 글쓰기 버튼 */}
       <div className="flex justify-end mb-4">
         <Link
@@ -94,11 +93,11 @@ export default function PostListPage({ userRole, userId }) {
             }
           }}
           className={`px-4 py-2 rounded text-white 
-                ${
-                  ["expert", "admin"].includes(userRole)
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700"
-                }`}
+            ${
+              ["expert", "admin"].includes(userRole)
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
         >
           글 쓰기
         </Link>
@@ -112,7 +111,14 @@ export default function PostListPage({ userRole, userId }) {
       ) : (
         <ul className="space-y-4">
           {filtered.map((post) => (
-            <li key={post.postId} className="p-4 border rounded">
+            <li
+              key={post.postId}
+              className={`p-4 border rounded ${
+                post.subscriber_type === "PAID" || post.isPaid
+                  ? "bg-green-50 border-green-400"
+                  : ""
+              }`}
+            >
               <div className="flex justify-between items-center mb-2">
                 <Link
                   to={`/posts/${post.postId}`}
@@ -121,7 +127,7 @@ export default function PostListPage({ userRole, userId }) {
                   {post.title}
                 </Link>
                 <span className="text-sm">
-                  {post.isResolved ? "해결완료" : "미해결"}
+                  {post.isResolved === true ? "해결완료" : "미해결"}
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">

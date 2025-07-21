@@ -4,6 +4,7 @@ import Select from "react-select";
 
 import { createPost } from "../../api/postApi";
 import { fetchTags } from "../../api/tagApi";
+import {getUser} from "../../api/userApi.js"
 
 export default function PostWritePage() {
   const navigate = useNavigate();
@@ -35,6 +36,25 @@ export default function PostWritePage() {
       });
   }, []);
 
+  const [userInfo, setCurrentUserInfo] = useState(null); 
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // "접속 사용자 정보"
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const user = await getUser();
+        setCurrentUserInfo(user);  // userId만 저장하지 말고 user 전체를 저장
+        setIsAdmin(user?.userType === "ADMIN");
+      } catch (err) {
+        console.error("유저 정보를 불러오지 못했습니다.", err);
+      }
+    }
+    fetchUser();
+  }, []);
+
+
+
   const handleExpertToggle = () => {
     if (subscriptionType !== "paid") {
       alert("유료(paid) 구독자만 전문가 답변 허용 기능을 사용할 수 있습니다.");
@@ -46,9 +66,9 @@ export default function PostWritePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!userId) {
+    if (!userInfo) {
       alert("로그인 후 작성 가능합니다.");
-      return;
+      return null;
     }
 
     try {

@@ -251,6 +251,8 @@ public class ExpertLibraryService {
         /* 태그 전면 교체 */
         lectureTagRepo.deleteAllByLectureId(chapterId);
         saveTagsForLecture(chapterId, dto.getTags());
+
+        lectureRepo.save(lec);
     }
 
     /* 9) 챕터 삭제 */
