@@ -2,9 +2,12 @@
 package com.lectory.contentlibrary.controller;
 
 import com.lectory.common.domain.Tag;
-import com.lectory.common.repository.TagRepository;   // ← 이미 존재하는 리포지터리
+import com.lectory.common.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 

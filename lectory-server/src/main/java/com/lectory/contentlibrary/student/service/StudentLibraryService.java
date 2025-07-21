@@ -263,7 +263,7 @@ public class StudentLibraryService {
         List<String> tags = lectureRepo.findDistinctTagNamesByRoomId(room.getLectureRoomId());
         return LectureRoomSummaryDto.builder()
                 .lectureRoomId(room.getLectureRoomId())
-                .thumbnail(room.getCoverImageUrl())
+                .coverImageUrl(room.getCoverImageUrl())
                 .title(room.getTitle())
                 .expertName(room.getExpert().getUser().getNickname())
                 .enrollmentCount(count)

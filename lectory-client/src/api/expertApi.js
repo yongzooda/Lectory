@@ -21,8 +21,6 @@ export const createLecture = (payload) =>
 
 /* ── 5) 강의실 수정  ⚠️ 오버로드 지원 ───────────────────── */
 export function updateLecture(arg1, arg2) {
-  /* 사용처 ①: updateLecture(lectureRoomId, payload)  */
-  /* 사용처 ②: updateLecture({ lectureRoomId, ...payload }) */
   let lectureRoomId, body;
   if (typeof arg1 === "object" && arg1.lectureRoomId) {
     ({ lectureRoomId, ...body } = arg1);
@@ -51,8 +49,3 @@ export const deleteChapter = (chapterId) =>
 
 /* ── 10) 태그 풀 조회 (/api/tags) ───────────────────────── */
 export const fetchAllTags = () => api.get("/tags");
-
-/* ── 11) S3 Pre-Signed URL 발급 ─────────────────────────── */
-/*  (백엔드: GET /api/uploads/presign?filename=foo.mp4)     */
-export const getPresignedUploadUrl = (filename) =>
-  api.get("/uploads/presign", { params: { filename } });
