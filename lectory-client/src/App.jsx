@@ -33,6 +33,7 @@ import EditLecturePage      from './pages/contentlibrary/expert/LectureEdit';
 import MembershipManagementPage from './pages/admin/MembershipManagementPage';
 import  ExpertApprovalPage from './pages/admin/ExpertApprovalPage';
 import ContentsManagementPage from './pages/admin/ContentsManagementPage';
+import Unauthorized from './pages/admin/Unauthorized';
 
 export default function App() {
   return (
@@ -72,6 +73,7 @@ export default function App() {
           <Route path="/admin/students"         element={<MembershipManagementPage />} />
           <Route path="/admin/expert-approval"  element={<ExpertApprovalPage />} />
           <Route path="/admin/contents"         element={<ContentsManagementPage />} />
+          <Route path="/unauthorized"           element={<Unauthorized />} />
 
           {/* ─── 결제 ─── */}
           <Route path="/pay"           element={<PayPage />}        />
