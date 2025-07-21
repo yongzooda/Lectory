@@ -1,3 +1,4 @@
+// src/pages/PostWritePage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
@@ -9,24 +10,39 @@ import { getUser } from "../../api/userApi.js";
 export default function PostWritePage() {
   const navigate = useNavigate();
 
-  const [subscriptionType, setSubscriptionType] = useState("free");
-  const [tagOptions, setTagOptions] = useState([]);
+  // — 로그인한 사용자 정보 (userId, userType)을 getUser()로만 관리
+  const [userInfo, setUserInfo] = useState(null);
+  const [subscriptionType, setSubscriptionType] = useState("free"); // free | paid
 
+  // — 폼 상태
   const [title, setTitle] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const [expertAllowed, setExpertAllowed] = useState(false);
   const [content, setContent] = useState("");
+  const [tagOptions, setTagOptions] = useState([]);
 
-  const userId = localStorage.getItem("userId");
-  const userRole = localStorage.getItem("userRole")?.toLowerCase();
-
+  // 1) 마운트 시점에 로그인 체크 & 사용자 정보 로드
   useEffect(() => {
-    setSubscriptionType(userRole === "paid" ? "paid" : "free");
+    async function loadUser() {
+      try {
+        const user = await getUser(); // { userId, userType, … }
+        setUserInfo(user);
+        setSubscriptionType(
+          user.userType?.toLowerCase() === "paid" ? "paid" : "free"
+        );
+      } catch (err) {
+        console.error("유저 정보를 불러오지 못했습니다.", err);
+        alert("로그인 후 작성 가능합니다.");
+        navigate("/login", { replace: true });
+      }
+    }
+    loadUser();
+  }, [navigate]);
 
-    // 태그 불러오기
+  // 2) 태그 목록 로드
+  useEffect(() => {
     fetchTags()
       .then((arr) => {
-        console.log("▶︎ /api/tags 응답:", arr);
         const opts = arr.map((name) => ({ value: name, label: name }));
         setTagOptions(opts);
       })
@@ -36,23 +52,7 @@ export default function PostWritePage() {
       });
   }, []);
 
-  const [userInfo, setCurrentUserInfo] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  // "접속 사용자 정보"
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const user = await getUser();
-        setCurrentUserInfo(user); // userId만 저장하지 말고 user 전체를 저장
-        setIsAdmin(user?.userType === "ADMIN");
-      } catch (err) {
-        console.error("유저 정보를 불러오지 못했습니다.", err);
-      }
-    }
-    fetchUser();
-  }, []);
-
+  // 전문가 답변 허용 토글
   const handleExpertToggle = () => {
     if (subscriptionType !== "paid") {
       alert("유료(paid) 구독자만 전문가 답변 허용 기능을 사용할 수 있습니다.");
@@ -61,12 +61,13 @@ export default function PostWritePage() {
     setExpertAllowed((prev) => !prev);
   };
 
+  // 제출 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!userInfo) {
       alert("로그인 후 작성 가능합니다.");
-      return null;
+      return;
     }
 
     try {
@@ -75,9 +76,8 @@ export default function PostWritePage() {
         content,
         onlyExpert: expertAllowed,
         tagIds: selectedTags.map((t) => t.value),
-        userId: userId,
+        userId: userInfo.userId, // 서버에서 받아온 userId
       });
-
       navigate("/posts");
     } catch (err) {
       console.error("글쓰기 오류", err);
@@ -142,7 +142,7 @@ export default function PostWritePage() {
           />
         </div>
 
-        {/* 버튼 */}
+        {/* 제출 버튼 */}
         <div className="flex space-x-4">
           <button
             type="submit"
