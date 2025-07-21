@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../../api/loginApi.js';
 import logo from '../../assets/images/Lectorylogo.png';
 import SignUpOverlay from './SignUpOverlay';
+import { getMyPage } from '../../api/mypageApi';
 
 export default function LoginForm() {
     const navigate = useNavigate();
@@ -19,8 +20,14 @@ export default function LoginForm() {
 
         try {
             await login({ email, password });
+            const userInfo = await getMyPage();
             alert('로그인 성공!');
-            navigate('/dashboard');
+
+            if(userInfo.userType === 'EXPERT'){
+                navigate('/library/expert')
+            } else {
+                navigate('/library');
+            }
         } catch (err) {
             setError(err.response?.data?.message || '로그인 실패');
         }
