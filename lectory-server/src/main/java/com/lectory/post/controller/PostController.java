@@ -79,25 +79,4 @@ public class PostController {
         postService.delete(postId, userId);
         return ResponseEntity.noContent().build();
     }
-
-    // 관리자의 게시글 수정
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PutMapping("/admin/{postId}")
-    public ResponseEntity<PostResponseDto> adminRewrite(
-            @PathVariable Long postId,
-            @Valid @RequestBody PostRequestDto dto
-    ) {
-        PostResponseDto response = postService.rewriteAsAdmin(postId, dto);
-        return ResponseEntity.ok(response);
-    }
-
-    // 관리자의 게시글 삭제
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @DeleteMapping("/admin/{postId}")
-    public ResponseEntity<Void> adminDelete(@PathVariable Long postId) {
-        postService.deleteAsAdmin(postId);
-        return ResponseEntity.noContent().build();
-    }
-
-
 }

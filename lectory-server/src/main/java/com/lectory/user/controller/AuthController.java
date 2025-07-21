@@ -39,8 +39,9 @@ public class AuthController {
 
             String email = userDetail.getUsername();
             Long userId = userDetail.getUser().getUserId();
+            String role = userDetail.getUser().getUserType().getUserType(); // role 추가
 
-            String accessToken = jwtUtil.generateToken(email, userId);
+            String accessToken = jwtUtil.generateToken(email, userId, role); // role 추가
             return ResponseEntity.ok(new JwtResponse(accessToken));
 
         } catch (AuthenticationException e) {

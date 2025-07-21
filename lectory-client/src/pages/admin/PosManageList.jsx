@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../api/axiosInstance'; // ✅ axiosInstance 가져오기
+import api from '../../api/axiosInstance'; // axiosInstance 가져오기
 
 const PosManageList = () => {
   const [posts, setPosts] = useState([]);
@@ -8,31 +8,29 @@ const PosManageList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-      const token = localStorage.getItem('accessToken');
-      console.log('[요청 보낼 토큰]', token);
+    const token = localStorage.getItem('accessToken');
 
-      if (!token) {
-        alert('로그인 후 이용해주세요.');
-        navigate('/unauthorized');
-        return;
-      }
+    if (!token) {
+      alert('로그인 후 이용해주세요.');
+      navigate('/unauthorized');
+      return;
+    }
 
-      // ✅ axios를 이용한 요청
-      api.get('/admin/manage-posts')
-        .then((response) => {
-          console.log('>>> 수신된 post 리스트:', response.data);
-          setPosts(response.data);
-        })
-        .catch((err) => {
-          console.error('게시글 가져오기 실패:', err);
-          if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-            alert('권한이 없습니다.');
-            navigate('/unauthorized');
-          } else {
-            setError('게시글을 불러오는 데 실패했습니다.');
-          }
-        });
-    }, [navigate]);
+    // axios를 이용한 요청
+    api.get('/admin/manage-posts')
+      .then((response) => {
+        setPosts(response.data);
+      })
+      .catch((err) => {
+        console.error('게시글 가져오기 실패:', err);
+        if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+          alert('관리자 권한이 필요합니다.');
+          navigate('/unauthorized');
+        } else {
+          setError('게시글을 불러오는 데 실패했습니다.');
+        }
+      });
+  }, [navigate]);
 
   const formatDate = (iso) => {
     const d = new Date(iso);
@@ -65,9 +63,9 @@ const PosManageList = () => {
                 onClick={() => navigate(`/posts/${post.postId}`)}
               >
                 <td className="border px-3 py-2 text-center">{index}</td>
-                <td className="border px-3 py-2">{post.title}</td>
-                <td className="border px-3 py-2">{post.authorEmail}</td>
-                <td className="border px-3 py-2">{formatDate(post.createdAt)}</td>
+                <td className="border px-3 py-2 text-center">{post.title}</td>
+                <td className="border px-3 py-2 text-center">{post.authorEmail}</td>
+                <td className="border px-3 py-2 text-center">{formatDate(post.createdAt)}</td>
                 <td className="border px-3 py-2 text-center">{post.reported === true ? 'O' : 'X'}</td>
               </tr>
             ))
