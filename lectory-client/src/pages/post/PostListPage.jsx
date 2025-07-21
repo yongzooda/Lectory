@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { fetchPosts } from "../api/postApi";
+import { fetchPosts } from "../../api/postApi";
 
 export default function PostListPage({ userRole, userId }) {
   const [posts, setPosts] = useState([]);

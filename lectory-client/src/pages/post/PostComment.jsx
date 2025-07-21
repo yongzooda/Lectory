@@ -182,7 +182,8 @@ const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
             </div>
           </div>
         )}
-        {/* 일반 사용자 프로필 사진 */}
+        <div className="right-group">
+          {/* 일반 사용자 프로필 사진 */}
         <div className="ellipse" />
         <div className="frame-3">
           <div className="frame-4">
@@ -248,7 +249,7 @@ const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
                   </>
                 ) : (
                   <>
-                    {/* ✅ 내가 작성자가 아닐 때 신고 버튼만 */}
+                    {/* 내가 작성자가 아닐 때 신고 버튼만 */}
                     <div
                       className="menu-item-2"
                       onClick={() => handleReport(comment.commentId)}
@@ -314,6 +315,7 @@ const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
                     </div>
                   </div>
                 </div>
+                <div className="right-group">
                 <div className="ellipse" />
                 <div className="frame-6">
                   <div className="frame-5">
@@ -398,10 +400,12 @@ const PostComment = ({ postId, comment, decodedUserId, onReply, onUpdate }) => {
                     </div>
                   </div>
                 )}
+                </div>
               </div>
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   );
