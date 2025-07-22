@@ -367,14 +367,12 @@ const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
                 </button>
               </div>
         
-              <div className="frame-2">
-                <textarea
-                  className="comment-textarea"
+              <textarea 
+                  className="frame-2"
                   placeholder="댓글을 입력하세요..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                 />
-              </div>
             </div>
           </div>
         </div>
