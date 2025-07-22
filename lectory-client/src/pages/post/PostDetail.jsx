@@ -26,28 +26,7 @@ export const PostDetail = () => {
   const [editTitle, setEditTitle] = useState("");  // 제목 수정 저장용
   const [editContent, setEditContent] = useState(""); 
 
-  const modalBackdropStyle = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 9999,
-  };
-  
-  const modalStyle = {
-    background: 'white',
-    padding: 20,
-    borderRadius: 8,
-    maxWidth: 400,
-    width: '90%',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
-  };
-  
+
   useEffect(() => {
     const fetchAllTags = async () => {
       try {
@@ -402,8 +381,8 @@ const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
       </div>
 
       {isTagModalOpen && (
-            <div style={modalBackdropStyle}>
-              <div style={modalStyle}>
+            <div className="modal-backdrop">
+              <div className="modal">
                 <h2>태그 선택</h2>
                 <div className="tag-list">
                   {allTags.map((tag) => (
