@@ -100,15 +100,17 @@ function ExpertMyPage() {
 
                 {/* 오른쪽 영역 */}
                 <div className="mypage-right">
-                    <h2 className="subscription-title">포트폴리오</h2>
+                    <h2 className="subscription-title">내 포트폴리오 보기</h2>
                     <button
                         className="expert-portfolio-btn"
                         onClick={handleDownloadPortfolio}
                         disabled={!portfolioUrl}
+                        title={portfolioUrl ? "포트폴리오 파일 열기" : "포트폴리오 파일 없음"}
                     >
-                        포트폴리오 보기
+                        📄 포트폴리오 보기
                     </button>
                 </div>
+
             </div>
 
             {editOpen && (

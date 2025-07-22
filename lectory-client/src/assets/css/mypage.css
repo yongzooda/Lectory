@@ -86,8 +86,8 @@
     margin-top: 10px;
     width: fit-content;
     padding: 8px 20px;
-    background-color: #22c55e; /* 연초록 */
-    color: white;
+    background-color: #A8D08D; /* 연초록 */
+    color: #355E3B;
     font-weight: 600;
     border: none;
     border-radius: 6px;
@@ -187,3 +187,28 @@
     color: #922b21;
 }
 
+.expert-portfolio-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background-color: #A8D08D;  /* 연한 녹색 계열 */
+    border: none;
+    border-radius: 8px;
+    color: #355E3B;  /* 짙은 녹색 */
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+}
+
+.expert-portfolio-btn:disabled {
+    background-color: #D3D3D3;
+    color: #8B8B8B;
+    cursor: not-allowed;
+}
+
+.expert-portfolio-btn:hover:not(:disabled) {
+    background-color: #86B24B;
+    color: white;
+}
