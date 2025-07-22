@@ -169,7 +169,7 @@
 
 .postDetail .button {
   align-items: center;
-  background-color: #C6E1B9;
+  background-color: #e6e6e6;
   border-radius: 24px;
   display: flex;
   gap: 8px;
@@ -179,7 +179,7 @@
   padding: 12px;
   position: relative;
   width: 99px;
-  left: 110px;
+  left: 100px;
 }
 
 .postDetail .star-instance {
@@ -377,7 +377,7 @@
   width: fit-content;
 }
 
-.postDetail .menu {
+.postDetail .menu-1 {
   align-items: flex-start;
   background-color: #ffffff;
   border: 1px solid;
@@ -393,7 +393,7 @@
   width: 170px;
 }
 
-.postDetail .menu-1 {
+.postDetail .menu-2 {
   align-items: flex-start;
   background-color: #ffffff;
   border: 1px solid;
@@ -401,7 +401,7 @@
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  right: -190px;
+  right: -185px;
   overflow: hidden;
   padding: 8px;
   position: absolute;

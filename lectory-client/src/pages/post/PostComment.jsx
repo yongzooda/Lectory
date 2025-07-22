@@ -341,9 +341,7 @@ const PostComment = ({
               )}
 
               {/* 채택 버튼: 게시글 작성자 && 미해결 상태일 때만 노출 */}
-              {!isResolved &&
-                decodedUserId === postOwnerId || isAdmin &&
-                !comment.isAccepted && (
+              {(!isResolved && (decodedUserId === postOwnerId || isAdmin) && !comment.isAccepted) && (
                   <div className="button">
                     <Star className="star-instance" />
                     <button
@@ -386,7 +384,7 @@ const PostComment = ({
 
             {/* 메뉴 보이기 여부에 따라 렌더링 */}
             {parentMenuVisible && (
-              <div className="menu">
+              <div className="menu-1">
                 <div className="menu-section">
                   {decodedUserId === comment.userId || isAdmin ? (
                     <>
@@ -526,7 +524,7 @@ const PostComment = ({
                       style={{ cursor: "pointer" }}
                     />
                     {replyMenuVisible === reply.commentId && (
-                      <div className="menu-1">
+                      <div className="menu-2">
                         <div className="menu-section">
                           {decodedUserId === reply.userId || isAdmin ? (
                             <>
