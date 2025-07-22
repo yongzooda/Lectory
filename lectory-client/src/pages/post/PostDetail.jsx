@@ -109,7 +109,7 @@ export const PostDetail = () => {
         title: newTitle,
         content: newContent,
         onlyExpert: post.onlyExpert,
-        tagIds: post.tags ? Array.from(post.tags) : [],
+        tagNames: post.tags ? Array.from(post.tags) : [],
       });
 
       alert("수정 완료");
