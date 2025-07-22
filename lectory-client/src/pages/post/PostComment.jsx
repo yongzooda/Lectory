@@ -4,7 +4,8 @@ import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
 import heart from "../../assets/images/heart.png";
 import emptyHeart from "../../assets/images/emptyHeart.png";
-import {getUser} from "../../api/userApi.js"
+import {getUser} from "../../api/userApi.js";
+import '../../assets/css/PostComment.css';
 
 const PostComment = ({
   postId,
@@ -24,16 +25,22 @@ const PostComment = ({
   const [replyingToId, setReplyingToId] = useState(null); // 대댓글 입력 중인 댓글 ID
   const [replyContent, setReplyContent] = useState(""); // 대댓글 내용
 
-  const [likeCount, setLikeCount] = useState(comment.likeCount); // 댓글 좋아요
-  const [liked, setLiked] = useState(comment.liked || false);
+  const [likeCount, setLikeCount] = useState(comment.likeCount ?? 0); // 댓글 좋아요
+  const [liked, setLiked] = useState(comment.liked ?? false);
 
   const initialReplyLikes = {}; // 대댓글 좋아요
   (comment.replies || []).forEach((r) => {
     initialReplyLikes[r.commentId] = {
-      likeCount: r.likeCount,
-      liked: r.liked || false,
+      likeCount: r.likeCount ?? 0,
+      liked: r.liked ?? false,
     };
   });
+
+  useEffect(() => {
+    setLikeCount(comment.likeCount ?? 0);
+    setLiked(comment.liked ?? false);
+  }, [comment]);
+
   const [replyLikes, setReplyLikes] = useState(initialReplyLikes);
 
   const token = localStorage.getItem("accessToken");
@@ -55,7 +62,6 @@ const PostComment = ({
     }
     fetchUser();
   }, []);
-
 
   // 부모 댓글 메뉴 토글
   const toggleParentMenu = () => {
@@ -224,7 +230,6 @@ const PostComment = ({
           targetId: commentId,
         }
       );
-
       const { likeCount, liked } = response.data;
 
       setLikeCount(likeCount);
@@ -283,7 +288,7 @@ const PostComment = ({
                 <img
                   className="free-icon-like"
                   alt="Free icon like"
-                  src={ liked ? heart : emptyHeart }
+                  src={liked ? heart : emptyHeart}
                   onClick={() => handleLikeComment(comment.commentId)}
                   style={{ cursor: "pointer" }}
                 />
@@ -294,12 +299,27 @@ const PostComment = ({
           </div>
         )}
         <div className="right-group">
-          {/* 일반 사용자 프로필 사진 */}
-          <div className="ellipse" />
+          {/* 사용자 프로필 사진 */}
+          {comment.userType === "EXPERT" && comment.expertProfileImage ? (
+            <div onClick={()=> window.location.href='/library?memberId=undefined&search='
+              +comment.userNickname+'&sort=createdAt%2Cdesc&page=0'}
+                 style={{ cursor: 'pointer' }}
+                 className="expert-profile-wrapper">
+            <img
+              className="expert-profile"
+              src={"/api"+comment.expertProfileImage}
+              alt="Expert Profile"
+            />
+            </div>
+          ) : (
+            <div className="ellipse" />
+          )}
           <div className="frame-3">
             <div className="frame-4">
               <div className="frame-5">
-                <div className="text-wrapper-12">{comment.userNickname}</div>
+                <div onClick={()=> window.location.href='/library?memberId=undefined&search='
+                    +comment.userNickname+'&sort=createdAt%2Cdesc&page=0'}
+                     style={{ cursor: 'pointer' }}className="text-wrapper-12">{comment.userNickname}</div>
                 <div className="text-wrapper-13">·</div>
                 <div className="text-wrapper-14">
                   {new Date(comment.updatedAt).toLocaleString("ko-KR")}
@@ -316,7 +336,7 @@ const PostComment = ({
 
               {/* 채택 버튼: 게시글 작성자 && 미해결 상태일 때만 노출 */}
               {!isResolved &&
-                decodedUserId === postOwnerId || isAdmin && 
+                decodedUserId === postOwnerId || isAdmin &&
                 !comment.isAccepted && (
                   <div className="button">
                     <Star className="star-instance" />
@@ -430,7 +450,9 @@ const PostComment = ({
                           className="free-icon-like"
                           alt="Free icon like"
                           src={
-                            replyLikes[reply.commentId]?.liked ? heart : emptyHeart
+                            replyLikes[reply.commentId]?.liked
+                              ? heart
+                              : emptyHeart
                           }
                           onClick={() => handleLikeReply(reply.commentId)}
                           style={{ cursor: "pointer" }}
@@ -443,7 +465,15 @@ const PostComment = ({
                     </div>
                   </div>
                   <div className="right-group">
-                    <div className="ellipse" />
+                    {reply.userType === "EXPERT" && reply.expertProfileImage ? (
+                      <img
+                        className="expert-profile"
+                        src={reply.expertProfileImage}
+                        alt="Expert Profile"
+                      />
+                    ) : (
+                      <div className="ellipse" />
+                    )}
                     <div className="frame-6">
                       <div className="frame-5">
                         <div className="text-wrapper-12">
