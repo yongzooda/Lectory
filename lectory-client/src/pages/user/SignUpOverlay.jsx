@@ -80,26 +80,44 @@
             </label>
 
             <div className={`expert-extra ${isExpert ? 'open' : ''}`}>
-              <label className="file-label">
-                {portfolioFile?.name || '포트폴리오 업로드'}
+              <div className="file-input-wrapper">
+                <input
+                    type="text"
+                    readOnly
+                    value={portfolioFile?.name || ''}
+                    placeholder="포트폴리오 업로드 (.pdf, .doc)"
+                    className="loginPage-input file-input-display"
+                    onClick={() => document.getElementById('portfolioInput').click()}
+                    required={isExpert}
+                />
                 <input
                     type="file"
+                    id="portfolioInput"
                     accept=".pdf,.doc,.docx"
-                    hidden
+                    style={{ display: 'none' }}
                     onChange={e => handleFileChange(e, setPortfolioFile)}
+                />
+              </div>
+
+              <div className="file-input-wrapper">
+                <input
+                    type="text"
+                    readOnly
+                    value={profileImage?.name || ''}
+                    placeholder="프로필 이미지 업로드 (jpg, png 등)"
+                    className="loginPage-input file-input-display"
+                    onClick={() => document.getElementById('profileInput').click()}
                     required={isExpert}
                 />
-              </label>
-              <label className="file-label">
-                {profileImage?.name || '프로필 이미지 업로드'}
                 <input
                     type="file"
+                    id="profileInput"
                     accept="image/*"
-                    hidden
+                    style={{ display: 'none' }}
                     onChange={e => handleFileChange(e, setProfileImage)}
-                    required={isExpert}
                 />
-              </label>
+              </div>
+
             </div>
 
             {error && <p className="loginPage-error">{error}</p>}

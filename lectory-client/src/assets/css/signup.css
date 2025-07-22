@@ -4,7 +4,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 720px;
-    max-height: 80vh;
+    max-height: 92vh;
     background: #F5FBF2;
     border-radius: 16px;
     box-shadow: 0 12px 24px rgba(50, 100, 50, 0.2);
@@ -151,4 +151,28 @@
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
     }
+}
+
+.file-input-wrapper {
+    margin-left: 97px;
+    width: 100%;
+
+    position: relative;
+    cursor: pointer;
+}
+
+.file-input-display {
+    cursor: pointer;
+    background: #C6E1B9;
+    color: #355E3B;
+    border-radius: 6px 6px 0 0;
+    border: none;
+    border-bottom: 2px solid rgba(53, 94, 59, 0.3);
+    transition: background-color 0.3s ease;
+}
+
+.file-input-display:focus {
+    background: #B5D8B0;
+    border-bottom: 2px solid #355E3B;
+    outline: none;
 }

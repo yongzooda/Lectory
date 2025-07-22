@@ -10,13 +10,26 @@ export const getMyPage = async () => {
     }
 };
 
-export const deleteUser = () => {
-    return api.delete('/users/mypage');
+export const deleteUser = async () => {
+    try {
+        const response = await api.delete('/users/mypage');
+        return response.data;
+    } catch (error) {
+        console.error('회원 탈퇴 실패:', error.response?.data || error.message);
+        throw error;
+    }
 };
 
 export const updateMyInfo = async (payload) => {
-    return api.put('/users/mypage', payload);
+    try {
+        const response = await api.put('/users/mypage', payload);
+        return response.data;
+    } catch (error) {
+        console.error('회원 정보 수정 실패:', error.response?.data || error.message);
+        throw error;
+    }
 };
+
 
 export const getExpertMyPage = async () => {
     try {
@@ -24,6 +37,16 @@ export const getExpertMyPage = async () => {
         return response.data;
     } catch (error) {
         console.error('전문가 마이페이지 조회 실패:', error.response?.data || error.message);
+        throw error;
+    }
+};
+
+export const updateExpertInfo = async (payload) => {
+    try {
+        const response = await api.put('/experts/mypage', payload);
+        return response.data;
+    } catch (error) {
+        console.error('전문가 정보 수정 실패:', error.response?.data || error.message);
         throw error;
     }
 };
