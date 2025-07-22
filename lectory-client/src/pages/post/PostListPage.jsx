@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { fetchPosts } from "../../api/postApi";
+import "../../assets/css/postList.css";
 
 export default function PostListPage({ userRole }) {
   const [posts, setPosts] = useState([]);
@@ -37,7 +38,6 @@ export default function PostListPage({ userRole }) {
         });
         const data = res.data;
         let list = Array.isArray(data.content) ? data.content : [];
-
         // expert 계정은 paid 구독자 게시글만
         if (userRole === "expert") {
           list = list.filter((p) => p.subscriber_type === "PAID" || p.isPaid);
@@ -45,10 +45,6 @@ export default function PostListPage({ userRole }) {
 
         setPosts(list);
         setTotalPages(data.totalPages ?? 1);
-
-        // 디버깅
-        console.log("posts:", list);
-        console.log("decoded userId:", numericUserId);
       } catch (e) {
         console.error(e);
         setError("게시글을 불러오는 중 오류가 발생했습니다.");
@@ -148,12 +144,13 @@ export default function PostListPage({ userRole }) {
                 >
                   {post.title}
                 </Link>
-                <span className="text-sm">
-                  {post.isResolved ? "해결완료" : "미해결"}
-                </span>
+                <div className="div-wrapper">
+                  <div className="text-wrapper-12">{post.resolved ? "해결완료" : "미해결"}</div>
+                </div>
+                
               </div>
               <p className="text-sm text-gray-600 mb-2">
-                작성자: {post.userNickname} |{" "}
+                {post.userNickname} |{" "}
                 {new Date(post.createdAt).toLocaleDateString("ko-KR")}
               </p>
               <p className="text-gray-700 mb-2 truncate">
