@@ -62,7 +62,7 @@ const ExpertApprovalPage = () => {
                   <td className="border px-3 py-2 text-center">{idx}</td>
                   <td className="border px-3 py-2 text-center">{expert.email}</td>
                   <td className="border px-3 py-2 text-center underline truncate max-w-[200px]">
-                    <a className="text-blue-600" href={expert.portfolioFileUrl} target="_blank" rel="noreferrer">포트폴리오 보기</a>
+                    <a className="text-blue-600" href={"/api"+expert.portfolioFileUrl} target="_blank" rel="noreferrer">포트폴리오 보기</a>
                   </td>
                   <td className="border px-3 py-2 text-center">{formatDate(expert.createdAt)}</td>
                   <td className="border px-3 py-2 space-x-2 text-center">
