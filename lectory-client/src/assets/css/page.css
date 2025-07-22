@@ -1,8 +1,6 @@
 .page {
-  background-color: #ffffff;
-  height: 1700px;
-  position: relative;
-  width: 1440px;
+  height: auto;
+  min-height: 100vh;
 }
 
 .page {

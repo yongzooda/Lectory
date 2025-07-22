@@ -27,10 +27,9 @@ export const PostDetailPage = () => {
   return (
     <div className="page" data-model-id="2810:13554">
       <div className="p-1">
-        {userRole === "ADMIN" ? <AdminNavigation /> : <NavbarLightDefault />}
+        {userRole === "ADMIN" ? <AdminNavigation /> : null}
       </div>
       <PostDetail />
-      <Footer />
     </div>
   );
 };
