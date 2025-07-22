@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchPostById, updatePost } from "../../api/postApi";
-import PostEdit from "./PostEdit";
 
 export default function PostEditPage() {
   const { postId } = useParams();
