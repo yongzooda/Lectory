@@ -148,6 +148,9 @@ export default function PostListPage({ userRole }) {
                   <div className="text-wrapper-12">{post.resolved ? "해결완료" : "미해결"}</div>
                 </div>
                 
+                <span className="text-sm">
+                  {post.resolved ? "해결완료" : "미해결"}
+                </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
                 {post.userNickname} |{" "}
