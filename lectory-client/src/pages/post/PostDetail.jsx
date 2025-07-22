@@ -6,7 +6,7 @@ import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
 import heart from "../../assets/images/heart.png";
 import emptyHeart from "../../assets/images/emptyHeart.png";
-import {getUser} from "../../api/userApi.js"
+import { getUser } from "../../api/userApi.js"
 
 export const PostDetail = () => {
   const { postId } = useParams(); // URL 파라미터 가져오기
@@ -15,6 +15,7 @@ export const PostDetail = () => {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
   const [decodedUserId, setDecodedUserId] = useState(null); // 게시글 작성자 본인인가
+  const [userRole, setUserRole] = useState(null); // 관리자 여부 확인
 
   const [likeCount, setLikeCount] = useState(0); // 초기값 0으로 수정
   const [liked, setLiked] = useState(false);
@@ -30,14 +31,16 @@ export const PostDetail = () => {
     } else {
       try {
         const id = JwtUtils.getId(token);
+        const role = JwtUtils.getRole(token);
         setDecodedUserId(id);
+        setUserRole(role);
       } catch (error) {
         console.error("토큰 디코딩 실패:", error);
       }
     }
   }, [token, navigate]);
 
-  const [userInfo, setCurrentUserInfo] = useState(null); 
+  const [userInfo, setCurrentUserInfo] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   // "접속 사용자 정보 조회"
   useEffect(() => {
@@ -278,7 +281,12 @@ export const PostDetail = () => {
 
         {/* 작성자와 로그인한 userId 비교하여 버튼 노출 */}
         <div className="text-wrapper-26">
-          {decodedUserId === post.userId || isAdmin ? (
+          {userRole === 'ADMIN' ? (
+            <>
+              <button onClick={handleEdit}>관리자 수정</button> |{" "}
+              <button onClick={handleDelete}>관리자 삭제</button>
+            </>
+          ) : decodedUserId === post.userId ? (
             <>
               <button onClick={handleEdit}>수정</button> |{" "}
               <button onClick={handleDelete}>삭제</button>
