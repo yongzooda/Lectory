@@ -58,7 +58,7 @@
       ]
     },
     {
-      "id": "src/pages/contentlibrary/student/LibraryHome.jsx",
+      "id": "src/pages/contentlibrary/expert/LibraryHome.jsx",
       "label": "LibraryHome",
       "routes": [
         "/library",
@@ -66,7 +66,7 @@
       ]
     },
     {
-      "id": "src/pages/contentlibrary/student/LectureDetail.jsx",
+      "id": "src/pages/contentlibrary/expert/LectureDetail.jsx",
       "label": "LectureDetail",
       "routes": [
         "/library/:lectureRoomId",
@@ -140,9 +140,9 @@
   ],
   "edges": [
     {
-      "id": "src\\pages\\user\\LoginForm.jsx:35:20-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "id": "src\\pages\\user\\LoginForm.jsx:35:20-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "source": "src\\pages\\user\\LoginForm.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "data": {
         "viaRoute": "/library/expert",
         "trigger": {
@@ -172,9 +172,9 @@
       }
     },
     {
-      "id": "src\\pages\\user\\LoginForm.jsx:47:16-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "id": "src\\pages\\user\\LoginForm.jsx:47:16-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "source": "src\\pages\\user\\LoginForm.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "data": {
         "viaRoute": "/library",
         "trigger": {
@@ -188,47 +188,31 @@
       }
     },
     {
-      "id": "src\\pages\\post\\PostWritePage.jsx:22:6-to-src\\pages\\user\\LoginForm.jsx",
+      "id": "src\\pages\\post\\PostWritePage.jsx:36:8-to-src\\pages\\user\\LoginForm.jsx",
       "source": "src\\pages\\post\\PostWritePage.jsx",
       "target": "src\\pages\\user\\LoginForm.jsx",
       "data": {
         "viaRoute": "/login",
         "trigger": {
           "element": "navigate(\"/login\", { replace: true })",
-          "line": 22,
-          "endLine": 22,
-          "column": 6,
-          "endColumn": 43,
+          "line": 36,
+          "endLine": 36,
+          "column": 8,
+          "endColumn": 45,
           "sourceFile": "src\\pages\\post\\PostWritePage.jsx"
         }
       }
     },
     {
-      "id": "src\\pages\\post\\PostWritePage.jsx:34:6-to-src\\pages\\user\\LoginForm.jsx",
-      "source": "src\\pages\\post\\PostWritePage.jsx",
-      "target": "src\\pages\\user\\LoginForm.jsx",
-      "data": {
-        "viaRoute": "/login",
-        "trigger": {
-          "element": "navigate(\"/login\", { replace: true })",
-          "line": 34,
-          "endLine": 34,
-          "column": 6,
-          "endColumn": 43,
-          "sourceFile": "src\\pages\\post\\PostWritePage.jsx"
-        }
-      }
-    },
-    {
-      "id": "src\\pages\\post\\PostWritePage.jsx:80:6-to-src\\pages\\post\\PostListPage.jsx",
+      "id": "src\\pages\\post\\PostWritePage.jsx:81:6-to-src\\pages\\post\\PostListPage.jsx",
       "source": "src\\pages\\post\\PostWritePage.jsx",
       "target": "src\\pages\\post\\PostListPage.jsx",
       "data": {
         "viaRoute": "/posts",
         "trigger": {
           "element": "navigate(\"/posts\")",
-          "line": 80,
-          "endLine": 80,
+          "line": 81,
+          "endLine": 81,
           "column": 6,
           "endColumn": 24,
           "sourceFile": "src\\pages\\post\\PostWritePage.jsx"
@@ -236,15 +220,15 @@
       }
     },
     {
-      "id": "src\\pages\\post\\PostWritePage.jsx:154:27-to-src\\pages\\post\\PostListPage.jsx",
+      "id": "src\\pages\\post\\PostWritePage.jsx:155:27-to-src\\pages\\post\\PostListPage.jsx",
       "source": "src\\pages\\post\\PostWritePage.jsx",
       "target": "src\\pages\\post\\PostListPage.jsx",
       "data": {
         "viaRoute": "/posts",
         "trigger": {
           "element": "navigate(\"/posts\")",
-          "line": 154,
-          "endLine": 154,
+          "line": 155,
+          "endLine": 155,
           "column": 27,
           "endColumn": 45,
           "sourceFile": "src\\pages\\post\\PostWritePage.jsx"
@@ -284,73 +268,89 @@
       }
     },
     {
-      "id": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx:80:6-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "source": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "id": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx:86:6-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "source": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "data": {
-        "viaRoute": "/library",
+        "viaRoute": "/library/expert",
         "trigger": {
-          "element": "<SearchBar\n        initial={search}\n        tags={tags}\n        sort={sort}\n        basePath=\"/library\"\n      />",
-          "line": 80,
-          "endLine": 85,
+          "element": "<SearchBar\n        initial={search}\n        tags={tags}\n        sort={sort}\n        basePath=\"/library/expert\"\n      />",
+          "line": 86,
+          "endLine": 91,
           "column": 6,
           "endColumn": 8,
-          "sourceFile": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx"
+          "sourceFile": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx"
         }
       }
     },
     {
-      "id": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx:88:6-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "source": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "id": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx:93:6-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "source": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "data": {
-        "viaRoute": "/library",
+        "viaRoute": "/library/expert",
         "trigger": {
-          "element": "<TagFilterBar\n        selected={tags}\n        allTags={allTags}\n        search={search}\n        sort={sort}\n        basePath=\"/library\"\n      />",
-          "line": 88,
-          "endLine": 94,
+          "element": "<TagFilterBar\n        selected={tags}\n        allTags={allTags}\n        search={search}\n        sort={sort}\n        basePath=\"/library/expert\"\n      />",
+          "line": 93,
+          "endLine": 99,
           "column": 6,
           "endColumn": 8,
-          "sourceFile": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx"
+          "sourceFile": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx"
         }
       }
     },
     {
-      "id": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx:98:8-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "source": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "id": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx:102:8-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "source": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "data": {
-        "viaRoute": "/library",
+        "viaRoute": "/library/expert",
         "trigger": {
-          "element": "<SortDropdown\n          search={search}\n          tags={tags}\n          value={sort}\n          basePath=\"/library\"\n        />",
-          "line": 98,
-          "endLine": 103,
+          "element": "<SortDropdown\n          search={search}\n          tags={tags}\n          value={sort}\n          basePath=\"/library/expert\"\n        />",
+          "line": 102,
+          "endLine": 107,
           "column": 8,
           "endColumn": 10,
-          "sourceFile": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx"
+          "sourceFile": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx"
         }
       }
     },
     {
-      "id": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx:132:12-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "source": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "id": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx:135:12-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "source": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "data": {
-        "viaRoute": "/library",
+        "viaRoute": "/library/expert",
         "trigger": {
-          "element": "<Pagination\n              pageInfo={pageInfo}\n              basePath=\"/library\"\n              query={{ search, tags, sort }}\n            />",
-          "line": 132,
-          "endLine": 136,
+          "element": "<Pagination\n              pageInfo={pageInfo}\n              basePath=\"/library/expert\"\n              query={{ search, tags, sort }}\n            />",
+          "line": 135,
+          "endLine": 139,
           "column": 12,
           "endColumn": 14,
-          "sourceFile": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx"
+          "sourceFile": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx"
         }
       }
     },
     {
-      "id": "src\\pages\\contentlibrary\\student\\EnrollResult.jsx:20:4-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "id": "src\\pages\\contentlibrary\\expert\\LectureDetail.jsx:41:4-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "source": "src\\pages\\contentlibrary\\expert\\LectureDetail.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
+      "data": {
+        "viaRoute": "/library/expert",
+        "trigger": {
+          "element": "navigate(\"/library/expert\")",
+          "line": 41,
+          "endLine": 41,
+          "column": 4,
+          "endColumn": 31,
+          "sourceFile": "src\\pages\\contentlibrary\\expert\\LectureDetail.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\contentlibrary\\student\\EnrollResult.jsx:20:4-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "source": "src\\pages\\contentlibrary\\student\\EnrollResult.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "data": {
         "viaRoute": "/library",
         "trigger": {
@@ -364,9 +364,9 @@
       }
     },
     {
-      "id": "src\\pages\\contentlibrary\\expert\\LectureNew.jsx:38:24-to-src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "id": "src\\pages\\contentlibrary\\expert\\LectureNew.jsx:38:24-to-src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "source": "src\\pages\\contentlibrary\\expert\\LectureNew.jsx",
-      "target": "src\\pages\\contentlibrary\\student\\LibraryHome.jsx",
+      "target": "src\\pages\\contentlibrary\\expert\\LibraryHome.jsx",
       "data": {
         "viaRoute": "/library/expert",
         "trigger": {

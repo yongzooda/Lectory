@@ -11,5 +11,5 @@ public class PostRequestDto {
     private String title;
     private String content;
     private boolean onlyExpert;
-    private Set<Long> tagIds;
+    private Set<String> tagNames;
 }
