@@ -4,7 +4,9 @@ import JwtUtils from "../../api/jwtUtils";
 import PostComment from "./PostComment";
 import "../../assets/css/postDetail.css";
 import api from "../../api/axiosInstance";
-
+import heart from "../../assets/images/heart.png";
+import emptyHeart from "../../assets/images/emptyHeart.png";
+import {getUser} from "../../api/userApi.js"
 export const PostDetail = () => {
   const { postId } = useParams(); // URL 파라미터 가져오기
   const [post, setPost] = useState(null); // 게시글 데이터
@@ -12,6 +14,8 @@ export const PostDetail = () => {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
   const [decodedUserId, setDecodedUserId] = useState(null); // 게시글 작성자 본인인가
+  const [likeCount, setLikeCount] = useState(0); // 초기값 0으로 수정
+  const [liked, setLiked] = useState(false);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
@@ -54,6 +58,22 @@ export const PostDetail = () => {
       }
     };
     fetchAllTags();
+  }, []);
+
+  const [userInfo, setCurrentUserInfo] = useState(null); 
+  const [isAdmin, setIsAdmin] = useState(false);
+  // "접속 사용자 정보 조회"
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const user = await getUser();
+        setCurrentUserInfo(user.userId);  // userId도 상태로 저장하는 거면 useState 필요!
+        setIsAdmin(user?.userType === "ADMIN");
+      } catch (err) {
+        console.error("유저 정보를 불러오지 못했습니다.", err);
+      }
+    }
+    fetchUser();
   }, []);
 
   useEffect(() => {
@@ -129,6 +149,8 @@ export const PostDetail = () => {
       });
       setPost(postData);
       setComments(commentsData);
+      setLikeCount(postData.likeCount);
+      setLiked(postData.liked);
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || error.message);
@@ -208,6 +230,9 @@ export const PostDetail = () => {
         targetId: postId,
       });
 
+      const { likeCount, liked } = response.data;
+      setLikeCount(likeCount);
+      setLiked(liked);
       const data = response.data;
       // 좋아요 개수 최신화
       setPost((prev) => ({
@@ -288,7 +313,7 @@ const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
                   <img
                     className="free-icon-like"
                     alt="Free icon like"
-                    src="https://c.animaapp.com/md2r5d9jD5c5WE/img/free-icon-like-6924834-1-4.png"
+                    src={liked ? heart : emptyHeart}
                   />
                   <div className="element">&nbsp;&nbsp;{post.likeCount}</div>
                 </div>
@@ -315,7 +340,7 @@ const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
   
         {/* 작성자와 로그인한 userId 비교하여 버튼 노출 */}
         <div className="text-wrapper-26">
-          {decodedUserId === post.userId ? (
+          {decodedUserId === post.userId || isAdmin ? (
             <>
               <button onClick={handleEdit}>수정</button> |{" "}
               <button onClick={handleDelete}>삭제</button>
@@ -355,27 +380,27 @@ const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
                 />
               ))
             )}
+            {/* 입력 칸 */}
+            <div className="div-2">
+              <div className="frame">
+                <button className="text-wrapper-11" onClick={handleAddComment}>
+                  등록
+                </button>
+              </div>
+        
+              <div className="frame-2">
+                <textarea
+                  className="comment-textarea"
+                  placeholder="댓글을 입력하세요..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-  
-      {/* 입력 칸 */}
-      <div className="div-2">
-        <div className="frame">
-          <button className="text-wrapper-11" onClick={handleAddComment}>
-            등록
-          </button>
-        </div>
-  
-        <div className="frame-2">
-          <textarea
-            className="comment-textarea"
-            placeholder="댓글을 입력하세요..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-          />
-        </div>
-      </div>
+
       {isTagModalOpen && (
             <div style={modalBackdropStyle}>
               <div style={modalStyle}>
