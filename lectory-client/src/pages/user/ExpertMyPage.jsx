@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getExpertMyPage, deleteUser } from '../../api/mypageApi.js';
 import '../../assets/css/mypage.css';
+import ExpertEditProfile from "./ExpertEditProfile.jsx";
 
 const defaultProfile = '/path/to/defaultProfileImage.png'; // 기본 프로필 이미지 경로
 
