@@ -6,7 +6,7 @@ export const PaySuccess = () => {
   const [now, setNow] = useState(new Date());
 
   const handleClick = () => {
-    window.location.href = "/";
+    window.location.href = "/library";
   };
   return (
     <div className="pay-page">
