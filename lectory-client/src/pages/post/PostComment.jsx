@@ -5,6 +5,7 @@ import api from "../../api/axiosInstance";
 import heart from "../../assets/images/heart.png";
 import emptyHeart from "../../assets/images/emptyHeart.png";
 import {getUser} from "../../api/userApi.js";
+import '../../assets/css/PostComment.css';
 
 const PostComment = ({
   postId,
@@ -300,18 +301,25 @@ const PostComment = ({
         <div className="right-group">
           {/* 사용자 프로필 사진 */}
           {comment.userType === "EXPERT" && comment.expertProfileImage ? (
+            <div onClick={()=> window.location.href='/library?memberId=undefined&search='
+              +comment.userNickname+'&sort=createdAt%2Cdesc&page=0'}
+                 style={{ cursor: 'pointer' }}
+                 className="expert-profile-wrapper">
             <img
               className="expert-profile"
-              src={comment.expertProfileImage}
+              src={"/api"+comment.expertProfileImage}
               alt="Expert Profile"
             />
+            </div>
           ) : (
             <div className="ellipse" />
           )}
           <div className="frame-3">
             <div className="frame-4">
               <div className="frame-5">
-                <div className="text-wrapper-12">{comment.userNickname}</div>
+                <div onClick={()=> window.location.href='/library?memberId=undefined&search='
+                    +comment.userNickname+'&sort=createdAt%2Cdesc&page=0'}
+                     style={{ cursor: 'pointer' }}className="text-wrapper-12">{comment.userNickname}</div>
                 <div className="text-wrapper-13">·</div>
                 <div className="text-wrapper-14">
                   {new Date(comment.updatedAt).toLocaleString("ko-KR")}
