@@ -317,9 +317,15 @@ const PostComment = ({
           <div className="frame-3">
             <div className="frame-4">
               <div className="frame-5">
+                { /* 전문가 일 때 이름 클릭 시 강의 조회 */ }
+                {comment.userType === "EXPERT" && comment.expertProfileImage ? (
                 <div onClick={()=> window.location.href='/library?memberId=undefined&search='
                     +comment.userNickname+'&sort=createdAt%2Cdesc&page=0'}
                      style={{ cursor: 'pointer' }}className="text-wrapper-12">{comment.userNickname}</div>
+                    ) : (
+                  /* 일반 사용자 일 때 */
+                <div className="text-wrapper-12">{comment.userNickname}</div>
+                    )}
                 <div className="text-wrapper-13">·</div>
                 <div className="text-wrapper-14">
                   {new Date(comment.updatedAt).toLocaleString("ko-KR")}
