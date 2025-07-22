@@ -116,7 +116,7 @@ const StudentLibraryHome = () => {
             {rooms.map((r) => (
               <LectureCard
                 key={r.lectureRoomId}
-                thumbnail={r.thumbnail}
+                coverImageUrl={r.coverImageUrl}
                 title={r.title}
                 expertName={r.expertName}
                 enrollmentCount={r.enrollmentCount}
