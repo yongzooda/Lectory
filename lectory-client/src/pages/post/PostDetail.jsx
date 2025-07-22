@@ -114,22 +114,54 @@ export const PostDetail = () => {
   const fetchPostAndComments = async () => {
     setLoading(true);
     try {
+      // 1. 게시글 조회
       const postResponse = await api.get(`/posts/${postId}`);
       const postData = postResponse.data;
 
+      // 2. 게시글 좋아요 정보 조회
+      const postLikeResponse = await api.get(`/posts/${postId}/like`, {
+        params: {
+          target: 'POST',
+          targetId: postId,
+        },
+      });
+      const postLikeData = postLikeResponse.data;
+
+      // 3. 댓글 조회
       const commentsResponse = await api.get(`/posts/${postId}/comment`);
       let commentsData = commentsResponse.data;
 
+      // 4. 댓글별 좋아요 정보 조회
+      const commentLikes = await Promise.all(
+          commentsData.map((comment) =>
+              api.get(`/posts/${postId}/like`, {
+                params: {
+                  target: 'COMMENT',
+                  targetId: comment.commentId,
+                },
+              })
+          )
+      );
+
+      // 5. 댓글 객체에 좋아요 정보 주입
+      commentsData = commentsData.map((comment, idx) => ({
+        ...comment,
+        likeCount: commentLikes[idx].data.likeCount,
+        liked: commentLikes[idx].data.liked,
+      }));
+
+      // 6. 댓글 정렬
       commentsData = commentsData.sort((a, b) => {
-        if (a.isAccepted && !b.isAccepted) return -1; // a가 채택된 댓글이면 앞으로
-        if (!a.isAccepted && b.isAccepted) return 1; // b가 채택된 댓글이면 뒤로
-        // 둘 다 채택된 댓글이 아니면 createdAt 오름차순
+        if (a.isAccepted && !b.isAccepted) return -1;
+        if (!a.isAccepted && b.isAccepted) return 1;
         return new Date(a.createdAt) - new Date(b.createdAt);
       });
+
+      // 7. 상태 업데이트
       setPost(postData);
       setComments(commentsData);
-      setLikeCount(postData.likeCount);
-      setLiked(postData.liked);
+      setLikeCount(postLikeData.likeCount);
+      setLiked(postLikeData.liked);
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || error.message);
@@ -137,6 +169,7 @@ export const PostDetail = () => {
       setLoading(false);
     }
   };
+
 
   // 수정 요청 함수 (PUT)
   const handleEdit = async () => {
@@ -294,7 +327,7 @@ const handleUpdateAfterAccept = (postIsResolvedFromResponse) => {
                     alt="Free icon like"
                     src={liked ? heart : emptyHeart}
                   />
-                  <div className="element">&nbsp;&nbsp;{post.likeCount}</div>
+                  <div className="element">&nbsp;&nbsp;{likeCount}</div>
                 </div>
               </div>
             </div>

@@ -48,4 +48,17 @@ public class LikeService {
         return new LikeResponseDto(likeCount, liked);
     }
 
+    public LikeResponseDto get(LikeRequestDto dto, Long userId) {
+        LikeTarget target = dto.getTarget();
+        Long targetId = dto.getTargetId();
+
+        Optional<Like> existingLike = likeRepository
+                .findByTargetAndTargetIdAndUser_UserId(target, targetId, userId);
+
+        if(existingLike.isPresent()) {
+            return new LikeResponseDto(likeRepository.countByTargetAndTargetId(target, targetId), true);
+        } else {
+            return new LikeResponseDto(likeRepository.countByTargetAndTargetId(target, targetId), false);
+        }
+    }
 }
