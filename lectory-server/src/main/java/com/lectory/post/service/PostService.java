@@ -3,14 +3,13 @@ package com.lectory.post.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.lectory.admin.repository.ReportManageRepository;
 import com.lectory.comment.repository.CommentRepository;
 import com.lectory.post.repository.PostTagRepository;
-import com.lectory.user.security.CustomUserDetail;
 import com.lectory.user.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import com.lectory.post.dto.PostRequestDto;
 import com.lectory.post.dto.PostResponseDto;
 import com.lectory.common.domain.Tag;
@@ -32,7 +31,6 @@ public class PostService {
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
-    private final PostTagRepository postTagRepository;
 
     // 글 등록
     @Transactional
@@ -178,45 +176,4 @@ public class PostService {
 
         postRepository.delete(post);
     }
-
-    // 관리자가 게시글 수정
-    @Transactional
-    public PostResponseDto rewriteAsAdmin(Long postId, PostRequestDto dto) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
-
-        post.setTitle(dto.getTitle());
-        post.setContent(dto.getContent());
-
-        post.getPostTags().clear();
-
-        Set<PostTag> newPostTags = new HashSet<>();
-        for (String tagName : dto.getTagNames()) {
-            Tag tag = tagRepository.findByName(tagName)
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태그입니다. id: " + tagName));
-
-            PostTag postTag = PostTag.builder()
-                    .post(post)
-                    .tag(tag)
-                    .id(new PostTagId(post.getPostId(), tag.getTagId()))
-                    .build();
-
-            newPostTags.add(postTag);
-        }
-
-        post.setPostTags(newPostTags);
-        return PostResponseDto.fromEntity(post);
-    }
-
-    // 관리자가 게시글 삭제
-    @Transactional
-    public void deleteAsAdmin(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
-
-        commentRepository.deleteAllChildCommentsByPostId(postId);
-        commentRepository.deleteAllParentCommentsByPostId(postId);
-        postRepository.delete(post);
-    }
-
 }
