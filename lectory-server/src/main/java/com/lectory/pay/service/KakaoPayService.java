@@ -238,6 +238,13 @@ public class KakaoPayService {
         regularPay.setCanceled(true);
         regularPayService.save(regularPay);
 
+        User user = userService.getUser(userId);
+        if (user != null) {
+            user.setSubscriptionStartDate(null);
+            user.setSubscriptionEndDate(null);
+            userService.cancelSubscription(userId);
+        }
+
     }
 
 }
