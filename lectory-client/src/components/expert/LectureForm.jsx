@@ -54,7 +54,7 @@ export default function LectureForm({ initial = {}, onSave, onCancel }) {
     // 파일 모드는 항상 빈 상태로 시작
     setCoverFile(null);
     setZipFile(null);
-  }, [initial]);
+  }, []);
 
   // 서버에 파일 업로드
   const upload = async (file) => {
