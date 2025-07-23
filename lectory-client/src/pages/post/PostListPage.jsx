@@ -38,6 +38,7 @@ export default function PostListPage({ userRole }) {
         });
         const data = res.data;
         let list = Array.isArray(data.content) ? data.content : [];
+
         // expert 계정은 paid 구독자 게시글만
         if (userRole === "expert") {
           list = list.filter((p) => p.subscriber_type === "PAID" || p.isPaid);
@@ -45,6 +46,10 @@ export default function PostListPage({ userRole }) {
 
         setPosts(list);
         setTotalPages(data.totalPages ?? 1);
+
+        // 디버깅
+        console.log("posts:", list);
+        console.log("decoded userId:", numericUserId);
       } catch (e) {
         console.error(e);
         setError("게시글을 불러오는 중 오류가 발생했습니다.");
@@ -120,7 +125,6 @@ export default function PostListPage({ userRole }) {
           글 쓰기
         </Link>
       </div>
-
       {/* 게시글 목록 */}
       {filtered.length === 0 ? (
         <div className="text-center text-gray-500">
@@ -144,10 +148,6 @@ export default function PostListPage({ userRole }) {
                 >
                   {post.title}
                 </Link>
-                <div className="div-wrapper">
-                  <div className="text-wrapper-12">{post.resolved ? "해결완료" : "미해결"}</div>
-                </div>
-                
                 <span className="text-sm">
                   {post.resolved ? "해결완료" : "미해결"}
                 </span>
