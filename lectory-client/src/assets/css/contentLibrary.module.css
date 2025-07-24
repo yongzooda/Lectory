@@ -1,0 +1,505 @@
+/* contentLibrary.module.css */
+
+/* 공통 컨테이너 */
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* 강의 카드 (LectureCard) */
+.lectureCard {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+.lectureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+.lectureCard img,
+.lectureCard .noImage {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.lectureCardContent {
+  padding: 1rem;
+}
+.lectureCardTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+.lectureCardMeta {
+  font-size: 0.875rem;
+  color: #6B7280;
+  margin-bottom: 0.5rem;
+}
+.lectureCardBadges {
+  display: flex;
+  gap: 0.25rem;
+}
+.lectureCardBadge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+.badgePaid {
+  background-color: #E11D48;
+}
+.badgeEnrolled {
+  background-color: #10B981;
+}
+
+/* 챕터 리스트 (ChapterList) */
+.chapterList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.chapterListItem {
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: box-shadow 0.15s ease;
+  cursor: pointer;
+}
+.chapterListItem:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.chapterHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.chapterTitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #111827;
+}
+.chapterTime {
+  font-size: 0.75rem;
+  color: #6B7280;
+}
+.chapterTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.chapterTag {
+  background-color: #F3F4F6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #374151;
+}
+
+/* 수강평 섹션 (CommentSection) */
+.commentSection {
+  margin-top: 2rem;
+}
+.commentList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.commentItem {
+  padding: 1rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.commentAuthor {
+  font-weight: 600;
+  color: #111827;
+}
+.commentDate {
+  font-size: 0.75rem;
+  color: #6B7280;
+}
+.commentContent {
+  margin-top: 0.5rem;
+  color: #374151;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.commentForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+.commentTextarea {
+  padding: 0.75rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 1rem;
+}
+.commentButton {
+  align-self: flex-end;
+  padding: 0.5rem 1rem;
+  background-color: #3B82F6;
+  color: #ffffff;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  border: none;
+}
+.commentButton:disabled {
+  background-color: #9CA3AF;
+  cursor: not-allowed;
+}
+.commentButton:hover:not(:disabled) {
+  background-color: #2563EB;
+}
+
+/* 수강신청 버튼 (EnrollButton) */
+.enrollButton {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  border: none;
+}
+.enrollButtonPaid {
+  background-color: #DC2626;
+}
+.enrollButtonFree {
+  background-color: #3B82F6;
+}
+.enrollButtonDisabled {
+  background-color: #9CA3AF;
+  cursor: not-allowed;
+}
+
+/* 강의실 헤더 (LectureHeader) */
+.lectureHeader {
+  margin-bottom: 2rem;
+}
+.coverImage {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.headerMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.lectureTitle {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+}
+.paidBadge {
+  background-color: #E11D48;
+  color: #ffffff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.metaInfo {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #6B7280;
+}
+.description {
+  font-size: 1rem;
+  color: #374151;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.tocSection {
+  margin-top: 1.5rem;
+}
+.tocHeading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+.tocList {
+  list-style: disc;
+  padding-left: 1.25rem;
+  color: #4B5563;
+  font-size: 0.875rem;
+}
+.timestamp {
+  font-size: 0.75rem;
+  color: #9CA3AF;
+}
+
+/* 페이지 전용 스타일 */
+
+/* ExpertLectureDetail */
+.inProgressBadge {
+  display: inline-block;
+  background-color: #10B981;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+}
+.tagBadge {
+  display: inline-block;
+  background-color: #F3F4F6;
+  color: #374151;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-right: 0.5rem;
+}
+.actionButtons {
+  display: flex;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+.actionButton {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #ffffff;
+  transition: background-color 0.2s;
+}
+.actionButtonEdit {
+  background-color: #3B82F6;
+}
+.actionButtonEdit:hover {
+  background-color: #2563EB;
+}
+.actionButtonDelete {
+  background-color: #DC2626;
+}
+.actionButtonDelete:hover {
+  background-color: #B91C1C;
+}
+.downloadSection {
+  margin-top: 1.5rem;
+}
+.downloadHeading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.downloadLink {
+  color: #3B82F6;
+  text-decoration: none;
+}
+.downloadLink:hover {
+  text-decoration: underline;
+}
+.sectionHeading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* LectureEdit */
+.pageHeading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.listSection {
+  margin-top: 2rem;
+}
+.listItem {
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.actionGroup {
+  display: flex;
+  gap: 0.5rem;
+}
+.actionBtn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #ffffff;
+  transition: background-color 0.2s;
+}
+.actionBtnEdit {
+  background-color: #3B82F6;
+}
+.actionBtnEdit:hover {
+  background-color: #2563EB;
+}
+.actionBtnDelete {
+  background-color: #DC2626;
+}
+.actionBtnDelete:hover {
+  background-color: #B91C1C;
+}
+
+/* LectureNew */
+.newPageHeading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* ExpertLibraryHome */
+.homeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.btnNewLecture {
+  padding: 0.75rem 1.5rem;
+  background-color: #3B82F6;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+.btnNewLecture:hover {
+  background-color: #2563EB;
+}
+.lectureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.loadingState,
+.emptyState {
+  text-align: center;
+  font-size: 1rem;
+  color: #6B7280;
+  padding: 2rem 0;
+}
+
+/* SearchBar */
+.searchBarForm {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+}
+.searchInput {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px 0 0 6px;
+  font-size: 1rem;
+  color: #374151;
+}
+.searchButton {
+  padding: 0.75rem 1.25rem;
+  background-color: #3B82F6;
+  color: #ffffff;
+  border: none;
+  border-radius: 0 6px 6px 0;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+.searchButton:hover {
+  background-color: #2563EB;
+}
+
+/* Pagination */
+.paginationNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 1.5rem;
+}
+.paginationLink {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #374151;
+  transition: background-color 0.2s;
+}
+.paginationLink:hover {
+  background-color: #F3F4F6;
+}
+.paginationLinkActive {
+  background-color: #3B82F6;
+  color: #ffffff;
+  border-color: #3B82F6;
+}
+
+/* SortDropdown */
+.sortSelect {
+  padding: 0.5rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #374151;
+}
+.sortSelect:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+/* TagFilterBar */
+.tagFilterBar {
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-bottom: 1.5rem;
+}
+.tagButton {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  color: #374151;
+  transition: background-color 0.2s, color 0.2s;
+}
+.tagButton:hover {
+  background-color: #F3F4F6;
+}
+.tagButtonActive {
+  background-color: #3B82F6;
+  color: #ffffff;
+  border-color: #3B82F6;
+}

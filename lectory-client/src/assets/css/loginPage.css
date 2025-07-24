@@ -1,0 +1,182 @@
+.loginPage-body {
+    background: #EBF5E8; /* 연한 연두색 배경 */
+    font-family: 'Open Sans', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* 메인 컨테이너 */
+.loginPage-container {
+    position: relative;
+    width: 650px;
+    height: 550px;
+    margin: auto;
+}
+
+/* 로그인/회원가입 패널 */
+.loginPage-welcome {
+    position: absolute;
+    top: 25%;
+    width: 650px;
+    height: 415px;
+    background: #E9F0E6; /* 연한 녹색 계열 */
+    border-radius: 5px;
+    box-shadow: 5px 5px 5px rgba(50, 100, 50, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+/* 좌측 녹색 박스 */
+.loginPage-pinkbox {
+    position: absolute;
+    top: -10%;
+    left: 5%;
+    width: 320px;
+    height: 500px;
+    background: #C6E1B9; /* 다크 세이지 그린 */
+    border-radius: 5px;
+    box-shadow: 2px 0 10px rgba(50, 100, 50, 0.1);
+    padding: 30px 20px;
+    box-sizing: border-box;
+    color: #355E3B; /* 어두운 녹색 글자 */
+    transition: all 0.5s ease-in-out;
+    z-index: 2;
+}
+
+/* 공통 버튼 스타일 */
+.loginPage-button,
+.signup-button {
+    width: 50%;
+    padding: 12px 0;
+    background: #E9F0E6; /* 밝은 연녹색 */
+    color: #355E3B; /* 어두운 녹색 */
+    border: 1px solid #8FBC8F; /* 중간 녹색 테두리 */
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.loginPage-button:hover,
+.signup-button:hover {
+    background: #B5D8B0; /* 연한 연두색 */
+    border-color: #567D46; /* 진한 녹색 */
+    color: #E9F0E6; /* 버튼 텍스트는 밝게 */
+}
+
+/* 타이틀 */
+.loginPage-title {
+    text-align: center;
+    color: #E9F0E6; /* 밝은 연녹색 */
+    font-size: 2em;
+    letter-spacing: 8px;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+}
+
+/* 입력 폼 */
+.loginPage-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 인풋 */
+.loginPage-input {
+    width: 85%;
+    background: #C6E1B9; /* 연한 민트녹색 */
+    color: #355E3B; /* 어두운 녹색 */
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 12px 9px;
+    margin: 18px 0;
+    font-size: 0.90em;
+    letter-spacing: 2px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.loginPage-input::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 100;
+}
+
+.loginPage-input:focus {
+    color: #234d20; /* 진한 녹색 */
+    border-bottom: 1.2px solid #567D46; /* 진한 녹색 */
+    font-size: 1em;
+}
+
+/* 에러 메시지 */
+.loginPage-error {
+    margin-top: 15px;
+    color: #a83232; /* 붉은색 (경고는 빨강 유지) */
+    font-size: 0.9em;
+}
+
+/* 우측 컨텐츠 */
+.loginPage-right {
+    width: 50%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.loginPage-right p {
+    font-size: 0.7em;
+    letter-spacing: 2px;
+    color: #355E3B;
+    text-align: center;
+}
+
+/* 추가 요소들 */
+.signup-image {
+    margin-top: -120px;
+    margin-bottom: 8px;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* signup-account 수정 */
+.signup-account {
+    margin-top: -70px;
+    font-size: 10px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* 오버레이 모달 */
+.signup-form-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 720px;
+    max-height: 80vh;
+    background: #F5FBF2; /* 약간 더 밝은 연녹색 */
+    z-index: 1000;
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(50, 100, 50, 0.2);
+    padding: 50px 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeInSlide 0.5s ease-in-out;
+    overflow-y: auto;
+    border: 2px solid #C6E1B9; /* 부드러운 테두리 추가 */
+}
+

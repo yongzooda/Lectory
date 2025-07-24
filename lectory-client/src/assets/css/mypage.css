@@ -1,0 +1,214 @@
+.mypage-title {
+    margin-top: 30px;
+    margin-left: 20px;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+
+.mypage-wrapper {
+    display: flex;
+    max-width: 100%;
+    margin: 20px auto;
+    padding: 0; /* 내부 여백을 영역별로 줌 */
+    background: #f9f9f9; /* 전체 배경 연한 회색 */
+    border-radius: 10px;
+    gap: 0; /* 영역 사이 여백은 경계선으로 대체 */
+    font-family: "Noto Sans KR", sans-serif;
+    box-shadow: none; /* 그림자 제거하거나 필요하면 살림 */
+    min-height: 250px;
+}
+
+/* 왼쪽 */
+.mypage-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+    gap: 15px;
+    padding: 20px;
+    background-color: #fafafa; /* 연한 배경색 */
+    border-right: 1px solid #e0e0e0; /* 아주 연한 구분선 */
+}
+
+.user-image-wrapper {
+    width: 120px;
+    height: 120px;
+    border: 3px solid black;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.user-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-nickname {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #333;
+}
+
+/* 가운데 */
+.mypage-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+    background-color: #fafafa;
+    border-right: 1px solid #e0e0e0; /* 오른쪽 경계선 */
+    border-left: none; /* 왼쪽 경계선는 왼쪽 영역에서 처리 */
+}
+
+.info-row {
+    display: flex;
+    gap: 10px;
+    font-size: 1.1rem;
+}
+
+.label {
+    font-weight: 600;
+    color: #666;
+    width: 90px;
+}
+
+.value {
+    font-weight: 500;
+    color: #222;
+}
+
+.edit-profile-btn {
+    margin-top: 10px;
+    width: fit-content;
+    padding: 8px 20px;
+    background-color: #A8D08D; /* 연초록 */
+    color: #355E3B;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: -50px;
+}
+
+.edit-profile-btn:hover {
+    background-color: #16a34a;
+}
+
+/* 오른쪽 */
+.mypage-right {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+    padding: 20px;
+    background-color: #fafafa;
+    /* 오른쪽 끝이라 경계선 필요없음 */
+}
+
+.subscription-title {
+    margin-top: -30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-align: left;
+    color: #333; /* 원하는 색상으로 변경 가능 */
+}
+
+.subscription-info {
+    font-size: 1.1rem;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.subscription-info .label {
+    font-weight: 600;
+    color: #555;
+    margin-right: 6px;
+}
+
+.subscription-info .value {
+    font-weight: 500;
+}
+
+.cancel-subscription-btn {
+    margin-top: 15px;
+    padding: 10px 16px;
+    background-color: #ef4444;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: -50px;
+}
+
+.cancel-subscription-btn:hover {
+    background-color: #dc2626;
+}
+
+/* 에러 & 로딩 */
+.mypage-error {
+    color: #dc2626;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.mypage-loading {
+    text-align: center;
+    margin-top: 3rem;
+    color: #6b7280;
+}
+
+.delete-account-btn {
+    margin-top: -5px;
+    padding: 6px 10px;
+    background-color: #fdf0f0;
+    color: #b03a2e;
+    border: 1px solid #f5d6d6;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.delete-account-btn:hover {
+    background-color: #fbe0e0;
+    color: #922b21;
+}
+
+.expert-portfolio-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background-color: #A8D08D;  /* 연한 녹색 계열 */
+    border: none;
+    border-radius: 8px;
+    color: #355E3B;  /* 짙은 녹색 */
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+}
+
+.expert-portfolio-btn:disabled {
+    background-color: #D3D3D3;
+    color: #8B8B8B;
+    cursor: not-allowed;
+}
+
+.expert-portfolio-btn:hover:not(:disabled) {
+    background-color: #86B24B;
+    color: white;
+}

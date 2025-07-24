@@ -1,0 +1,178 @@
+.signup-form-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 720px;
+    max-height: 92vh;
+    background: #F5FBF2;
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(50, 100, 50, 0.2);
+    padding: 50px 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    scrollbar-width: none;      /* Firefox */
+    -ms-overflow-style: none;   /* IE10+ */
+}
+
+.signup-form-overlay::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+.signup-close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.8em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.signup-close-button:hover {
+    background: #567D46;
+    color: #fff;
+}
+
+.loginPage-title {
+    color: #E9F0E6;
+    font-size: 2em;
+    letter-spacing: 8px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.signup-form-overlay .loginPage-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.signup-form-overlay .loginPage-input {
+    width: 85%;
+    background: #C6E1B9;
+    border-radius: 6px 6px 0 0;
+    padding: 12px 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-bottom: 2px solid rgba(53, 94, 59, 0.3);
+    font-size: 0.95em;
+    color: #355E3B;
+    transition: background-color 0.3s ease;
+}
+
+.signup-form-overlay .loginPage-input:focus {
+    background: #B5D8B0;
+    border-bottom: 2px solid #355E3B;
+    outline: none;
+}
+
+.file-label {
+    display: block;
+    width: 85%;
+    padding: 12px;
+    background: #C6E1B9;
+    color: #355E3B;
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: background 0.3s ease;
+}
+
+.file-label:hover {
+    background: #B5D8B0;
+}
+
+.expert-checkbox {
+    align-self: flex-start;
+    margin: 10px 0;
+    font-size: 0.9em;
+    color: #355E3B;
+}
+
+.expert-checkbox input {
+    margin-right: 6px;
+}
+
+.expert-extra {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.expert-extra.open {
+    max-height: 200px;
+}
+
+.signup-form-overlay .loginPage-button,
+.signup-form-overlay .signup-button {
+    width: 90%;
+    padding: 12px 0;
+    background: #E9F0E6; /* 밝은 연녹색 */
+    color: #355E3B; /* 어두운 녹색 */
+    border: 1px solid #8FBC8F; /* 중간 녹색 테두리 */
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.signup-form-overlay .loginPage-button:hover,
+.signup-form-overlay .signup-button:hover {
+    background: #B5D8B0; /* 연한 연두색 */
+    border-color: #567D46; /* 진한 녹색 */
+    color: #E9F0E6;
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.file-input-wrapper {
+    margin-left: 97px;
+    width: 100%;
+
+    position: relative;
+    cursor: pointer;
+}
+
+.file-input-display {
+    cursor: pointer;
+    background: #C6E1B9;
+    color: #355E3B;
+    border-radius: 6px 6px 0 0;
+    border: none;
+    border-bottom: 2px solid rgba(53, 94, 59, 0.3);
+    transition: background-color 0.3s ease;
+}
+
+.file-input-display:focus {
+    background: #B5D8B0;
+    border-bottom: 2px solid #355E3B;
+    outline: none;
+}

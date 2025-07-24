@@ -1,0 +1,16 @@
+.page {
+  height: auto;
+  min-height: 100vh;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page--centered {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
